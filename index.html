@@ -560,6 +560,9 @@
     <button class="tab-btn" onclick="switchTab('mexico', this)">
       <span>🇲🇽</span> BETS – México <span class="tab-count">5</span>
     </button>
+    <button class="tab-btn" onclick="switchTab('pm', this)">
+      <span>📊</span> Prediction Markets <span class="tab-count">7</span>
+    </button>
     <button class="tab-btn" onclick="switchTab('idea', this)">
       <span>💡</span> Ideia da Semana
     </button>
@@ -2125,6 +2128,201 @@
 
 </div><!-- /tab-mexico -->
 
+<!-- ═══════════════════════════════════════ ABA PM: PREDICTION MARKETS ═══════ -->
+<div class="tab-panel" id="tab-pm">
+  <div class="tab-heading-row">
+    <div class="tab-heading-main">
+      <div class="tab-heading">📊 Prediction Markets</div>
+    </div>
+    <div class="tab-heading-desc">Mercados de predição — regulação, jurídico e cenário competitivo</div>
+  </div>
+
+  <!-- TOGGLE: Notícias & Jurídico / Concorrentes -->
+  <div id="pm-sub" style="margin-bottom:16px;display:flex;gap:8px;">
+    <button class="toggle-btn semanal active" onclick="switchPMSub('juridico',this)">Notícias &amp; Jurídico</button>
+    <button class="toggle-btn recentes" onclick="switchPMSub('concorrentes',this)">Concorrentes</button>
+  </div>
+
+  <!-- SUB-ABA: NOTÍCIAS & JURÍDICO -->
+  <div id="pm-juridico" class="cards-grid">
+
+    <!-- CARD — Parecer interno · Jantalia/Axel · P1 (fonte interna) -->
+    <div class="card" style="border-left:3px solid var(--accent);">
+      <div class="card-header">
+        <div class="card-header-top">
+          <div class="card-badges">
+            <span class="badge alta">Alta</span>
+            <span class="badge br">BR</span>
+            <span class="action-badge action-urgente">AÇÃO INTERNA</span>
+          </div>
+          <div class="card-source"><div class="card-source-name">Pitaco · Parecer Interno</div><div>mar 2026</div></div>
+        </div>
+      </div>
+      <div class="card-body">
+        <div class="card-title">Parecer jurídico interno (Jantalia/Axel) sobre viabilidade de Prediction Markets no Brasil — em análise</div>
+        <div class="card-text">O time jurídico da Pitaco encomendou parecer aos especialistas Jantalia e Axel sobre o arcabouço legal para operação de mercados de predição no Brasil. A análise avalia enquadramento na Lei 14.790/2023, competência regulatória da SPA/MF e riscos de enquadramento como jogo de azar não licenciado. Resultado do parecer definirá possibilidade de lançamento de produto PM.</div>
+        <div class="card-analysis">📊 Análise do agente: Prediction markets operam em zona cinzenta regulatória no Brasil — não há portaria SPA/MF específica. Risco jurídico elevado para lançamento antes de parecer conclusivo e eventual consulta formal ao regulador.</div>
+      </div>
+      <div class="card-footer">
+        <div class="card-norm"><em>⚖️ Jurídico: Lei 14.790/2023 Art. 3º (definição de apostas de quota fixa) · Decreto 11.562/2023 · Portaria SPA/MF 1.231/2024 — enquadramento de PM como aposta de evento incerto ainda não consolidado.</em></div>
+        <div class="card-link"><a href="https://slack.com/app_redirect?channel=C02RHL9GMHC" target="_blank">↗ Ver discussão no #legal-team · Slack</a></div>
+        <div class="card-slack">💬 <span class="slack-channel">#legal-team</span> — Aguardar conclusão do parecer antes de qualquer comunicação externa ou decisão de produto sobre PM.</div>
+      </div>
+    </div>
+
+    <!-- CARD — Reuters / FT · mar 2026 · CFTC EUA regulação PM · P3 -->
+    <div class="card">
+      <div class="card-header">
+        <div class="card-header-top">
+          <div class="card-badges">
+            <span class="badge media">Média</span>
+            <span class="badge intl">EUA</span>
+            <span class="action-badge action-monitorar">MONITORAR</span>
+          </div>
+          <div class="card-source"><div class="card-source-name">Reuters · reuters.com</div><div>mar 2026</div></div>
+        </div>
+      </div>
+      <div class="card-body">
+        <div class="card-title">CFTC consolida regulação de Prediction Markets nos EUA após decisão favorável ao Kalshi em corte federal</div>
+        <div class="card-text">A Commodity Futures Trading Commission (CFTC) avança na regulação de mercados de predição após corte federal rejeitar contestação sobre os contratos de eventos políticos do Kalshi. A decisão consolida o modelo americano — em que PM são tratados como derivativos financeiros, não como apostas — e cria referência regulatória que outros países podem adotar.</div>
+        <div class="card-analysis">📊 Análise do agente: Modelo americano (CFTC/derivativo) é diferente do brasileiro (SPA/MF/apostas). Brasil pode optar por: (1) assimilar PM como apostas de quota fixa sob Lei 14.790, ou (2) criar marco próprio. Decisão americana aumenta pressão por definição regulatória local.</div>
+      </div>
+      <div class="card-footer">
+        <div class="card-norm"><em>⚖️ Jurídico: Modelo CFTC (derivativo financeiro) vs. modelo SPA/MF (aposta de cota fixa) — enquadramentos distintos implicam regimes de licenciamento, tributação e responsabilidade diferentes.</em></div>
+        <div class="card-link"><a href="https://www.reuters.com" target="_blank">↗ Ver matéria completa · reuters.com</a></div>
+        <div class="card-slack">💬 <span class="slack-channel">#legal-team</span> — Usar decisão da CFTC como referência comparada no parecer Jantalia/Axel. Modelo americano pode influenciar posição da SPA/MF.</div>
+      </div>
+    </div>
+
+    <!-- CARD — iGaming Brasil · fev 2026 · Brasil PM e regulação SPA · P2 -->
+    <div class="card">
+      <div class="card-header">
+        <div class="card-header-top">
+          <div class="card-badges">
+            <span class="badge media">Média</span>
+            <span class="badge br">BR</span>
+            <span class="action-badge action-monitorar">MONITORAR</span>
+          </div>
+          <div class="card-source"><div class="card-source-name">iGaming Brasil · igamingbrazil.com</div><div>fev 2026</div></div>
+        </div>
+      </div>
+      <div class="card-body">
+        <div class="card-title">SPA/MF ainda não se pronunciou sobre Prediction Markets — setor aguarda posição oficial do regulador brasileiro</div>
+        <div class="card-text">O setor de apostas aguarda manifestação formal da SPA/MF sobre o enquadramento de mercados de predição no arcabouço regulatório da Lei 14.790/2023. Operadoras e advogados divergem: alguns entendem que PM de eventos esportivos podem ser oferecidos sob licença existente; outros defendem que PM de eventos políticos/econômicos exigem nova autorização ou são vedados.</div>
+        <div class="card-analysis">📊 Análise do agente: Ausência de regulação específica é risco bilateral — abre espaço para inovação, mas expõe operadoras a autuações por atividade não autorizada. Consulta formal prévia à SPA/MF é caminho mais seguro.</div>
+      </div>
+      <div class="card-footer">
+        <div class="card-norm"><em>⚖️ Jurídico: Lei 14.790/2023 Art. 3º c/c Portaria SPA/MF 1.231/2024 — lista de modalidades autorizadas não menciona PM explicitamente. Risco de enquadramento como jogo de azar ilícito (art. 50 LCP).</em></div>
+        <div class="card-link"><a href="https://igamingbrazil.com/pt/noticias/" target="_blank">↗ Ver matéria completa · igamingbrazil.com</a></div>
+        <div class="card-slack">💬 <span class="slack-channel">#legal-team</span> — Considerar consulta formal ou pedido de reunião técnica com SPA/MF antes de qualquer decisão de produto.</div>
+      </div>
+    </div>
+
+  </div><!-- /pm-juridico -->
+
+  <!-- SUB-ABA: CONCORRENTES -->
+  <div id="pm-concorrentes" class="cards-grid" style="display:none">
+
+    <!-- CARD — Kalshi · mar 2026 · EUA · P3 -->
+    <div class="card">
+      <div class="card-header">
+        <div class="card-header-top">
+          <div class="card-badges">
+            <span class="badge alta">Alta</span>
+            <span class="badge intl">EUA</span>
+            <span class="action-badge action-referencia">REFERÊNCIA</span>
+          </div>
+          <div class="card-source"><div class="card-source-name">Kalshi · kalshi.com</div><div>mar 2026</div></div>
+        </div>
+      </div>
+      <div class="card-body">
+        <div class="card-title">Kalshi: líder global em Prediction Markets com campanha "1 Billion" e expansão internacional agressiva</div>
+        <div class="card-text">A Kalshi (EUA), primeira plataforma de prediction markets regulada pela CFTC, opera contratos sobre eleições, economia, clima e esportes. A campanha "1 Billion" mira 1 bilhão de usuários globais. A plataforma expandiu para mercados fora dos EUA aproveitando brechas regulatórias locais, incluindo usuários brasileiros e mexicanos que acessam via VPN ou sem bloqueio ativo.</div>
+        <div class="card-analysis">📊 Análise do agente: Kalshi é o benchmark de produto e regulação em PM. Seu modelo (contratos de evento, interface de trading, market making automático) é referência para qualquer operadora que queira entrar no segmento.</div>
+      </div>
+      <div class="card-footer">
+        <div class="card-norm"><em>⚖️ Jurídico: Kalshi opera sem licença SPA/MF no Brasil — usuários brasileiros acessam em zona cinzenta. Pitaco não pode replicar modelo sem autorização regulatória prévia.</em></div>
+        <div class="card-link"><a href="https://kalshi.com" target="_blank">↗ Ver produto · kalshi.com</a></div>
+        <div class="card-slack">💬 <span class="slack-channel">#benchmark</span> → <span class="slack-channel">#legal-team</span> — Mapear funcionalidades do Kalshi como referência de produto para eventual PM da Pitaco. Compartilhar com time de produto após conclusão do parecer jurídico.</div>
+      </div>
+    </div>
+
+    <!-- CARD — Polymarket · mar 2026 · Global · P3 -->
+    <div class="card">
+      <div class="card-header">
+        <div class="card-header-top">
+          <div class="card-badges">
+            <span class="badge media">Média</span>
+            <span class="badge intl">GLOBAL</span>
+            <span class="action-badge action-monitorar">MONITORAR</span>
+          </div>
+          <div class="card-source"><div class="card-source-name">Polymarket · polymarket.com</div><div>mar 2026</div></div>
+        </div>
+      </div>
+      <div class="card-body">
+        <div class="card-title">Polymarket cresce em eventos políticos e econômicos globais — modelo descentralizado em blockchain</div>
+        <div class="card-text">O Polymarket opera como plataforma descentralizada de prediction markets baseada em blockchain (Polygon), sem licença regulatória formal em nenhum país. Oferece mercados sobre eleições, guerras, economia e eventos de IA. Apesar de bloquear usuários americanos, atinge volume bilionário por ciclo eleitoral. Usuários brasileiros acessam sem restrição.</div>
+        <div class="card-analysis">📊 Análise do agente: Polymarket captura demanda que operadoras tradicionais não atendem — eventos geopolíticos, IA e macro. Modelo descentralizado dificulta bloqueio regulatório. Concorrência indireta, mas cresce rápido entre público de alta renda e cripto.</div>
+      </div>
+      <div class="card-footer">
+        <div class="card-norm"><em>⚖️ Jurídico: Sem licença em nenhuma jurisdição principal. No Brasil, pode ser enquadrado como jogo de azar ilícito (art. 50 LCP) ou plataforma de derivativos não autorizada (CVM). Risco alto de bloqueio pelo BACEN/CVM caso ganhe escala local.</em></div>
+        <div class="card-link"><a href="https://polymarket.com" target="_blank">↗ Ver produto · polymarket.com</a></div>
+        <div class="card-slack">💬 <span class="slack-channel">#benchmark</span> — Monitorar crescimento de Polymarket no Brasil como termômetro de demanda por PM. Comparar categorias de mercado com o que a Pitaco poderia oferecer.</div>
+      </div>
+    </div>
+
+    <!-- CARD — Betfair Exchange · mar 2026 · UK/Global · P3 -->
+    <div class="card">
+      <div class="card-header">
+        <div class="card-header-top">
+          <div class="card-badges">
+            <span class="badge baixa">Baixa</span>
+            <span class="badge intl">UK/BR</span>
+            <span class="action-badge action-referencia">REFERÊNCIA</span>
+          </div>
+          <div class="card-source"><div class="card-source-name">Betfair · betfair.com.br</div><div>mar 2026</div></div>
+        </div>
+      </div>
+      <div class="card-body">
+        <div class="card-title">Betfair Exchange: único modelo de exchange de apostas licenciado no Brasil — referência próxima de PM</div>
+        <div class="card-text">A Betfair Exchange opera no Brasil como a única exchange de apostas com licença SPA/MF, permitindo que usuários apostem entre si (peer-to-peer) em vez de contra a casa. O modelo se aproxima conceitualmente dos prediction markets — preços formados por oferta e demanda, não por odds fixas da operadora. Serve como referência regulatória para produtos similares.</div>
+        <div class="card-analysis">📊 Análise do agente: A aprovação da Betfair Exchange pela SPA/MF abre precedente para produtos de formação de preço por mercado (P2P). Argumentar junto ao regulador que PM de eventos esportivos segue lógica similar pode ser estratégia jurídica válida.</div>
+      </div>
+      <div class="card-footer">
+        <div class="card-norm"><em>⚖️ Jurídico: Betfair Exchange opera sob Lei 14.790/2023 com licença SPA/MF específica para modelo exchange. Precedente útil para eventual consulta regulatória sobre PM esportivos pela Pitaco.</em></div>
+        <div class="card-link"><a href="https://www.betfair.com.br" target="_blank">↗ Ver produto · betfair.com.br</a></div>
+        <div class="card-slack">💬 <span class="slack-channel">#legal-team</span> — Usar modelo Betfair Exchange como analogia regulatória no parecer Jantalia/Axel e eventual consulta à SPA/MF.</div>
+      </div>
+    </div>
+
+    <!-- CARD — Robinhood / Interactive Brokers · mar 2026 · EUA · P3 -->
+    <div class="card">
+      <div class="card-header">
+        <div class="card-header-top">
+          <div class="card-badges">
+            <span class="badge baixa">Baixa</span>
+            <span class="badge intl">EUA</span>
+            <span class="action-badge action-monitorar">MONITORAR</span>
+          </div>
+          <div class="card-source"><div class="card-source-name">Bloomberg · bloomberg.com</div><div>mar 2026</div></div>
+        </div>
+      </div>
+      <div class="card-body">
+        <div class="card-title">Corretoras tradicionais dos EUA (Robinhood, Interactive Brokers) entram em Prediction Markets via CFTC</div>
+        <div class="card-text">Após a consolidação regulatória da CFTC, corretoras tradicionais como Robinhood e Interactive Brokers anunciaram planos de oferecer contratos de prediction markets em suas plataformas. O movimento sinaliza a convergência entre mercados financeiros e mercados de predição — e indica que PM deixou de ser nicho cripto/startup para entrar no mainstream financeiro.</div>
+        <div class="card-analysis">📊 Análise do agente: Entrada de players financeiros tradicionais valida PM como produto mainstream. No Brasil, isso pode acelerar pressão do setor financeiro (B3, XP) por regulamentação — criando janela de oportunidade para operadoras de apostas que já têm licença e base de usuários.</div>
+      </div>
+      <div class="card-footer">
+        <div class="card-norm"><em>⚖️ Jurídico: No Brasil, PM no âmbito financeiro seria competência da CVM/BACEN — distinto da SPA/MF. Risco de disputa regulatória de competência entre reguladores caso o produto ganhe escala.</em></div>
+        <div class="card-link"><a href="https://bloomberg.com" target="_blank">↗ Ver matéria completa · bloomberg.com</a></div>
+        <div class="card-slack">💬 <span class="slack-channel">#benchmark</span> — Monitorar entrada de corretoras em PM como sinal de maturação do mercado. Avaliar se Pitaco deve posicionar PM como produto de apostas ou produto financeiro.</div>
+      </div>
+    </div>
+
+  </div><!-- /pm-concorrentes -->
+
+</div><!-- /tab-pm -->
+
 <!-- ═══════════════════════════════════════ ABA 7: IDEIA DA SEMANA ════════════ -->
 <div class="tab-panel" id="tab-idea">
   <div class="tab-heading-row">
@@ -2274,6 +2472,13 @@
     btn.classList.add('active');
     document.getElementById('mexico-noticias').style.display = sub === 'noticias' ? 'grid' : 'none';
     document.getElementById('mexico-produto').style.display = sub === 'produto' ? 'grid' : 'none';
+  }
+
+  function switchPMSub(sub, btn) {
+    document.querySelectorAll('#pm-sub .toggle-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById('pm-juridico').style.display = sub === 'juridico' ? 'grid' : 'none';
+    document.getElementById('pm-concorrentes').style.display = sub === 'concorrentes' ? 'grid' : 'none';
   }
 
   function switchTab(tabId, btn) {

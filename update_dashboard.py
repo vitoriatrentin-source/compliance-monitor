@@ -26,6 +26,9 @@ NEWS_SOURCES = [
     ("BNL Data",            "https://bnldata.com.br/noticias/"),
     ("iGaming Brasil",      "https://igamingbrazil.com/pt/noticias/"),
     ("G&M News",            "https://g-mnews.com/pt/noticias/"),
+    # Prediction Markets — fontes internacionais
+    ("Kalshi Blog",         "https://kalshi.com/blog"),
+    ("Polymarket Blog",     "https://polymarket.com/blog"),
 ]
 
 SLACK_CHANNELS = {
@@ -155,10 +158,12 @@ HORÁRIO ATUAL (BRT): {timestamp}
 Atualize o dashboard. Regras obrigatórias:
 
 1. NOVOS CARDS — adicione apenas cards com informação NOVA (não duplicar os existentes).
-   Aba correta: AML, LGPD, RG, Sports Integrity, Cenário Internacional, Concorrentes ou BETS-México.
+   Aba correta: AML, LGPD, RG, Sports Integrity, Cenário Internacional, Concorrentes, BETS-México ou Prediction Markets.
    Fontes P1 (prioridade máxima): gov.br/coaf, gov.br/anpd, in.gov.br (DOU — apostas/bets), SPA/MF.
    Fontes P2: BNL Data, iGaming Brasil, G&M News, Mediabet.
-   Cards de Concorrentes DEVEM ter fonte externa (P1/P2/P3) — Slack apenas como insight na seção card-slack.
+   Fontes internacionais PM: Kalshi Blog, Polymarket Blog, Reuters, Bloomberg, CFTC.
+   Cards de Concorrentes e Prediction Markets DEVEM ter fonte externa — Slack apenas como insight em card-slack.
+   Aba Prediction Markets tem duas sub-abas: "Notícias & Jurídico" (id=pm-juridico) e "Concorrentes" (id=pm-concorrentes).
    Estrutura de cada card:
    <div class="card">
      <div class="card-header">
