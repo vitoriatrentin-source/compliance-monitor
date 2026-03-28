@@ -177,22 +177,28 @@ Atualize o dashboard. Regras obrigatórias:
 1. NOVOS CARDS — adicione apenas cards com informação NOVA (não duplicar os existentes).
    Aba correta: AML, LGPD, RG, Sports Integrity, Cenário Internacional, Concorrentes, BETS-México ou Prediction Markets.
    Fontes P1 (prioridade máxima): gov.br/coaf, gov.br/anpd, in.gov.br (DOU — apostas/bets), SPA/MF.
-   ORDENAÇÃO dentro de cada aba (respeitar sempre):
-   - Primeiro: P1 mais recentes → P2 mais recentes → P3 mais recentes
-   - Por último: cards com badge "⚠ Fonte única" (single source)
-   NÃO use a classe "priority-alta" no article — use apenas as classes: "news-card".
+   ORDENAÇÃO dentro de cada lista (REORDENE também os cards existentes a cada atualização):
+   Ordem obrigatória dentro de cada news-list:
+     1º) P1 (gov.br, SPA/MF, DOU) — mais recente primeiro
+     2º) P2 (BNL Data, iGaming Brasil, G&M News, Mediabet) — mais recente primeiro
+     3º) P3 (demais fontes) — mais recente primeiro
+     Último) cards com badge "⚠ Fonte única" — sempre ao final, independente da data
+   NÃO use a classe "priority-alta" no article — use apenas: "news-card".
 
    DIVISÃO SEMANAL vs RECENTES (obrigatório em TODOS os tabs com news-list):
-   - id="TABID-semanal": notícias dos últimos 7 dias (semana corrente)
-   - id="TABID-recentes": notícias com mais de 7 dias (histórico)
-   - Isso se aplica a AML (aml-semanal/aml-recentes), Sports (sports-semanal/sports-recentes),
-     Privacy (privacy-semanal/privacy-recentes), RG (rg-semanal/rg-recentes),
-     Internacional (intl-tendencias para semanal, intl-enforcement para recentes),
-     Concorrentes (comp-produto para semanal, comp-juridico para recentes),
-     México (mexico-noticias para semanal, mexico-produto para recentes),
-     PM (pm-juridico para semanal, pm-concorrentes para recentes).
-   - Ao adicionar um card novo: coloque em -semanal se a notícia for dos últimos 7 dias.
-   - Não mova cards existentes entre semanal e recentes.
+   - id="TABID-semanal": notícias publicadas nos últimos 7 dias
+   - id="TABID-recentes": notícias com mais de 7 dias
+   Mapeamento de IDs:
+     AML → aml-semanal / aml-recentes
+     Sports → sports-semanal / sports-recentes
+     Privacy → privacy-semanal / privacy-recentes
+     RG → rg-semanal / rg-recentes
+     Internacional → intl-tendencias (semanal) / intl-enforcement (recentes)
+     Concorrentes → comp-produto (semanal) / comp-juridico (recentes)
+     México → mexico-noticias (semanal) / mexico-produto (recentes)
+     PM → pm-juridico (semanal) / pm-concorrentes (recentes)
+   - Cards com mais de 7 dias devem ser movidos de -semanal para -recentes.
+   - Novos cards vão sempre em -semanal (se dentro dos últimos 7 dias).
    Fontes P2: BNL Data, iGaming Brasil, G&M News, Mediabet.
    Fontes internacionais PM: Kalshi Blog, Polymarket Blog, Reuters, Bloomberg, CFTC.
    Cards de Concorrentes e Prediction Markets DEVEM ter fonte externa — Slack apenas como insight em card-slack.
