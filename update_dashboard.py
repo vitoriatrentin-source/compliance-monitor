@@ -6,7 +6,6 @@ Roda via GitHub Actions 6x/dia
 
 import os
 import re
-import zipfile
 import requests
 import anthropic
 from datetime import datetime, timezone, timedelta
@@ -14,8 +13,6 @@ from datetime import datetime, timezone, timedelta
 # ── Config ────────────────────────────────────────────────────────────────────
 ANTHROPIC_API_KEY  = os.environ["ANTHROPIC_API_KEY"]
 SLACK_TOKEN        = os.environ["SLACK_TOKEN"]
-NETLIFY_TOKEN      = os.environ["NETLIFY_TOKEN"]
-NETLIFY_SITE_ID    = os.environ.get("NETLIFY_SITE_ID", "0a81f462-de30-46e3-900a-50807c584b46")
 
 NEWS_SOURCES = [
     ("COAF",                "https://www.gov.br/coaf/pt-br/assuntos/noticias"),
@@ -218,29 +215,10 @@ Atualize o dashboard. Regras obrigatórias:
     return message.content[0].text.strip()
 
 
-def deploy(html: str) -> dict:
-    # Salva HTML atualizado
+def save(html: str):
+    # Salva HTML — o git push no workflow do Actions faz o deploy no GitHub Pages
     with open("index.html", "w", encoding="utf-8") as f:
         f.write(html)
-
-    # Cria zip
-    with zipfile.ZipFile("site.zip", "w", zipfile.ZIP_DEFLATED) as zf:
-        zf.write("index.html")
-        if os.path.exists("netlify.toml"):
-            zf.write("netlify.toml")
-
-    # Deploy Netlify
-    with open("site.zip", "rb") as f:
-        resp = requests.post(
-            f"https://api.netlify.com/api/v1/sites/{NETLIFY_SITE_ID}/deploys",
-            headers={
-                "Authorization": f"Bearer {NETLIFY_TOKEN}",
-                "Content-Type": "application/zip",
-            },
-            data=f.read(),
-            timeout=60,
-        )
-    return resp.json()
 
 
 # ── Main ──────────────────────────────────────────────────────────────────────
@@ -266,12 +244,10 @@ def main():
         print(updated_html[:500])
         return
 
-    print("\n[5/5] Deploy no Netlify...")
-    result = deploy(updated_html)
-    state  = result.get("state", "unknown")
-    dep_id = result.get("id", "?")
-    print(f"✅ Deploy {dep_id} → {state}")
-    print(f"🌐 https://lighthearted-mochi-b32abf.netlify.app")
+    print("\n[5/5] Salvando HTML (deploy via git push do Actions)...")
+    save(updated_html)
+    print(f"✅ index.html atualizado")
+    print(f"🌐 https://vitoriatrentin-source.github.io/compliance-monitor/")
 
 
 if __name__ == "__main__":
