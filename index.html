@@ -202,8 +202,8 @@ body {
 
 /* ── SECTION HEADER ── */
 .section-header {
-  display: flex; align-items: flex-start; justify-content: space-between;
-  margin-bottom: 20px; gap: 16px; flex-wrap: wrap;
+  display: flex; flex-direction: column; align-items: flex-start;
+  margin-bottom: 20px; gap: 10px;
 }
 .section-label {
   display: flex; align-items: center; gap: 8px; margin-bottom: 4px;
@@ -569,10 +569,6 @@ body {
       <button class="tab-btn" data-tab="prazos">⏱ Prazos</button>
       <button class="tab-btn" data-tab="ideia">💡 Ideia da Semana</button>
     </div>
-    <div class="global-view-toggle" id="global-view-toggle">
-      <button class="view-btn active" id="gvt-semanal">Semanal</button>
-      <button class="view-btn" id="gvt-recentes">Recentes</button>
-    </div>
   </div>
 </nav>
 
@@ -581,11 +577,10 @@ body {
 <!-- ═══════════ ABA 1: AML/CFT ═══════════ -->
 <div class="tab-pane active" id="tab-aml">
   <div class="section-header">
-    <div class="section-title-block">
-      <div class="section-label"><div class="section-icon">🏦</div><h2 class="section-name">AML / CFT</h2></div>
-      <div class="section-tags">
-        <span class="section-tag">Lavagem de dinheiro</span><span class="section-tag">COAF</span><span class="section-tag">SIGAP</span><span class="section-tag">FATF/GAFI</span><span class="section-tag">ativos virtuais</span>
-      </div>
+    <div class="section-label"><div class="section-icon">🏦</div><h2 class="section-name">AML / CFT</h2></div>
+    <div class="view-toggle">
+      <button class="view-btn active" onclick="switchView('aml','semanal',this)">Semanal</button>
+      <button class="view-btn" onclick="switchView('aml','recentes',this)">Recentes</button>
     </div>
   </div>
 
@@ -775,9 +770,10 @@ body {
 <!-- ═══════════ ABA 2: SPORTS ═══════════ -->
 <div class="tab-pane" id="tab-sports">
   <div class="section-header">
-    <div class="section-title-block">
-      <div class="section-label"><div class="section-icon">⚽</div><h2 class="section-name">Sports Integrity</h2></div>
-      <div class="section-tags"><span class="section-tag">Manipulação de resultados</span><span class="section-tag">IBIA</span><span class="section-tag">Sportradar</span><span class="section-tag">Ministério do Esporte</span></div>
+    <div class="section-label"><div class="section-icon">⚽</div><h2 class="section-name">Sports Integrity</h2></div>
+    <div class="view-toggle">
+      <button class="view-btn active" onclick="switchView('sports','semanal',this)">Semanal</button>
+      <button class="view-btn" onclick="switchView('sports','recentes',this)">Recentes</button>
     </div>
   </div>
 
@@ -849,9 +845,10 @@ body {
 <!-- ═══════════ ABA 3: DATA PRIVACY ═══════════ -->
 <div class="tab-pane" id="tab-privacy">
   <div class="section-header">
-    <div class="section-title-block">
-      <div class="section-label"><div class="section-icon">🔐</div><h2 class="section-name">Data Privacy</h2></div>
-      <div class="section-tags"><span class="section-tag">LGPD</span><span class="section-tag">ANPD</span><span class="section-tag">ECA Digital (Lei 15.211/2025)</span><span class="section-tag">GDPR</span></div>
+    <div class="section-label"><div class="section-icon">🔐</div><h2 class="section-name">Data Privacy</h2></div>
+    <div class="view-toggle">
+      <button class="view-btn active" onclick="switchView('privacy','semanal',this)">Semanal</button>
+      <button class="view-btn" onclick="switchView('privacy','recentes',this)">Recentes</button>
     </div>
   </div>
 
@@ -950,9 +947,10 @@ body {
 <!-- ═══════════ ABA 4: RESPONSIBLE GAMING ═══════════ -->
 <div class="tab-pane" id="tab-rg">
   <div class="section-header">
-    <div class="section-title-block">
-      <div class="section-label"><div class="section-icon">🛡️</div><h2 class="section-name">Responsible Gaming</h2></div>
-      <div class="section-tags"><span class="section-tag">Autoexclusão</span><span class="section-tag">Autolimites</span><span class="section-tag">Saúde mental</span><span class="section-tag">Benchmark JR</span></div>
+    <div class="section-label"><div class="section-icon">🛡️</div><h2 class="section-name">Responsible Gaming</h2></div>
+    <div class="view-toggle">
+      <button class="view-btn active" onclick="switchView('rg','semanal',this)">Semanal</button>
+      <button class="view-btn" onclick="switchView('rg','recentes',this)">Recentes</button>
     </div>
   </div>
 
@@ -1057,9 +1055,10 @@ body {
 <!-- ═══════════ ABA 5: INTERNACIONAL ═══════════ -->
 <div class="tab-pane" id="tab-intl">
   <div class="section-header">
-    <div class="section-title-block">
-      <div class="section-label"><div class="section-icon">🌍</div><h2 class="section-name">Cenário Internacional</h2></div>
-      <div class="section-tags"><span class="section-tag">UK</span><span class="section-tag">Austrália</span><span class="section-tag">Portugal</span><span class="section-tag">Espanha</span><span class="section-tag">UE</span></div>
+    <div class="section-label"><div class="section-icon">🌍</div><h2 class="section-name">Cenário Internacional</h2></div>
+    <div class="view-toggle">
+      <button class="view-btn active" onclick="switchView('intl','tendencias',this)">Tendências</button>
+      <button class="view-btn" onclick="switchView('intl','enforcement',this)">Enforcement</button>
     </div>
   </div>
 
@@ -1244,9 +1243,10 @@ body {
 <!-- ═══════════ ABA 6: CONCORRENTES ═══════════ -->
 <div class="tab-pane" id="tab-competitors">
   <div class="section-header">
-    <div class="section-title-block">
-      <div class="section-label"><div class="section-icon">🎯</div><h2 class="section-name">Concorrentes</h2></div>
-      <div class="section-tags"><span class="section-tag">Betano</span><span class="section-tag">Bet365</span><span class="section-tag">Superbet</span><span class="section-tag">Sportingbet</span><span class="section-tag">Betnacional</span><span class="section-tag">Novibet</span></div>
+    <div class="section-label"><div class="section-icon">🎯</div><h2 class="section-name">Concorrentes</h2></div>
+    <div class="view-toggle">
+      <button class="view-btn active" onclick="switchView('comp','produto',this)">Produto</button>
+      <button class="view-btn" onclick="switchView('comp','juridico',this)">Jurídico</button>
     </div>
   </div>
 
@@ -1473,10 +1473,7 @@ body {
 <!-- ═══════════ ABA 7: BETS – MÉXICO ═══════════ -->
 <div class="tab-pane" id="tab-mexico">
   <div class="section-header">
-    <div class="section-title-block">
-      <div class="section-label"><div class="section-icon">🇲🇽</div><h2 class="section-name">BETS – México</h2></div>
-      <div class="section-tags"><span class="section-tag">SEGOB</span><span class="section-tag">Caliente</span><span class="section-tag">Liga MX</span><span class="section-tag">LATAM</span></div>
-    </div>
+    <div class="section-label"><div class="section-icon">🇲🇽</div><h2 class="section-name">BETS – México</h2></div>
   </div>
 
   <div class="sub-toggle" id="mexico-sub">
@@ -1571,10 +1568,7 @@ body {
 <!-- ═══════════ ABA 8: PREDICTION MARKETS ═══════════ -->
 <div class="tab-pane" id="tab-pm">
   <div class="section-header">
-    <div class="section-title-block">
-      <div class="section-label"><div class="section-icon">📊</div><h2 class="section-name">Prediction Markets</h2></div>
-      <div class="section-tags"><span class="section-tag">Kalshi</span><span class="section-tag">Polymarket</span><span class="section-tag">CFTC</span><span class="section-tag">Regulação BR</span></div>
-    </div>
+    <div class="section-label"><div class="section-icon">📊</div><h2 class="section-name">Prediction Markets</h2></div>
   </div>
 
   <div class="sub-toggle" id="pm-sub">
@@ -1699,9 +1693,7 @@ body {
 <!-- ═══════════ ABA 9: PRAZOS ═══════════ -->
 <div class="tab-pane" id="tab-prazos">
   <div class="section-header">
-    <div class="section-title-block">
-      <div class="section-label"><div class="section-icon">⏱</div><h2 class="section-name">Prazos &amp; Deadlines</h2></div>
-    </div>
+    <div class="section-label"><div class="section-icon">⏱</div><h2 class="section-name">Prazos &amp; Deadlines</h2></div>
   </div>
 
   <div class="stats-row">
@@ -1773,10 +1765,7 @@ body {
 <!-- ═══════════ ABA 10: IDEIA DA SEMANA ═══════════ -->
 <div class="tab-pane" id="tab-ideia">
   <div class="section-header">
-    <div class="section-title-block">
-      <div class="section-label"><div class="section-icon">💡</div><h2 class="section-name">Ideia da Semana</h2></div>
-      <div class="section-tags"><span class="section-tag">Semana de 24–28 mar 2026</span></div>
-    </div>
+    <div class="section-label"><div class="section-icon">💡</div><h2 class="section-name">Ideia da Semana</h2></div>
   </div>
 
   <div class="idea-card">
@@ -1961,8 +1950,27 @@ gvtRecentes.addEventListener('click', () => {
 applyView(currentTab, currentView);
 updateGlobalToggle(currentTab);
 
-// legacy switchView (compatibilidade)
-function switchView() {}
+function switchView(tabId, mode, btn) {
+  const views = {
+    aml:         { semanal: 'aml-semanal',     recentes: 'aml-recentes' },
+    sports:      { semanal: 'sports-semanal',  recentes: 'sports-recentes' },
+    privacy:     { semanal: 'privacy-semanal', recentes: 'privacy-recentes' },
+    rg:          { semanal: 'rg-semanal',      recentes: 'rg-recentes' },
+    intl:        { tendencias: 'intl-tendencias', enforcement: 'intl-enforcement' },
+    comp:        { produto: 'comp-produto',    juridico: 'comp-juridico' },
+  };
+  const map = views[tabId];
+  if (!map) return;
+  const toggle = btn.closest('.view-toggle');
+  toggle.querySelectorAll('.view-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  Object.values(map).forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.style.display = 'none';
+  });
+  const target = document.getElementById(map[mode]);
+  if (target) target.style.display = 'flex';
+}
 
 // MEXICO SUB-TABS
 function switchMexicoSub(sub, btn) {
