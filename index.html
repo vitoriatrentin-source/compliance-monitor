@@ -485,6 +485,58 @@ body {
 </style>
 </head>
 <body>
+
+<!-- TELA DE LOGIN -->
+<div id="login-screen" style="
+  position:fixed;inset:0;z-index:9999;
+  background:#0F0A1E;
+  display:flex;align-items:center;justify-content:center;
+  font-family:'Sora',sans-serif;
+">
+  <div style="
+    background:#1A1030;border:1px solid rgba(124,58,237,0.3);
+    border-radius:16px;padding:40px 48px;width:100%;max-width:380px;
+    display:flex;flex-direction:column;align-items:center;gap:24px;
+  ">
+    <div style="width:48px;height:48px;border-radius:12px;background:#7C3AED;
+      display:flex;align-items:center;justify-content:center;
+      font-size:22px;font-weight:700;color:#fff;">P</div>
+    <div style="text-align:center">
+      <div style="color:#fff;font-size:18px;font-weight:600;">Monitor de Compliance</div>
+      <div style="color:#8B7BAE;font-size:13px;margin-top:4px;">Pitaco · Acesso restrito</div>
+    </div>
+    <input id="pwd-input" type="password" placeholder="Senha"
+      style="width:100%;padding:12px 16px;border-radius:8px;border:1px solid rgba(124,58,237,0.3);
+        background:#0F0A1E;color:#fff;font-family:'Sora',sans-serif;font-size:14px;outline:none;box-sizing:border-box;"
+      onkeydown="if(event.key==='Enter')checkPwd()"
+    />
+    <div id="pwd-error" style="color:#EF4444;font-size:12px;display:none;">Senha incorreta.</div>
+    <button onclick="checkPwd()" style="
+      width:100%;padding:12px;border-radius:8px;border:none;
+      background:#7C3AED;color:#fff;font-family:'Sora',sans-serif;
+      font-size:14px;font-weight:600;cursor:pointer;
+    ">Entrar</button>
+  </div>
+</div>
+
+<script>
+(function(){
+  if(sessionStorage.getItem('rdp-auth')==='ok'){
+    document.getElementById('login-screen').style.display='none';
+  }
+})();
+function checkPwd(){
+  var v=document.getElementById('pwd-input').value;
+  if(v==='vitoriardp'){
+    sessionStorage.setItem('rdp-auth','ok');
+    document.getElementById('login-screen').style.display='none';
+  } else {
+    document.getElementById('pwd-error').style.display='block';
+    document.getElementById('pwd-input').value='';
+  }
+}
+</script>
+
 <div class="app-shell">
 
 <!-- HEADER -->
