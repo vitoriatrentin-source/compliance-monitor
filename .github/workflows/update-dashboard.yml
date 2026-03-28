@@ -1,0 +1,44 @@
+name: Atualizar Monitor de Compliance
+
+on:
+  schedule:
+    # Horários em BRT (UTC-3) — GitHub Actions usa UTC
+    - cron: '3 11 * * *'    # 08:03 BRT
+    - cron: '2 13 * * *'    # 10:02 BRT
+    - cron: '30 15 * * *'   # 12:30 BRT
+    - cron: '3 18 * * *'    # 15:03 BRT
+    - cron: '7 21 * * *'    # 18:07 BRT
+    - cron: '4 1 * * *'     # 22:04 BRT (madrugada UTC)
+  workflow_dispatch:          # Permite rodar manualmente
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repositório
+        uses: actions/checkout@v4
+
+      - name: Configurar Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Instalar dependências
+        run: pip install anthropic requests
+
+      - name: Atualizar dashboard
+        run: python update_dashboard.py
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          SLACK_TOKEN: ${{ secrets.SLACK_TOKEN }}
+          NETLIFY_TOKEN: ${{ secrets.NETLIFY_TOKEN }}
+          NETLIFY_SITE_ID: ${{ secrets.NETLIFY_SITE_ID }}
+
+      - name: Commit do HTML atualizado
+        run: |
+          git config --global user.name "compliance-bot"
+          git config --global user.email "bot@pitaco.bet.br"
+          git add index.html
+          git diff --staged --quiet || git commit -m "chore: atualização automática $(date +'%d/%m/%Y %H:%M') BRT"
+          git push

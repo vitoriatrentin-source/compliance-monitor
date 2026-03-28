@@ -1,0 +1,1967 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Monitor de Compliance</title>
+<style>
+  :root {
+    --bg: #0a0a0f;
+    --surface: #141418;
+    --surface2: #1c1c22;
+    --surface3: #242430;
+    --border: #2e2e3a;
+    --text: #e8ecf4;
+    --text-muted: #8a84a8;
+    --text-dim: #4a4268;
+    --alta: #E24B4A;
+    --media: #EF9F27;
+    --baixa: #639922;
+    --accent: #5c35e8;
+    --accent2: #4624D0;
+    --card-recent: #EF9F27;
+    --card-semanal: #5c35e8;
+    --green: #22c55e;
+    --red: #ef4444;
+    --purple-glow: rgba(70,36,208,0.35);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    min-height: 100vh;
+    font-size: 13px;
+  }
+
+  /* HEADER */
+  .header {
+    background: linear-gradient(160deg, #2d1a6e 0%, #1a0f42 50%, #0d0a1a 100%);
+    border-bottom: none;
+    padding: 18px 28px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    backdrop-filter: blur(20px);
+    box-shadow: 0 4px 40px rgba(70,36,208,0.3);
+  }
+  .header-left { display: flex; align-items: center; gap: 16px; }
+  .logo-pitaco {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+  }
+  .pitaco-text {
+    font-weight: 900;
+    font-size: 18px;
+    letter-spacing: 1.5px;
+    color: #fff;
+    font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+    text-transform: uppercase;
+  }
+  .header-title { font-size: 15px; font-weight: 700; color: #fff; letter-spacing: -0.2px; }
+  .header-subtitle { font-size: 11px; color: rgba(255,255,255,0.45); margin-top: 2px; }
+  .rebranding-tag {
+    display: inline-block;
+    background: rgba(255,255,255,0.1);
+    border-radius: 4px;
+    padding: 1px 5px;
+    font-size: 9px;
+    color: rgba(255,255,255,0.6);
+    font-weight: 600;
+    margin-left: 4px;
+    vertical-align: middle;
+  }
+  .header-right { display: flex; align-items: center; gap: 10px; }
+  .header-meta { text-align: right; font-size: 11px; color: rgba(255,255,255,0.4); line-height: 1.4; }
+  .status-dot {
+    width: 7px; height: 7px;
+    border-radius: 50%;
+    background: var(--green);
+    display: inline-block;
+    margin-right: 4px;
+    animation: pulse 2s infinite;
+  }
+  @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
+  .license-badge {
+    background: rgba(255,255,255,0.08);
+    border: 1px solid rgba(255,255,255,0.15);
+    border-radius: 20px;
+    padding: 4px 10px;
+    font-size: 10px;
+    color: rgba(255,255,255,0.6);
+    font-weight: 600;
+  }
+  .last-update {
+    background: rgba(255,255,255,0.08);
+    border: 1px solid rgba(255,255,255,0.12);
+    border-radius: 20px;
+    padding: 5px 12px;
+    font-size: 10px;
+    color: rgba(255,255,255,0.55);
+    display: flex;
+    align-items: center;
+    gap: 5px;
+  }
+
+  /* DEADLINE BAR */
+  .deadline-bar {
+    background: #0f0f14;
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+    padding: 10px 28px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+  .deadline-bar::-webkit-scrollbar { display: none; }
+  .deadline-label {
+    font-size: 10px; font-weight: 700;
+    color: var(--text-dim);
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    white-space: nowrap;
+    margin-right: 4px;
+  }
+  .deadline-chip {
+    display: flex; align-items: center; gap: 5px;
+    padding: 4px 11px;
+    border-radius: 20px;
+    font-size: 10px; font-weight: 600;
+    white-space: nowrap; cursor: default;
+    border: 1px solid transparent;
+  }
+  .deadline-chip.overdue { background: rgba(180,20,20,0.2); border-color: rgba(226,75,74,0.6); color: #ff5555; font-weight: 700; animation: urgentPulse 2s infinite; }
+  .deadline-chip.urgent { background: rgba(226,75,74,0.12); border-color: rgba(226,75,74,0.3); color: #ff8080; }
+  .deadline-chip.warning { background: rgba(239,159,39,0.10); border-color: rgba(239,159,39,0.28); color: #f4b84a; }
+  .deadline-chip.ok { background: rgba(99,153,34,0.08); border-color: rgba(99,153,34,0.22); color: #87c73a; }
+  .deadline-chip.done { background: rgba(34,197,94,0.07); border-color: rgba(34,197,94,0.2); color: #4ade80; opacity: 0.75; text-decoration: line-through; }
+  .deadline-chip.done .chip-dot { background: #4ade80; }
+  .chip-dot { width: 5px; height: 5px; border-radius: 50%; background: currentColor; }
+  .chip-sep { color: var(--text-dim); font-size: 10px; }
+  .chip-section { font-size: 9px; font-weight: 800; text-transform: uppercase; letter-spacing: 0.8px; color: var(--text-dim); white-space: nowrap; padding: 0 4px; }
+  @keyframes urgentPulse { 0%,100% { box-shadow: 0 0 0 0 rgba(226,75,74,0); } 50% { box-shadow: 0 0 6px 2px rgba(226,75,74,0.35); } }
+
+  /* TABS */
+  .tabs-outer {
+    background: #0f0f14;
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+    display: flex; align-items: stretch;
+    position: sticky; top: 69px; z-index: 90;
+    padding: 0 8px;
+  }
+  .tabs-container {
+    flex: 1; min-width: 0;
+    padding: 8px 8px;
+    display: flex; align-items: center; gap: 4px;
+    overflow-x: auto; scrollbar-width: none;
+  }
+  .tabs-container::-webkit-scrollbar { display: none; }
+  .tabs-right {
+    padding: 0 16px;
+    display: flex; align-items: center;
+    flex-shrink: 0;
+  }
+  #tab-toggle-area { display: none; }
+  .tab-btn {
+    padding: 7px 14px;
+    font-size: 12px; font-weight: 500;
+    color: var(--text-muted);
+    background: none; border: none;
+    border-radius: 20px;
+    cursor: pointer; white-space: nowrap;
+    transition: all 0.2s;
+    display: flex; align-items: center; gap: 6px;
+  }
+  .tab-btn:hover { color: var(--text); background: rgba(255,255,255,0.05); }
+  .tab-btn.active {
+    color: #fff;
+    background: linear-gradient(135deg, #4624D0, #6d3fef);
+    font-weight: 700;
+    box-shadow: 0 4px 16px rgba(70,36,208,0.4);
+  }
+  .tab-count {
+    background: rgba(255,255,255,0.15);
+    color: rgba(255,255,255,0.8);
+    border-radius: 10px;
+    padding: 1px 6px;
+    font-size: 10px; font-weight: 700;
+  }
+  .tab-btn:not(.active) .tab-count { background: rgba(70,36,208,0.2); color: #a890ff; }
+  .tab-btn:not(.active) .tab-count.high { background: rgba(226,75,74,0.15); color: #ff7b7a; }
+
+  /* CONTENT */
+  .content { padding: 28px 32px; max-width: 1400px; margin: 0 auto; }
+  .tab-panel { display: none; }
+  .tab-panel.active { display: block; }
+
+  /* TOGGLE — agora dentro de cada tab (canto superior esquerdo) */
+  #tab-toggle-area { display: none !important; }
+  .tab-heading-row { margin-bottom: 18px; }
+  .tab-heading-main { display: flex; align-items: center; gap: 14px; margin-bottom: 5px; flex-wrap: wrap; }
+  .tab-heading { font-size: 17px; font-weight: 800; color: var(--text); display: flex; align-items: center; gap: 8px; letter-spacing: -0.2px; }
+  .tab-heading-desc { font-size: 11px; color: var(--text-dim); font-weight: 400; margin-top: 0; letter-spacing: 0.1px; }
+  .toggle-group {
+    display: flex;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 20px;
+    overflow: hidden; padding: 3px; gap: 2px;
+  }
+  .toggle-btn {
+    padding: 5px 14px;
+    font-size: 11px; font-weight: 600;
+    color: var(--text-muted);
+    background: none; border: none;
+    border-radius: 20px; cursor: pointer;
+    transition: all 0.18s;
+    white-space: nowrap;
+  }
+  .toggle-btn:hover { color: var(--text); }
+  .toggle-btn.active { background: rgba(92,53,232,0.35); color: #fff; box-shadow: 0 2px 8px rgba(92,53,232,0.3); }
+  .toggle-btn.semanal.active { color: #c4b0ff; }
+  .toggle-btn.recentes.active { color: #fcd38d; background: rgba(239,159,39,0.2); }
+
+  /* CARDS GRID */
+  .cards-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(350px, 1fr)); gap: 16px; }
+  .cards-grid.wide { grid-template-columns: repeat(auto-fill, minmax(430px, 1fr)); }
+
+  /* CARD */
+  .card {
+    background: #18181f;
+    border: none;
+    border-radius: 20px;
+    overflow: hidden;
+    transition: transform 0.22s, box-shadow 0.22s;
+    box-shadow: 0 4px 30px rgba(0,0,0,0.45);
+    position: relative;
+  }
+  .card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, var(--accent2), var(--accent));
+    opacity: 0.6;
+    border-radius: 20px 20px 0 0;
+  }
+  .card.recentes::before { background: linear-gradient(90deg, #d4760a, var(--card-recent)); }
+  .card.warned::before { background: linear-gradient(90deg, #d4760a, var(--card-recent)); }
+  .card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 12px 50px rgba(0,0,0,0.6), 0 0 0 1px rgba(92,53,232,0.25), 0 0 40px rgba(70,36,208,0.12);
+  }
+
+  .card-header {
+    padding: 14px 18px 11px;
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+    background: transparent;
+  }
+  .card-header-top {
+    display: flex; align-items: flex-start;
+    justify-content: space-between; gap: 8px;
+    margin-bottom: 4px;
+  }
+  .card-badges { display: flex; align-items: center; gap: 5px; flex-wrap: wrap; }
+  .badge {
+    display: inline-flex; align-items: center; gap: 3px;
+    padding: 3px 9px;
+    border-radius: 20px;
+    font-size: 9.5px; font-weight: 700;
+    text-transform: uppercase; letter-spacing: 0.4px;
+  }
+  .badge.alta { background: rgba(226,75,74,0.15); color: #ff8080; border: 1px solid rgba(226,75,74,0.25); }
+  .badge.media { background: rgba(239,159,39,0.13); color: #f4b84a; border: 1px solid rgba(239,159,39,0.25); }
+  .badge.baixa { background: rgba(99,153,34,0.10); color: #87c73a; border: 1px solid rgba(99,153,34,0.2); }
+  .badge.br { background: rgba(34,197,94,0.08); color: #4ade80; border: 1px solid rgba(34,197,94,0.18); }
+  .badge.intl { background: rgba(124,92,252,0.12); color: #c4a8ff; border: 1px solid rgba(124,92,252,0.2); }
+  .badge.single-source { background: rgba(239,159,39,0.10); color: #f4b84a; border: 1px solid rgba(239,159,39,0.25); }
+  .source-warning {
+    font-size: 10px; color: #d4943a;
+    font-style: italic;
+    margin-top: 5px;
+    padding: 4px 8px;
+    background: rgba(239,159,39,0.07);
+    border-radius: 4px;
+    border-left: 2px solid rgba(239,159,39,0.4);
+    line-height: 1.4;
+  }
+  .card-source { font-size: 10px; color: var(--text-muted); text-align: right; white-space: nowrap; line-height: 1.3; }
+  .card-source-name { font-weight: 600; color: var(--text-dim); }
+
+  .card-body { padding: 14px 18px; }
+  .card-title { font-size: 14px; font-weight: 700; color: #f0ecff; line-height: 1.45; margin-bottom: 8px; }
+  .card-text { font-size: 12px; color: #7e7aa0; line-height: 1.7; }
+  .card-analysis {
+    margin-top: 12px; padding: 10px 14px;
+    background: rgba(92,53,232,0.1);
+    border-radius: 12px;
+    border-left: none;
+    border: 1px solid rgba(92,53,232,0.18);
+    font-size: 11px; color: #a89de0; font-style: italic; line-height: 1.6;
+  }
+  .card-footer {
+    padding: 10px 18px 14px;
+    border-top: 1px solid rgba(255,255,255,0.05);
+    display: flex; flex-direction: column; gap: 6px;
+    background: rgba(0,0,0,0.2);
+  }
+  .card-norm { font-size: 10px; color: var(--text-dim); font-style: italic; }
+  .card-link { font-size: 11px; }
+  .card-link a {
+    color: #b8a0ff;
+    text-decoration: none;
+    display: inline-flex; align-items: center; gap: 4px;
+    font-weight: 500;
+    transition: color 0.15s;
+  }
+  .card-link a:hover { color: #d4c4ff; text-decoration: underline; }
+  .card-link.unverified { font-size: 10px; color: #d4943a; font-style: italic; }
+  .card-slack { font-size: 10px; color: var(--text-dim); padding-top: 6px; border-top: 1px solid rgba(255,255,255,0.04); line-height: 1.4; }
+  .slack-channel { color: #9b97d4; font-weight: 600; }
+  .insight-tag { background: rgba(70,36,208,0.2); color: #c4a8ff; padding: 2px 7px; border-radius: 4px; font-weight: 700; font-size: 9px; border: 1px solid rgba(92,53,232,0.2); }
+
+  /* NO DATA */
+  .no-data-card {
+    background: #18181f;
+    border: 1px dashed rgba(255,255,255,0.08);
+    border-radius: 16px;
+    padding: 24px;
+    color: var(--text-dim);
+    font-size: 12px;
+  }
+  .no-data-card .nd-icon { font-size: 24px; margin-bottom: 8px; }
+  .no-data-card .nd-title { font-weight: 600; color: var(--text-muted); margin-bottom: 6px; }
+  .nd-queries { margin-top: 10px; }
+  .nd-queries-label { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; color: var(--text-dim); margin-bottom: 6px; }
+  .nd-query {
+    font-size: 10px; color: #8a84c8;
+    background: rgba(70,36,208,0.07);
+    border: 1px solid rgba(70,36,208,0.2);
+    border-radius: 4px;
+    padding: 4px 8px;
+    margin-bottom: 4px;
+    font-family: monospace;
+  }
+
+  /* COMPETITOR TABLE */
+  .comp-table { width: 100%; border-collapse: collapse; font-size: 11px; }
+  .comp-table th {
+    background: var(--surface2);
+    padding: 8px 12px;
+    text-align: left;
+    color: var(--text-muted); font-weight: 600; font-size: 10px;
+    text-transform: uppercase; letter-spacing: 0.4px;
+    border-bottom: 1px solid var(--border);
+  }
+  .comp-table td { padding: 9px 12px; border-bottom: 1px solid rgba(42,35,72,0.6); color: var(--text); vertical-align: top; }
+  .comp-table tr:last-child td { border-bottom: none; }
+  .comp-table tr:hover td { background: rgba(255,255,255,0.02); }
+  .action-badge { padding: 2px 7px; border-radius: 4px; font-size: 9px; font-weight: 700; text-transform: uppercase; }
+  .action-copiar { background: rgba(34,197,94,0.12); color: #4ade80; border: 1px solid rgba(34,197,94,0.25); }
+  .action-adaptar { background: rgba(70,36,208,0.15); color: #a890ff; border: 1px solid rgba(70,36,208,0.3); }
+  .action-monitorar { background: rgba(239,159,39,0.12); color: #f4b84a; border: 1px solid rgba(239,159,39,0.25); }
+  .action-evitar { background: rgba(226,75,74,0.12); color: #ff7b7a; border: 1px solid rgba(226,75,74,0.25); }
+  .action-referencia { background: rgba(124,92,252,0.12); color: #c4a8ff; border: 1px solid rgba(124,92,252,0.25); }
+
+  /* SCORECARD */
+  .scorecard-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(110px, 1fr)); gap: 10px; margin-top: 10px; }
+  .score-item { background: var(--surface2); border: 1px solid var(--border); border-radius: 8px; padding: 12px; text-align: center; }
+  .score-name { font-size: 10px; color: var(--text-muted); font-weight: 600; margin-bottom: 6px; }
+  .score-val { font-size: 22px; font-weight: 800; line-height: 1; }
+  .score-val.high { color: var(--baixa); }
+  .score-val.mid { color: var(--media); }
+  .score-val.low { color: var(--alta); }
+  .score-val.nd { color: var(--text-dim); font-size: 16px; }
+  .score-bar { height: 3px; background: var(--border); border-radius: 2px; margin-top: 6px; overflow: hidden; }
+  .score-fill { height: 100%; border-radius: 2px; transition: width 0.5s; }
+
+  /* IDEIA */
+  .idea-card {
+    background: linear-gradient(135deg, rgba(70,36,208,0.1) 0%, rgba(92,53,232,0.07) 100%);
+    border: 1px solid rgba(70,36,208,0.25);
+    border-radius: 12px;
+    padding: 20px; margin-bottom: 16px;
+  }
+  .idea-title { font-size: 17px; font-weight: 800; color: var(--text); margin-bottom: 8px; line-height: 1.3; }
+  .idea-desc { font-size: 12px; color: #9490b8; line-height: 1.7; }
+  .idea-meta { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 14px; align-items: center; }
+  .idea-chip { padding: 4px 10px; border-radius: 6px; font-size: 10px; font-weight: 600; }
+  .idea-chip.prazo { background: rgba(70,36,208,0.12); color: #a890ff; border: 1px solid rgba(70,36,208,0.25); }
+  .idea-chip.risco { background: rgba(239,159,39,0.12); color: #f4b84a; border: 1px solid rgba(239,159,39,0.25); }
+  .idea-chip.norma { background: rgba(99,153,34,0.1); color: #87c73a; border: 1px solid rgba(99,153,34,0.2); }
+
+  /* SECTION LABEL */
+  .section-label {
+    font-size: 10px; font-weight: 700;
+    text-transform: uppercase; letter-spacing: 0.8px;
+    color: var(--text-dim);
+    margin: 20px 0 10px;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .section-label::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+
+  /* TABLE WRAPPER */
+  .table-wrapper { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; overflow: hidden; margin-bottom: 16px; }
+  .table-wrapper .table-scroll { overflow-x: auto; -webkit-overflow-scrolling: touch; scrollbar-width: thin; scrollbar-color: rgba(92,53,232,0.3) transparent; }
+  .table-wrapper .table-scroll::-webkit-scrollbar { height: 4px; }
+  .table-wrapper .table-scroll::-webkit-scrollbar-track { background: transparent; }
+  .table-wrapper .table-scroll::-webkit-scrollbar-thumb { background: rgba(92,53,232,0.4); border-radius: 4px; }
+  .table-title { padding: 12px 14px; font-size: 12px; font-weight: 700; color: var(--text); border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 8px; }
+
+  /* MOBILE */
+  @media (max-width: 640px) {
+    .header { padding: 14px 16px; }
+    .header-meta { display: none; }
+    .license-badge { display: none; }
+    .pitaco-text { font-size: 15px; }
+    .content { padding: 16px; }
+    .cards-grid { grid-template-columns: 1fr !important; }
+    .cards-grid.wide { grid-template-columns: 1fr !important; }
+    .deadline-bar { padding: 8px 16px; }
+    .tabs-outer { top: 61px; }
+    .tab-btn { padding: 6px 11px; font-size: 11px; }
+    .scorecard-grid { grid-template-columns: repeat(3, 1fr); }
+  }
+
+  /* SOURCES BOX */
+  .sources-box {
+    background: rgba(70,36,208,0.04);
+    border: 1px solid rgba(70,36,208,0.15);
+    border-radius: 8px;
+    padding: 10px 14px;
+    margin-bottom: 14px;
+    font-size: 10px;
+    color: var(--text-dim);
+    line-height: 1.6;
+  }
+  .sources-box strong { color: #8a84c8; font-weight: 700; }
+  .sources-box .src-new { color: #a890ff; font-weight: 700; }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="header">
+  <div class="header-left">
+    <div class="logo-pitaco">
+      <svg width="30" height="40" viewBox="0 0 30 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <linearGradient id="pitG" x1="0" y1="0" x2="30" y2="40" gradientUnits="userSpaceOnUse">
+            <stop stop-color="#A030FF"/>
+            <stop offset="0.55" stop-color="#5520CC"/>
+            <stop offset="1" stop-color="#1E1280"/>
+          </linearGradient>
+        </defs>
+        <!--
+          fill-rule evenodd: regiões com nº par de sobreposições = transparente (cria buracos)
+          1) Haste vertical completa
+          2) Bowl exterior (semi-oval direita)
+          3) Contador interno (buraco do P)
+          4) Entalhe topo-esquerdo (separa haste do bowl visualmente no topo)
+        -->
+        <path fill="url(#pitG)" fill-rule="evenodd" clip-rule="evenodd"
+          d="M0 0H8V40H0V0Z
+             M8 0H19C27.8 0 30 5.5 30 11.5C30 18.5 26 23 19 23H8V0Z
+             M12 6H19C23.2 6 24.8 8.8 24.8 11.5C24.8 14.2 23.2 17 19 17H12V6Z
+             M8 0H13V6H8V0Z"/>
+      </svg>
+      <span class="pitaco-text">PITACO</span>
+    </div>
+    <div>
+      <div class="header-title">Monitor de Compliance</div>
+      <div class="header-subtitle">pitaco.bet.br · SPA/MF Lic. nº 2.091/2024</div>
+    </div>
+  </div>
+  <div class="header-right">
+    <div class="last-update">↻ Atualizado às 14:30 · 27 mar 2026</div>
+    <div class="header-meta">
+      <div><span class="status-dot"></span>Monitor ativo</div>
+      <div id="current-date" style="margin-top:2px"></div>
+    </div>
+  </div>
+</div>
+
+<!-- DEADLINE BAR -->
+<div class="deadline-bar">
+  <div class="deadline-label">⏱ Prazos</div>
+
+  <div class="chip-section">🚨 Vencidos</div>
+  <div class="deadline-chip overdue"><div class="chip-dot"></div>Política Integridade AQF · venceu 16/03</div>
+  <div class="chip-sep">·</div>
+  <div class="deadline-chip overdue"><div class="chip-dot"></div>Política JR AQF · venceu 23/03</div>
+  <div class="chip-sep">·</div>
+
+  <div class="chip-section">⚡ Urgente</div>
+  <div class="deadline-chip urgent"><div class="chip-dot"></div>Cert. GLI · 31/03</div>
+  <div class="chip-sep">·</div>
+  <div class="deadline-chip urgent"><div class="chip-dot"></div>COAF Rafael · 01/04</div>
+  <div class="chip-sep">·</div>
+  <div class="deadline-chip urgent"><div class="chip-dot"></div>Resp. Ofício SEI 14847 (Publicidade) · 03/04</div>
+  <div class="chip-sep">·</div>
+  <div class="deadline-chip urgent"><div class="chip-dot"></div>COAF Omar · 04/04</div>
+  <div class="chip-sep">·</div>
+
+  <div class="chip-section">⚠️ Atenção</div>
+  <div class="deadline-chip warning"><div class="chip-dot"></div>Termos de Uso AQF · 06/04</div>
+  <div class="chip-sep">·</div>
+  <div class="deadline-chip warning"><div class="chip-dot"></div>Manual PLD · 06/04</div>
+  <div class="chip-sep">·</div>
+  <div class="deadline-chip warning"><div class="chip-dot"></div>Manual Publicidade · 06/04</div>
+  <div class="chip-sep">·</div>
+  <div class="deadline-chip urgent"><div class="chip-dot"></div>⚠️ COAF Fábio · 10/04</div>
+  <div class="chip-sep">·</div>
+  <div class="deadline-chip urgent"><div class="chip-dot"></div>⚠️ Cert. Seg. pitaco.bet.br · 10/04 — EM RISCO</div>
+  <div class="chip-sep">·</div>
+  <div class="deadline-chip warning"><div class="chip-dot"></div>Política PLD/FTP · 13/04</div>
+  <div class="chip-sep">·</div>
+  <div class="deadline-chip ok"><div class="chip-dot"></div>Treinamento PDADOS · 15/04</div>
+  <div class="chip-sep">·</div>
+  <div class="deadline-chip ok"><div class="chip-dot"></div>Regras de Jogos AQF · 20/04</div>
+  <div class="chip-sep">·</div>
+
+  <div class="chip-section">✅ Concluídos</div>
+  <div class="deadline-chip done"><div class="chip-dot"></div>COAF Ivanline · 26/03</div>
+  <div class="chip-sep">·</div>
+  <div class="deadline-chip done"><div class="chip-dot"></div>Ofício SPA 392/2026 · 19/03</div>
+  <div class="chip-sep">·</div>
+  <div class="deadline-chip done"><div class="chip-dot"></div>Trein. JR · realizado</div>
+  <div class="chip-sep">·</div>
+  <div class="deadline-chip done"><div class="chip-dot"></div>Trein. PLD · realizado</div>
+  <div class="chip-sep">·</div>
+  <div class="deadline-chip done"><div class="chip-dot"></div>Trein. MKT · realizado</div>
+</div>
+
+<!-- TABS -->
+<div class="tabs-outer">
+  <div class="tabs-container">
+    <button class="tab-btn active" onclick="switchTab('aml', this)">
+      <span>🏦</span> AML / CFT <span class="tab-count high">8</span>
+    </button>
+    <button class="tab-btn" onclick="switchTab('sports', this)">
+      <span>⚽</span> Sports Integrity <span class="tab-count high">3</span>
+    </button>
+    <button class="tab-btn" onclick="switchTab('privacy', this)">
+      <span>🔐</span> Data Privacy <span class="tab-count">3</span>
+    </button>
+    <button class="tab-btn" onclick="switchTab('rg', this)">
+      <span>🛡️</span> Responsible Gaming <span class="tab-count">3</span>
+    </button>
+    <button class="tab-btn" onclick="switchTab('intl', this)">
+      <span>🌍</span> Internacional <span class="tab-count">10</span>
+    </button>
+    <button class="tab-btn" onclick="switchTab('comp', this)">
+      <span>🎯</span> Concorrentes <span class="tab-count">14</span>
+    </button>
+    <button class="tab-btn" onclick="switchTab('idea', this)">
+      <span>💡</span> Ideia da Semana
+    </button>
+  </div>
+  <div class="tabs-right">
+    <div id="tab-toggle-area" class="toggle-group"></div>
+  </div>
+</div>
+
+<!-- CONTENT -->
+<div class="content">
+
+<!-- ═══════════════════════════════════════ ABA 1: AML/CFT ═══════════════════════ -->
+<div class="tab-panel active" id="tab-aml">
+  <div class="tab-heading-row">
+    <div class="tab-heading-main">
+      <div class="tab-heading">🏦 AML / CFT</div>
+      <div id="toggle-aml" class="toggle-group" style="display:none"></div>
+    </div>
+    <div class="tab-heading-desc">Lavagem de dinheiro · COAF · SIGAP · FATF/GAFI · ativos virtuais</div>
+  </div>
+  <!-- fontes P1: gov.br/coaf, in.gov.br, fatf-gafi.org, bcb.gov.br | P2: BNL Data (bnldata.com.br), iGaming Brasil (igamingbrazil.com), G&M News (g-mnews.com), Infobetting, Jota, Migalhas | P3: mediabet.com.br, imprensa geral — Ordenação: P1 → P2 → P3 -->
+
+  <div id="aml-semanal" class="cards-grid">
+
+    <!-- CARD REAL — gov.br/coaf · 24/03/2026 · Fonte oficial (Prioridade 1) -->
+    <div class="card">
+      <div class="card-header">
+        <div class="card-header-top">
+          <div class="card-badges">
+            <span class="badge media">Média</span>
+            <span class="badge br">BR</span>
+          </div>
+          <div class="card-source">
+            <div class="card-source-name">COAF · gov.br</div>
+            <div>24 mar 2026</div>
+          </div>
+        </div>
+      </div>
+      <div class="card-body">
+        <div class="card-title">Brasil apresenta avanços no combate ao suborno transnacional em reunião da OCDE com participação do COAF</div>
+        <div class="card-text">O COAF participou do Grupo de Trabalho sobre Suborno da OCDE em Paris, apresentando progresso no cumprimento de 18 recomendações da revisão de 2023, incluindo fortalecimento das capacidades de inteligência financeira e mecanismos de cooperação internacional. O Brasil recebeu reconhecimento positivo do grupo e deverá apresentar relatório de acompanhamento em um ano, com foco em quatro recomendações prioritárias.</div>
+        <div class="card-analysis">📊 Análise do agente: Posicionamento do Brasil na OCDE reforça tendência de alinhamento com padrões internacionais de PLD/FTP — o que deve se traduzir em maior rigor da SPA/MF na supervisão de operadoras em 2026.</div>
+      </div>
+      <div class="card-footer">
+        <div class="card-norm"><em>⚖️ Jurídico: FATF Recommendation 16 · Portaria SPA/MF 566/2025 — Obrigações PLD</em></div>
+        <div class="card-link"><a href="https://www.gov.br/coaf/pt-br/assuntos/noticias/ultimas-noticias/brasil-apresenta-avancos-no-combate-ao-suborno-transnacional-em-reuniao-da-ocde-com-participacao-do-coaf" target="_blank">↗ Ver matéria completa · gov.br/coaf</a></div>
+        <div class="card-slack">💬 Discussão interna · <span class="slack-channel">#legal-finance</span> — Avaliar impacto no planejamento jurídico-financeiro e posicionamento da Pitaco frente às novas exigências de PLD/FTP.</div>
+      </div>
+    </div>
+
+    <!-- CARD REAL — gov.br/coaf · 23/03/2026 · Fonte oficial (Prioridade 1) -->
+    <div class="card">
+      <div class="card-header">
+        <div class="card-header-top">
+          <div class="card-badges">
+            <span class="badge media">Média</span>
+            <span class="badge br">BR</span>
+          </div>
+          <div class="card-source">
+            <div class="card-source-name">COAF · gov.br</div>
+            <div>23 mar 2026</div>
+          </div>
+        </div>
+      </div>
+      <div class="card-body">
+        <div class="card-title">COAF participa de Conferência Regional AML/CFT sobre Ativos Virtuais no México</div>
+        <div class="card-text">O COAF integrou delegação brasileira — com MPF, Polícia Federal e Banco Central — em conferência regional sobre AML/CFT no México (10–13/mar), organizada pela EU AML/CFT Global Facility, GAFILAT e autoridades mexicanas. As sessões técnicas abordaram avaliação de risco, supervisão de prestadores de serviços de ativos virtuais (PSAVs) e identificação de beneficiários finais.</div>
+        <div class="card-analysis">📊 Análise do agente: O foco em PSAVs sinaliza agenda regulatória crescente para ativos virtuais em plataformas de apostas. Monitorar desdobramentos na regulação nacional de criptomoedas aplicada ao setor de bets.</div>
+      </div>
+      <div class="card-footer">
+        <div class="card-norm"><em>⚖️ Jurídico: FATF Recommendation 15 (Ativos Virtuais) · Portaria SPA/MF 1.231/2024</em></div>
+        <div class="card-link"><a href="https://www.gov.br/coaf/pt-br/assuntos/noticias/ultimas-noticias/coaf-participa-de-conferencia-regional-aml-cft-sobre-ativos-virtuais-no-mexico" target="_blank">↗ Ver matéria completa · gov.br/coaf</a></div>
+        <div class="card-slack">💬 Discussão interna · <span class="slack-channel">#questionamentos-kpmg</span> — Verificar se o tema de ativos virtuais está coberto no escopo da auditoria KPMG em andamento.</div>
+      </div>
+    </div>
+
+    <!-- CARD REAL — gov.br/coaf · 23/03/2026 · Global Fraud Summit · Fonte oficial (Prioridade 1) -->
+    <div class="card">
+      <div class="card-header">
+        <div class="card-header-top">
+          <div class="card-badges">
+            <span class="badge media">Média</span>
+            <span class="badge br">BR</span>
+          </div>
+          <div class="card-source">
+            <div class="card-source-name">COAF · gov.br</div>
+            <div>23 mar 2026</div>
+          </div>
+        </div>
+      </div>
+      <div class="card-body">
+        <div class="card-title">COAF integra delegação brasileira no Global Fraud Summit em Viena e adere a documentos internacionais contra fraude</div>
+        <div class="card-text">O COAF participou do Global Fraud Summit (16–17/mar, UNODC – Viena), onde o Brasil reforçou seu compromisso com o combate à fraude, à lavagem de dinheiro e ao financiamento do terrorismo. A delegação aderiu a dois documentos internacionais sobre prevenção de fraude, com destaque para o papel das Unidades de Inteligência Financeira e para a cooperação público-privada como pilares do sistema PLD.</div>
+        <div class="card-analysis">📊 Análise do agente: Adesão a documentos internacionais reforça tendência de alinhamento do Brasil com padrões FATF/GAFI — o que tende a elevar o patamar de exigências para operadoras ao longo de 2026. Monitorar impacto nas próximas portarias da SPA/MF.</div>
+      </div>
+      <div class="card-footer">
+        <div class="card-norm"><em>⚖️ Jurídico: FATF Recommendation 40 (Cooperação Internacional) · Portaria SPA/MF 566/2025</em></div>
+        <div class="card-link"><a href="https://www.gov.br/coaf/pt-br/assuntos/noticias/ultimas-noticias/coaf-integra-delegacao-brasileira-em-cupula-global-sobre-combate-a-fraude" target="_blank">↗ Ver matéria completa · gov.br/coaf</a></div>
+        <div class="card-slack">💬 Discussão interna · <span class="slack-channel">#legal-finance</span> — Monitorar desdobramentos da cúpula e possível impacto em obrigações PLD do setor de bets.</div>
+      </div>
+    </div>
+
+    <!-- CARD REAL — bnldata.com.br · 27/03/2026 · Prioridade 2 -->
+    <div class="card">
+      <div class="card-header">
+        <div class="card-header-top">
+          <div class="card-badges">
+            <span class="badge media">Média</span>
+            <span class="badge br">BR</span>
+          </div>
+          <div class="card-source">
+            <div class="card-source-name">BNL Data · bnldata.com.br</div>
+            <div>27 mar 2026</div>
+          </div>
+        </div>
+      </div>
+      <div class="card-body">
+        <div class="card-title">26,3% dos lares brasileiros participaram de jogos de apostas em 2025 — pressão por enforcement aumenta</div>
+        <div class="card-text">Pesquisa divulgada pela BNL Data aponta que mais de 1 em cada 4 lares no Brasil participou de apostas em 2025. O dado alimenta pressão política e regulatória por enforcement mais rigoroso, e a ANJL contestou metodologia de outra pesquisa que apontava apostas como principal causa de endividamento — sinalizando embate público crescente entre operadoras e reguladores.</div>
+        <div class="card-analysis">📊 Análise do agente: Alta penetração do setor intensifica o escrutínio regulatório e de mídia sobre operadoras. Para a Pitaco, reforça a importância de demonstrar conformidade proativa com normas de JR e PLD perante SPA/MF e opinião pública.</div>
+      </div>
+      <div class="card-footer">
+        <div class="card-norm"><em>⚖️ Jurídico: Portaria SPA/MF 1.231/2024 · Lei 14.790/2023 — Contexto de enforcement crescente</em></div>
+        <div class="card-link"><a href="https://bnldata.com.br/263-dos-lares-participaram-de-jogos-de-apostas-em-2025/" target="_blank">↗ Ver matéria completa · bnldata.com.br</a></div>
+        <div class="card-slack">💬 Discussão interna · <span class="slack-channel">#legal-team</span> — <span class="insight-tag">💡 Insight</span> Usar dado para reforçar internamente urgência dos prazos regulatórios em aberto (Radar Semanal Heloísa).</div>
+      </div>
+    </div>
+
+    <!-- CARD REAL — bnldata.com.br · 26/03/2026 · Apostas eleitorais TSE · Prioridade 2 -->
+    <div class="card">
+      <div class="card-header">
+        <div class="card-header-top">
+          <div class="card-badges">
+            <span class="badge alta">Alta</span>
+            <span class="badge br">BR</span>
+          </div>
+          <div class="card-source">
+            <div class="card-source-name">BNL Data · bnldata.com.br</div>
+            <div>26 mar 2026</div>
+          </div>
+        </div>
+      </div>
+      <div class="card-body">
+        <div class="card-title">TSE proíbe apostas eleitorais e restringe plataformas digitais — operadoras devem bloquear mercados</div>
+        <div class="card-text">O Tribunal Superior Eleitoral publicou resolução proibindo apostas em eventos eleitorais no Brasil e restringindo o funcionamento de plataformas digitais que ofereçam esses mercados. A medida antecipa o ciclo eleitoral de 2026 e cria obrigação direta para operadoras de apostas licenciadas pela SPA/MF, que devem verificar e bloquear eventuais mercados eleitorais em suas ofertas.</div>
+        <div class="card-analysis">📊 Análise do agente: Impacto direto no portfólio de mercados da Pitaco. Verificar imediatamente se há mercados eleitorais ativos. Descumprimento pode gerar dupla sanção — TSE e SPA/MF.</div>
+      </div>
+      <div class="card-footer">
+        <div class="card-norm"><em>⚖️ Jurídico: Resolução TSE · Lei 14.790/2023 · Portaria SPA/MF 1.231/2024 — vedação de mercados não autorizados</em></div>
+        <div class="card-link"><a href="https://bnldata.com.br/apostas-eleitorais-sao-proibidas-pelo-tse-e-plataformas-digitais-ficam-restritas/" target="_blank">↗ Ver matéria completa · bnldata.com.br</a></div>
+        <div class="card-slack">💬 <span class="slack-channel">#legal-team</span> → <span class="slack-channel">#ops-trading</span> — <span class="insight-tag">🚨 Urgente</span> Confirmar com ops-trading se há mercados eleitorais na plataforma e acionar bloqueio imediato se houver.</div>
+      </div>
+    </div>
+
+    <!-- CARD REAL — bnldata.com.br · 26/03/2026 · Investigação Carioca 2026 · Prioridade 2 (AML angle) -->
+    <div class="card">
+      <div class="card-header">
+        <div class="card-header-top">
+          <div class="card-badges">
+            <span class="badge alta">Alta</span>
+            <span class="badge br">BR</span>
+          </div>
+          <div class="card-source">
+            <div class="card-source-name">BNL Data · bnldata.com.br</div>
+            <div>26 mar 2026</div>
+          </div>
+        </div>
+      </div>
+      <div class="card-body">
+        <div class="card-title">Polícia do Rio investiga grupo que lucrou 650% com apostas suspeitas em cartões no Carioca 2026 — ângulo AML</div>
+        <div class="card-text">A investigação policial sobre apostas em cartões no Cariocão 2026 — onde um grupo teria obtido R$ 300 mil com investimento de R$ 40 mil (650% de retorno) — levanta alerta de AML além da integridade esportiva: padrões de lucro anormal via apostas concentradas podem caracterizar lavagem de dinheiro. Operadoras são obrigadas a detectar e reportar operações suspeitas ao COAF/SIGAP.</div>
+        <div class="card-analysis">📊 Análise do agente: Duplo enquadramento — integridade esportiva (Portaria 1.549/2024) e AML (Portaria 566/2025). Operadoras que processaram essas apostas sem acionar alertas de transação suspeita podem enfrentar autuação pela SPA/MF.</div>
+      </div>
+      <div class="card-footer">
+        <div class="card-norm"><em>⚖️ Jurídico: Portaria SPA/MF 566/2025 (PLD) · Lei 9.613/1998 (Lavagem) · Portaria SPA/MF 1.549/2024 (Integridade)</em></div>
+        <div class="card-link"><a href="https://bnldata.com.br/policia-do-rio-investiga-grupo-que-lucrou-650-com-apostas-em-cartoes-suspeitos-no-carioca-2026/" target="_blank">↗ Ver matéria completa · bnldata.com.br</a></div>
+        <div class="card-slack">💬 <span class="slack-channel">#legal-team</span> → <span class="slack-channel">#legal-finance</span> — Avaliar se as regras de detecção de transação suspeita do P3 cobrem padrões de apostas concentradas em mercados de cartões.</div>
+      </div>
+    </div>
+
+    <!-- CARD REAL — mediabet.com.br · 26/03/2026 · Lei 15.358/2026 · ⚠️ Fonte única (P3) -->
+    <div class="card warned">
+      <div class="card-header">
+        <div class="card-header-top">
+          <div class="card-badges">
+            <span class="badge alta">Alta</span>
+            <span class="badge br">BR</span>
+            <span class="badge single-source">⚠️ Fonte única</span>
+          </div>
+          <div class="card-source">
+            <div class="card-source-name">mediabet.com.br</div>
+            <div>26 mar 2026</div>
+          </div>
+        </div>
+        <div class="source-warning">Confirmado em 1 veículo — verificar na fonte oficial (planalto.gov.br/Lei 15.358) antes de usar.</div>
+      </div>
+      <div class="card-body">
+        <div class="card-title">Lula sanciona Lei 15.358/2026: BC e Fazenda podem bloquear contas e Pix vinculados a bets ilegais</div>
+        <div class="card-text">O presidente Lula sancionou a Lei nº 15.358/2026 — Marco Legal de Combate ao Crime Organizado — que autoriza Banco Central e Fazenda a bloquearem contas bancárias, fundos e transações Pix conectados a plataformas de apostas ilegais. A medida visa cortar o fluxo financeiro que sustenta bets não regulamentadas no sistema bancário e de pagamentos brasileiro.</div>
+        <div class="card-analysis">📊 Análise do agente: Impacto direto no enforcement do setor. Operadoras sem licença SPA/MF ficam sujeitas a bloqueio financeiro imediato. Para operadoras licenciadas como a Pitaco, reforça a vantagem regulatória e exige atualização das políticas de PLD com referência expressa à nova lei.</div>
+      </div>
+      <div class="card-footer">
+        <div class="card-norm"><em>⚖️ Jurídico: Lei nº 15.358/2026 · Portaria SPA/MF 566/2025 · Lei 9.613/1998 (PLD)</em></div>
+        <div class="card-link"><a href="https://mediabet.com.br/lula-bloqueio-contas-pix-bets-ilegais/" target="_blank">↗ Ver matéria completa · mediabet.com.br</a></div>
+        <div class="card-slack">💬 Discussão interna · <span class="slack-channel">#legal-finance</span> — <span class="insight-tag">🚨 Urgente</span> Atualizar Manual PLD/FTP com referência à Lei 15.358/2026. Confirmar na in.gov.br antes do Radar Semanal.</div>
+      </div>
+    </div>
+
+    <!-- CARD REAL — mediabet.com.br · 24/03/2026 · Prioridade 3 · Fonte única -->
+    <div class="card warned">
+      <div class="card-header">
+        <div class="card-header-top">
+          <div class="card-badges">
+            <span class="badge baixa">Baixa</span>
+            <span class="badge br">BR</span>
+            <span class="badge single-source">⚠️ Fonte única</span>
+          </div>
+          <div class="card-source">
+            <div class="card-source-name">mediabet.com.br</div>
+            <div>24 mar 2026</div>
+          </div>
+        </div>
+        <div class="source-warning">Confirmado em 1 veículo (Prioridade 3) — cruzar com igamingbrasil.com ou jota.info antes de usar internamente.</div>
+      </div>
+      <div class="card-body">
+        <div class="card-title">Afiliados no iGaming: o que mudou após a regulamentação no Brasil em 2026</div>
+        <div class="card-text">Entrevista com Nakata, CEO da AffiliaUp, explora como a regulação transformou o setor de afiliados — de geração de tráfego em volume para operações orientadas a performance e compliance. O ambiente regulado exige contratos profissionais, responsabilidade por KPIs (LTV, retenção, análise comportamental) e estruturas focadas em valor de longo prazo do usuário.</div>
+        <div class="card-analysis">📊 Análise do agente: Reflexo direto do novo marco regulatório. Afiliados com baixo compliance podem expor operadoras a risco regulatório indireto — revisar contratos com afiliados à luz da Portaria 1.231/2024.</div>
+      </div>
+      <div class="card-footer">
+        <div class="card-norm"><em>⚖️ Jurídico: Portaria SPA/MF 1.231/2024 — Publicidade e Canais de Aquisição</em></div>
+        <div class="card-link"><a href="https://mediabet.com.br/afiliados-igaming-brasil-regulamentacao/" target="_blank">↗ Ver matéria completa · mediabet.com.br</a></div>
+        <div class="card-slack">💬 Discussão interna · <span class="slack-channel">#p-envio-de-relatorios-betting</span> — Sem discussão registrada sobre afiliados no canal esta semana.</div>
+      </div>
+    </div>
+
+  </div><!-- /aml-semanal -->
+
+  <div id="aml-recentes" style="display:none" class="cards-grid">
+    <div class="no-data-card">
+      <div class="nd-icon">🔍</div>
+      <div class="nd-title">Modo Recentes</div>
+      <div>Peça ao agente para atualizar as notícias desta aba com os artigos mais recentes.</div>
+      <div class="nd-queries">
+        <div class="nd-queries-label">Queries prontas para execução</div>
+        <div class="nd-query">"COAF bets obrigações março 2026"</div>
+        <div class="nd-query">"SPA MF portaria apostas março 2026"</div>
+        <div class="nd-query">"FATF GAFI Brasil apostas março 2026"</div>
+      </div>
+    </div>
+  </div>
+</div><!-- /tab-aml -->
+
+
+<!-- ═══════════════════════════════════════ ABA 2: SPORTS ══════════════════════ -->
+<div class="tab-panel" id="tab-sports">
+  <div class="tab-heading-row">
+    <div class="tab-heading-main">
+      <div class="tab-heading">⚽ Sports Integrity</div>
+      <div id="toggle-sports" class="toggle-group" style="display:none"></div>
+    </div>
+    <div class="tab-heading-desc">Manipulação de resultados · IBIA · Sportradar · Ministério do Esporte</div>
+  </div>
+  <!-- fontes: ibia.bet, sportradar.com, mec.gov.br, mpf.mp.br | UOL Esporte, ESPN, Lance!, Globoesporte | Reuters Sports, AP Sports, BNL Data -->
+
+  <div id="sports-semanal" class="cards-grid">
+
+    <!-- CARD REAL — mediabet.com.br · 26/03/2026 · ⚠️ Fonte única -->
+    <div class="card warned">
+      <div class="card-header">
+        <div class="card-header-top">
+          <div class="card-badges">
+            <span class="badge alta">Alta</span>
+            <span class="badge br">BR</span>
+            <span class="badge single-source">⚠️ Fonte única</span>
+          </div>
+          <div class="card-source">
+            <div class="card-source-name">mediabet.com.br</div>
+            <div>26 mar 2026</div>
+          </div>
+        </div>
+        <div class="source-warning">Confirmado em 1 veículo — verificar em UOL Esporte, Lance! ou ESPN Brasil antes de usar.</div>
+      </div>
+      <div class="card-body">
+        <div class="card-title">Polícia investiga apostas suspeitas em cartões no Cariocão 2026: grupo teria lucrado 650% em partida de fevereiro</div>
+        <div class="card-text">A Polícia Civil do Rio investiga padrão suspeito de apostas em cartões amarelos na partida entre Portuguesa e Nova Iguaçu pelo Campeonato Carioca. Um grupo teria investido R$ 40.000 e obtido R$ 300.000 de retorno (650%) com apostas em jogadores específicos que receberam cartões durante o jogo. As autoridades apuram possíveis crimes de fraude e corrupção esportiva.</div>
+        <div class="card-analysis">📊 Análise do agente: Caso emblemático de manipulação de resultados via mercado de apostas. Operadoras licenciadas têm obrigação de reportar padrões anômalos ao SIGAP. Verificar se os limites e alertas de apostas em cartões da Pitaco estão calibrados para detectar esse tipo de concentração.</div>
+      </div>
+      <div class="card-footer">
+        <div class="card-norm"><em>⚖️ Jurídico: Portaria SPA/MF 1.549/2024 (Integridade Esportiva) · Lei 14.597/2023 (Lei Geral do Esporte) · SIGAP</em></div>
+        <div class="card-link"><a href="https://mediabet.com.br/policia-investiga-apostas-em-cartoes-carioca-2026/" target="_blank">↗ Ver matéria completa · mediabet.com.br</a></div>
+        <div class="card-slack">💬 Discussão interna · <span class="slack-channel">#legal-team</span> — <span class="insight-tag">🚨 Urgente</span> Revisar limites de apostas em eventos de cartão. Verificar se o caso foi reportado ao SIGAP por alguma operadora.</div>
+      </div>
+    </div>
+
+  </div>
+
+    <!-- CARD REAL — bnldata.com.br · 26/03/2026 · Integridade Carioca 2026 · Prioridade 2 -->
+    <div class="card">
+      <div class="card-header">
+        <div class="card-header-top">
+          <div class="card-badges">
+            <span class="badge alta">Alta</span>
+            <span class="badge br">BR</span>
+          </div>
+          <div class="card-source">
+            <div class="card-source-name">BNL Data · bnldata.com.br</div>
+            <div>26 mar 2026</div>
+          </div>
+        </div>
+      </div>
+      <div class="card-body">
+        <div class="card-title">Polícia do Rio investiga grupo que lucrou 650% com apostas em cartões suspeitos no Carioca 2026</div>
+        <div class="card-text">A Polícia Civil fluminense abriu inquérito sobre padrão anômalo de apostas em cartões amarelos durante partida do Campeonato Carioca. Um grupo teria convertido R$ 40.000 em R$ 300.000 apostando em jogadores específicos que receberam cartões, com suspeita de manipulação de resultado. O caso reacende debate sobre controles de integridade em operadoras licenciadas.</div>
+        <div class="card-analysis">📊 Análise do agente: Caso com múltiplas obrigações regulatórias simultâneas para operadoras: detectar padrão anômalo, reportar ao SIGAP e comunicar a IBIA/Sportradar se houver acordo com essas entidades. Revisar sensibilidade dos alertas de mercado de cartões.</div>
+      </div>
+      <div class="card-footer">
+        <div class="card-norm"><em>⚖️ Jurídico: Portaria SPA/MF 1.549/2024 (Integridade Esportiva) · Lei 14.597/2023 · Obrigação de reporte ao SIGAP</em></div>
+        <div class="card-link"><a href="https://bnldata.com.br/policia-do-rio-investiga-grupo-que-lucrou-650-com-apostas-em-cartoes-suspeitos-no-carioca-2026/" target="_blank">↗ Ver matéria completa · bnldata.com.br</a></div>
+        <div class="card-slack">💬 <span class="slack-channel">#legal-team</span> → <span class="slack-channel">#ops-trading</span> — <span class="insight-tag">🚨 Urgente</span> Verificar limites e alertas ativos no mercado de cartões. Confirmar se reporte ao SIGAP foi ou deve ser feito.</div>
+      </div>
+    </div>
+
+    <!-- CARD REAL — g-mnews.com · 24/03/2026 · IA e Integridade · Prioridade 2 -->
+    <div class="card">
+      <div class="card-header">
+        <div class="card-header-top">
+          <div class="card-badges">
+            <span class="badge media">Média</span>
+            <span class="badge intl">Internacional</span>
+          </div>
+          <div class="card-source">
+            <div class="card-source-name">G&amp;M News · g-mnews.com</div>
+            <div>24 mar 2026</div>
+          </div>
+        </div>
+      </div>
+      <div class="card-body">
+        <div class="card-title">Mindway AI: ciência, tecnologia e dados como solução de ponta para integridade e jogo responsável no iGaming</div>
+        <div class="card-text">Entrevista com Stephen Aupy (Mindway AI) na G&M News destaca como a combinação de IA preditiva e análise humana está redefinindo padrões de detecção de comportamentos de risco — tanto no jogo responsável quanto na integridade esportiva. A empresa integra dados comportamentais em tempo real com machine learning para identificar padrões de manipulação e dependência antes que se tornem incidentes regulatórios.</div>
+        <div class="card-analysis">📊 Análise do agente: Tecnologia relevante para o roadmap de automação JR da Pitaco (citado no Linear update). Avaliar parceria ou benchmarking com Mindway AI para antecipar exigências regulatórias de monitoramento comportamental da SPA/MF para H2/2026.</div>
+      </div>
+      <div class="card-footer">
+        <div class="card-norm"><em>⚖️ Jurídico: Portaria SPA/MF 615/2024 (JR) · Portaria SPA/MF 1.549/2024 — Tecnologia de monitoramento como meio de compliance</em></div>
+        <div class="card-link"><a href="https://g-mnews.com/pt/stephen-aupy-mindway-ai-uma-sinergia-unica-de-ciencia-tecnologia-dados-e-analise-humana-para-criar-uma-solucao-de-ponta/" target="_blank">↗ Ver matéria completa · g-mnews.com</a></div>
+        <div class="card-slack">💬 <span class="slack-channel">#legal-team</span> → <span class="slack-channel">#me-ajuda-eng</span> — <span class="insight-tag">💡 Insight</span> Compartilhar com time de Dados no contexto do projeto de automação JR mencionado no Linear.</div>
+      </div>
+    </div>
+
+  <div id="sports-recentes" style="display:none" class="cards-grid">
+    <div class="no-data-card">
+      <div class="nd-icon">🔍</div>
+      <div class="nd-title">Modo Recentes</div>
+      <div>Peça ao agente para buscar notícias de manipulação e integridade dos últimos dias.</div>
+      <div class="nd-queries">
+        <div class="nd-queries-label">Queries prontas para execução</div>
+        <div class="nd-query">"manipulação resultados futebol Brasil março 2026"</div>
+        <div class="nd-query">"IBIA alerta apostas Brasil março 2026"</div>
+        <div class="nd-query">"Sportradar integridade esportiva março 2026"</div>
+      </div>
+    </div>
+  </div>
+</div><!-- /tab-sports -->
+
+
+<!-- ═══════════════════════════════════════ ABA 3: DATA PRIVACY ══════════════ -->
+<div class="tab-panel" id="tab-privacy">
+  <div class="tab-heading-row">
+    <div class="tab-heading-main">
+      <div class="tab-heading">🔐 Data Privacy</div>
+      <div id="toggle-privacy" class="toggle-group" style="display:none"></div>
+    </div>
+    <div class="tab-heading-desc">LGPD · ANPD · ECA Digital (Lei 15.211/2025) · GDPR</div>
+  </div>
+  <!-- fontes P1: anpd.gov.br, in.gov.br, planalto.gov.br | P2: BNL Data (bnldata.com.br), iGaming Brasil (igamingbrazil.com), G&M News (g-mnews.com), iapp.org, lgpd.news, Jota Privacy | P3: imprensa geral — Ordenação: P1 → P2 → P3 -->
+
+  <div id="privacy-semanal" class="cards-grid">
+
+    <!-- CARD REAL — gov.br/anpd · 25/03/2026 · Fonte oficial Prioridade 1 -->
+    <div class="card">
+      <div class="card-header">
+        <div class="card-header-top">
+          <div class="card-badges"><span class="badge media">Média</span><span class="badge br">BR</span></div>
+          <div class="card-source"><div class="card-source-name">ANPD · gov.br</div><div>25 mar 2026</div></div>
+        </div>
+      </div>
+      <div class="card-body">
+        <div class="card-title">ANPD realiza missão internacional em Londres e avança cooperação bilateral em proteção de dados e governança da IA</div>
+        <div class="card-text">A ANPD conduziu missão institucional em Londres (23–25/mar/2026), estabelecendo diálogos bilaterais com o ICO (Information Commissioner's Office) e a Ofcom. Os acordos avançam canais estruturados de cooperação técnica — incluindo compartilhamento de metodologias de fiscalização — com foco em proteção de crianças, design de plataformas e governança de IA.</div>
+        <div class="card-analysis">📊 Análise do agente: Aproximação ANPD-ICO sinaliza tendência de convergência regulatória entre LGPD e GDPR. Operadoras de bets com operações ou usuários em ambos os mercados devem monitorar impactos práticos nas políticas de dados.</div>
+      </div>
+      <div class="card-footer">
+        <div class="card-norm"><em>⚖️ Jurídico: LGPD · Acordo de cooperação ANPD-ICO · Governança IA</em></div>
+        <div class="card-link"><a href="https://www.gov.br/anpd/pt-br/assuntos/noticias/anpd-realiza-missao-internacional-em-londres-e-avanca-agenda-de-cooperacao-bilateral-em-protecao-de-dados-e-governanca-da-ia" target="_blank">↗ Ver matéria completa · gov.br/anpd</a></div>
+        <div class="card-slack">💬 Discussão interna · <span class="slack-channel">#legal-team</span> — Incluir no Radar Semanal (Heloísa). Convergência LGPD-GDPR pode impactar parceiros europeus da Pitaco.</div>
+      </div>
+    </div>
+
+    <!-- CARD REAL — gov.br/anpd · 20/03/2026 · Fonte oficial Prioridade 1 -->
+    <div class="card">
+      <div class="card-header">
+        <div class="card-header-top">
+          <div class="card-badges"><span class="badge alta">Alta</span><span class="badge br">BR</span></div>
+          <div class="card-source"><div class="card-source-name">ANPD · gov.br</div><div>20 mar 2026</div></div>
+        </div>
+      </div>
+      <div class="card-body">
+        <div class="card-title">ANPD publica orientações preliminares e cronograma para aferição de idade no ambiente digital</div>
+        <div class="card-text">A ANPD divulgou parâmetros iniciais para implementação de mecanismos de verificação de idade em plataformas digitais, conforme exigido pela Lei nº 15.211/2025 (ECA Digital). O monitoramento ocorrerá em duas etapas: primeiro em lojas de aplicativos e sistemas operacionais, depois ampliando para outros setores a partir de agosto de 2026. A norma visa compatibilizar a verificação com o direito à privacidade das crianças.</div>
+        <div class="card-analysis">📊 Análise do agente: Impacto direto no fluxo de KYC de operadoras de bets. Agosto de 2026 é o prazo crítico para adequação dos demais setores — operadoras devem antecipar a implementação para evitar sanções.</div>
+      </div>
+      <div class="card-footer">
+        <div class="card-norm"><em>⚖️ Jurídico: Lei nº 15.211/2025 (ECA Digital) · LGPD Art. 14 — Dados de Crianças e Adolescentes</em></div>
+        <div class="card-link"><a href="https://www.gov.br/anpd/pt-br/assuntos/noticias/anpd-publica-orientacoes-preliminares-e-cronograma-para-afericao-de-idade-no-ambiente-digital" target="_blank">↗ Ver matéria completa · gov.br/anpd</a></div>
+        <div class="card-slack">💬 Discussão interna · <span class="slack-channel">#legal-team</span> — <span class="insight-tag">💡 Insight</span> Cruzar prazo de agosto/2026 com roadmap de KYC em #me-ajuda-eng.</div>
+      </div>
+    </div>
+
+    <!-- CARD REAL — gov.br/anpd · 18/03/2026 · Fonte oficial Prioridade 1 -->
+    <div class="card">
+      <div class="card-header">
+        <div class="card-header-top">
+          <div class="card-badges"><span class="badge alta">Alta</span><span class="badge br">BR</span></div>
+          <div class="card-source"><div class="card-source-name">ANPD · gov.br</div><div>18 mar 2026</div></div>
+        </div>
+      </div>
+      <div class="card-body">
+        <div class="card-title">Decreto nº 12.880 regulamenta proteção de crianças e adolescentes no ambiente digital</div>
+        <div class="card-text">O Presidente Lula assinou o Decreto nº 12.880, regulamentando a Lei nº 15.211/2025 sobre proteção de crianças em ambientes digitais. O decreto institui a Política Nacional de Proteção da Criança e do Adolescente no Ambiente Digital e designa a ANPD como responsável pela fiscalização, com publicação de orientações complementares prevista para os próximos dias.</div>
+        <div class="card-analysis">📊 Análise do agente: Decreto de alto impacto para operadoras de apostas — qualquer plataforma acessível a menores deve adequar fluxos de cadastro, verificação de idade e tratamento de dados. Cronograma de adequação deve ser revisado com urgência.</div>
+      </div>
+      <div class="card-footer">
+        <div class="card-norm"><em>⚖️ Jurídico: Decreto nº 12.880 · Lei nº 15.211/2025 (ECA Digital) · LGPD Art. 14</em></div>
+        <div class="card-link"><a href="https://www.gov.br/anpd/pt-br/assuntos/noticias/publicado-decreto-que-detalha-a-protecao-a-criancas-e-adolescentes-no-ambiente-digital" target="_blank">↗ Ver matéria completa · gov.br/anpd</a></div>
+        <div class="card-slack">💬 Discussão interna · <span class="slack-channel">#legal-team</span> — Incluir no Radar Semanal (Heloísa) como item de alta urgência. Cruzar impacto com #questionamentos-kpmg.</div>
+      </div>
+    </div>
+
+  </div>
+
+  <div id="privacy-recentes" style="display:none" class="cards-grid">
+    <div class="no-data-card">
+      <div class="nd-icon">🔍</div>
+      <div class="nd-title">Modo Recentes</div>
+      <div>Peça ao agente para buscar notícias de LGPD e ANPD dos últimos dias.</div>
+      <div class="nd-queries">
+        <div class="nd-queries-label">Queries prontas para execução</div>
+        <div class="nd-query">"ANPD multa proteção dados março 2026"</div>
+        <div class="nd-query">"LGPD bets dados pessoais março 2026"</div>
+        <div class="nd-query">"ECA Digital apostas menores março 2026"</div>
+      </div>
+    </div>
+  </div>
+</div><!-- /tab-privacy -->
+
+
+<!-- ═══════════════════════════════════════ ABA 4: RESPONSIBLE GAMING ════════ -->
+<div class="tab-panel" id="tab-rg">
+  <div class="tab-heading-row">
+    <div class="tab-heading-main">
+      <div class="tab-heading">🛡️ Responsible Gaming</div>
+      <div id="toggle-rg" class="toggle-group" style="display:none"></div>
+    </div>
+    <div class="tab-heading-desc">Autoexclusão · autolimites · saúde mental · benchmark JR</div>
+  </div>
+  <!-- fontes P1: gov.br/autoexclusão, spa.fazenda.gov.br, who.int | P2: BNL Data (bnldata.com.br), iGaming Brasil (igamingbrazil.com), G&M News (g-mnews.com), responsiblegambling.org, icrg.org, mediabet.com.br | P3: imprensa geral — Ordenação: P1 → P2 → P3 -->
+
+  <div id="rg-semanal" class="cards-grid">
+
+    <!-- CARD REAL — gov.br/fazenda (SPA/MF) · 16/03/2026 · Fonte oficial Prioridade 1 -->
+    <div class="card">
+      <div class="card-header">
+        <div class="card-header-top">
+          <div class="card-badges">
+            <span class="badge alta">Alta</span>
+            <span class="badge br">BR</span>
+          </div>
+          <div class="card-source">
+            <div class="card-source-name">SPA/MF · gov.br/fazenda</div>
+            <div>16 mar 2026</div>
+          </div>
+        </div>
+      </div>
+      <div class="card-body">
+        <div class="card-title">SPA/MF orienta apostadores sobre direitos no mercado regulado e lança curso gratuito com Senacon no Dia do Consumidor</div>
+        <div class="card-text">A Secretaria de Prêmios e Apostas lançou orientações sobre os direitos dos apostadores no mercado regulado, coincidindo com o Dia do Consumidor. Em parceria com a Senacon, disponibilizou curso gratuito sobre apostas de quota fixa, jogo responsável, saúde mental e educação financeira — com certificação digital ao final. Operadoras autorizadas devem garantir pagamento tempestivo de prêmios, canais de atendimento eficazes, proteção de dados e ferramentas de autolimitação de tempo e valores.</div>
+        <div class="card-analysis">📊 Análise do agente: Ação educativa da SPA reforça fiscalização de obrigações de JR. Operadoras devem garantir que ferramentas de autolimitação estejam visíveis e funcionais — este tipo de iniciativa precede tipicamente endurecimento de fiscalização.</div>
+      </div>
+      <div class="card-footer">
+        <div class="card-norm"><em>⚖️ Jurídico: Portaria SPA/MF 615/2024 (Jogo Responsável) · CDC Art. 6 (Direitos do Consumidor)</em></div>
+        <div class="card-link"><a href="https://www.gov.br/fazenda/pt-br/assuntos/noticias/2026/marco/no-dia-do-consumidor-spa-orienta-sobre-direitos-dos-apostadores-no-mercado-regulado" target="_blank">↗ Ver matéria completa · gov.br/fazenda</a></div>
+        <div class="card-slack">💬 Discussão interna · <span class="slack-channel">#legal-team</span> — <span class="insight-tag">💡 Insight</span> Verificar se ferramentas de JR da Pitaco atendem às obrigações listadas pela SPA. Incluir no Radar Semanal (Heloísa).</div>
+      </div>
+    </div>
+
+    <!-- CARD REAL — bnldata.com.br · 26/03/2026 · ANJL contesta pesquisa endividamento · Prioridade 2 -->
+    <div class="card">
+      <div class="card-header">
+        <div class="card-header-top">
+          <div class="card-badges">
+            <span class="badge media">Média</span>
+            <span class="badge br">BR</span>
+          </div>
+          <div class="card-source">
+            <div class="card-source-name">BNL Data · bnldata.com.br</div>
+            <div>26 mar 2026</div>
+          </div>
+        </div>
+      </div>
+      <div class="card-body">
+        <div class="card-title">ANJL contesta pesquisa que aponta apostas como principal causa de endividamento — debate regulatório acirrado</div>
+        <div class="card-text">A Associação Nacional de Jogos e Loterias (ANJL) publicou nota contestando metodologia de pesquisa que identificava apostas online como principal vetor de endividamento de famílias brasileiras. O debate expõe tensão crescente entre entidades do setor e órgãos de proteção ao consumidor — e pode antecipar medidas regulatórias de limite de gastos mensais similares às do PL 3754/25.</div>
+        <div class="card-analysis">📊 Análise do agente: Contexto de pressão pública aumenta risco regulatório para operadoras sem mecanismos robustos de JR. Para a Pitaco, é momento de reforçar e documentar ferramentas de autolimitação — antes que medidas compulsórias sejam impostas.</div>
+      </div>
+      <div class="card-footer">
+        <div class="card-norm"><em>⚖️ Jurídico: PL 3754/25 (limites mensais) · Portaria SPA/MF 615/2024 · CDC Art. 6 — contexto de risco reputacional e regulatório</em></div>
+        <div class="card-link"><a href="https://bnldata.com.br/anjl-contesta-pesquisa-que-aponta-apostas-online-como-principal-causa-de-endividamento/" target="_blank">↗ Ver matéria completa · bnldata.com.br</a></div>
+        <div class="card-slack">💬 <span class="slack-channel">#legal-team</span> — <span class="insight-tag">💡 Insight</span> Heloísa: incluir no Radar Semanal. PL 3754/25 voltou a tramitar no Senado — monitorar designação de relator (alerta no Radar de 10–16/mar).</div>
+      </div>
+    </div>
+
+    <!-- CARD REAL — g-mnews.com · 24/03/2026 · Modelo regulatório Brasil · Prioridade 2 -->
+    <div class="card">
+      <div class="card-header">
+        <div class="card-header-top">
+          <div class="card-badges">
+            <span class="badge media">Média</span>
+            <span class="badge br">BR</span>
+          </div>
+          <div class="card-source">
+            <div class="card-source-name">G&amp;M News · g-mnews.com</div>
+            <div>24 mar 2026</div>
+          </div>
+        </div>
+      </div>
+      <div class="card-body">
+        <div class="card-title">Brasil: construir um modelo próprio, equilibrado e moderno na indústria de jogos — análise G&M News</div>
+        <div class="card-text">Análise da G&M News avalia o modelo regulatório brasileiro em desenvolvimento, destacando que o país tem a oportunidade de criar um framework equilibrado entre proteção ao consumidor, geração de receita e jogo responsável — sem copiar modelos europeus integralmente. O texto destaca a importância de ferramentas de JR como pilar central do modelo e não como exigência secundária.</div>
+        <div class="card-analysis">📊 Análise do agente: Perspectiva estratégica relevante: o modelo brasileiro ainda está em construção, e operadoras que se posicionarem como referência de JR desde agora têm maior influência nos rumos regulatórios — além de menor risco de sanção.</div>
+      </div>
+      <div class="card-footer">
+        <div class="card-norm"><em>⚖️ Jurídico: Lei 14.790/2023 · Portaria SPA/MF 615/2024 · Contexto de amadurecimento do marco regulatório</em></div>
+        <div class="card-link"><a href="https://g-mnews.com/pt/brasil-construir-um-modelo-proprio-equilibrado-e-moderno-na-industria-de-jogos/" target="_blank">↗ Ver matéria completa · g-mnews.com</a></div>
+        <div class="card-slack">💬 <span class="slack-channel">#legal-team</span> — <span class="insight-tag">💡 Insight</span> Compartilhar com Axel e Vitória. Posicionamento proativo da Pitaco em JR como vantagem regulatória de longo prazo.</div>
+      </div>
+    </div>
+
+    <div class="no-data-card">
+      <div class="nd-icon">📭</div>
+      <div class="nd-title">Demais fontes de JR indisponíveis</div>
+      <div>spa.fazenda.gov.br (direto), responsiblegambling.org e icrg.org estavam inacessíveis nesta rodada. Consultar diretamente quando necessário.</div>
+    </div>
+
+  </div>
+
+  <div id="rg-recentes" style="display:none" class="cards-grid">
+    <div class="no-data-card">
+      <div class="nd-icon">🔍</div>
+      <div class="nd-title">Modo Recentes</div>
+      <div>Peça ao agente para buscar notícias de jogo responsável dos últimos dias.</div>
+      <div class="nd-queries">
+        <div class="nd-queries-label">Queries prontas para execução</div>
+        <div class="nd-query">"jogo responsável autoexclusão bets Brasil março 2026"</div>
+        <div class="nd-query">"SPA MF jogo responsável Q2 2026"</div>
+        <div class="nd-query">"apostas saúde mental Brasil março 2026"</div>
+      </div>
+    </div>
+  </div>
+</div><!-- /tab-rg -->
+
+
+<!-- ═══════════════════════════════════════ ABA 5: INTERNACIONAL ═══════════════ -->
+<div class="tab-panel" id="tab-intl">
+  <div class="tab-heading-row">
+    <div class="tab-heading-main">
+      <div class="tab-heading">🌍 Internacional</div>
+      <div id="toggle-intl" class="toggle-group" style="display:none"></div>
+    </div>
+    <div class="tab-heading-desc">UK · Austrália · Portugal · Espanha · UE — tendências e enforcement</div>
+  </div>
+  <!-- fontes P1: gamblingcommission.gov.uk, agco.ca, dgoj.gob.es, jogosonline.turismodeportugal.pt | P2: BNL Data (bnldata.com.br), iGaming Brasil (igamingbrazil.com), G&M News (g-mnews.com), iGaming Business, Gambling Insider, CalvinAyre | P3: Reuters, FT, mediabet.com.br — Ordenação: P1 → P2 → P3 -->
+
+  <div id="intl-tendencias" class="cards-grid">
+
+    <!-- CARD REAL — gamblingcommission.gov.uk · 26/02/2026 · Fonte oficial Prioridade 1 -->
+    <div class="card">
+      <div class="card-header">
+        <div class="card-header-top">
+          <div class="card-badges"><span class="badge media">Média</span><span class="badge intl">Internacional</span></div>
+          <div class="card-source"><div class="card-source-name">UK Gambling Commission</div><div>26 fev 2026</div></div>
+        </div>
+      </div>
+      <div class="card-body">
+        <div class="card-title">UKGC defende uso de criptomoedas em apostas licenciadas e pede "estabilidade regulatória" no BGC AGM 2026</div>
+        <div class="card-text">O Diretor Executivo do Gambling Commission Tim Miller anunciou a intenção de explorar criptomoedas como método de pagamento para apostas licenciadas, como estratégia para manter consumidores no mercado regulado em vez de empurrá-los a sites ilegais. Miller também pediu um período de "estabilidade regulatória" após as reformas do Gambling Act Review e destacou alocação governamental de £26M para combate ao mercado ilegal em 3 anos. Aumentos de taxas elevarão a receita total da Comissão de 0,21% para 0,28% do GGY do setor.</div>
+        <div class="card-analysis">📊 Análise do agente: Sinalização relevante para o Brasil — a SPA/MF poderá considerar aceitar cripto como método de pagamento em bets, seguindo tendência do UKGC. O fundo de £26M contra mercado ilegal é benchmark para discussão de enforcement no setor brasileiro.</div>
+      </div>
+      <div class="card-footer">
+        <div class="card-norm"><em>⚖️ Jurídico: UK Gambling Act Review 2023 · Aplicabilidade indireta via Portaria SPA/MF 1.231/2024 — meios de pagamento</em></div>
+        <div class="card-link"><a href="https://www.gamblingcommission.gov.uk/news/article/bgc-agm-2026-tim-miller-speech" target="_blank">↗ Ver discurso completo · gamblingcommission.gov.uk</a></div>
+        <div class="card-slack">💬 Discussão interna · <span class="slack-channel">#legal-finance</span> — Avaliar posicionamento da SPA/MF sobre cripto em pagamentos de bets. Cruzar com #open-finance.</div>
+      </div>
+    </div>
+
+    <!-- CARD REAL — mediabet.com.br · 26/03/2026 · IAB cassinos · Fonte única · Prioridade 3 -->
+    <div class="card warned">
+      <div class="card-header">
+        <div class="card-header-top">
+          <div class="card-badges">
+            <span class="badge media">Média</span>
+            <span class="badge br">BR</span>
+            <span class="badge single-source">⚠️ Fonte única</span>
+          </div>
+          <div class="card-source"><div class="card-source-name">mediabet.com.br</div><div>26 mar 2026</div></div>
+        </div>
+        <div class="source-warning">Confirmado em 1 veículo (Prioridade 3) — cruzar com jota.info ou Migalhas antes de usar internamente.</div>
+      </div>
+      <div class="card-body">
+        <div class="card-title">IAB aprova análise que questiona constitucionalidade da proibição de cassinos físicos no Brasil desde 1946</div>
+        <div class="card-text">O Instituto dos Advogados Brasileiros (IAB) aprovou análise que desafia a constitucionalidade do Decreto-Lei 9.215/1946, que proíbe cassinos físicos no Brasil há quase 80 anos. Especialistas apontam incompatibilidade com a Constituição de 1988. O IAB preparará parecer jurídico para apoiar recurso ao STF e fortalecer projetos de lei de regulação do jogo presencial.</div>
+        <div class="card-analysis">📊 Análise do agente: Aprovação pelo IAB eleva a tração jurídica da pauta. A legalização de cassinos físicos criaria um novo vetor competitivo para operadoras de bets online — monitorar desdobramentos no STF e no Congresso.</div>
+      </div>
+      <div class="card-footer">
+        <div class="card-norm"><em>⚖️ Jurídico: Decreto-Lei 9.215/1946 · PL de regulação do jogo em tramitação no Congresso</em></div>
+        <div class="card-link"><a href="https://mediabet.com.br/iab-analise-proibicao-cassinos-constituicao-1988/" target="_blank">↗ Ver matéria completa · mediabet.com.br</a></div>
+        <div class="card-slack">💬 Discussão interna · <span class="slack-channel">#legal-team</span> — Incluir no Radar Semanal (Heloísa) como tendência regulatória — monitorar STF e Congresso.</div>
+      </div>
+    </div>
+
+    <!-- CARD REAL — mediabet.com.br · 23/03/2026 · Fonte única · Prioridade 3 -->
+    <div class="card warned">
+      <div class="card-header">
+        <div class="card-header-top">
+          <div class="card-badges">
+            <span class="badge media">Média</span>
+            <span class="badge br">BR</span>
+            <span class="badge single-source">⚠️ Fonte única</span>
+          </div>
+          <div class="card-source"><div class="card-source-name">mediabet.com.br</div><div>23 mar 2026</div></div>
+        </div>
+        <div class="source-warning">Confirmado em 1 veículo (Prioridade 3) — cruzar com igamingbrasil.com ou jota.info antes de usar internamente.</div>
+      </div>
+      <div class="card-body">
+        <div class="card-title">Líderes do iGaming propõem padronização regulatória, KYC no saque e monitoramento comportamental de JR</div>
+        <div class="card-text">No painel de encerramento do Mercosul iGaming Summit, executivos do setor (Wesley Cardia, Sávio Prado, Leonardo Baptista e Amilton Noble) propuseram medidas práticas: moratória regulatória de 6 meses para adaptação do mercado, migração do KYC para o momento do saque (reduzindo atrito no cadastro), e implementação de sistemas de monitoramento comportamental para jogo responsável — em substituição a avisos genéricos.</div>
+        <div class="card-analysis">📊 Análise do agente: Proposta de KYC no saque é tendência relevante — avalia trade-off entre fricção na entrada e efetividade do controle. Monitoramento comportamental de JR alinha com exigência esperada da SPA/MF para 2º semestre de 2026.</div>
+      </div>
+      <div class="card-footer">
+        <div class="card-norm"><em>⚖️ Jurídico: Portaria SPA/MF 615/2024 (JR) · Portaria 1.231/2024 (KYC)</em></div>
+        <div class="card-link"><a href="https://mediabet.com.br/acoes-desenvolvimento-setor-igaming-brasil/" target="_blank">↗ Ver matéria completa · mediabet.com.br</a></div>
+        <div class="card-slack">💬 Discussão interna · <span class="slack-channel">#legal-team</span> — Avaliar proposta de KYC no saque vs. exigência regulatória atual de verificação no cadastro.</div>
+      </div>
+    </div>
+
+    <!-- CARD REAL — g-mnews.com · 24/03/2026 · Bônus e retenção Portugal · Prioridade 2 -->
+    <div class="card">
+      <div class="card-header">
+        <div class="card-header-top">
+          <div class="card-badges">
+            <span class="badge media">Média</span>
+            <span class="badge intl">Internacional</span>
+          </div>
+          <div class="card-source">
+            <div class="card-source-name">G&amp;M News · g-mnews.com</div>
+            <div>24 mar 2026</div>
+          </div>
+        </div>
+      </div>
+      <div class="card-body">
+        <div class="card-title">Menos bônus, mais estratégia: como operadoras europeias estão repensando retenção no mercado regulado</div>
+        <div class="card-text">Análise da G&M News sobre o mercado português mostra que operadoras estão migrando de modelos baseados em bônus agressivos para estratégias de retenção baseadas em experiência do produto, personalização e conteúdo — reflexo do aperto regulatório sobre ofertas de bônus na Europa. O movimento antecipa o que o mercado brasileiro tende a experimentar com a maturação da Portaria 1.231/2024.</div>
+        <div class="card-analysis">📊 Análise do agente: Benchmark europeu relevante para o Brasil. Com a SPA/MF restringindo modelos de bônus (art. 29, Lei 14.790/2023), a Pitaco deve antecipar a migração para retenção baseada em produto — análoga ao que operadoras europeias já implementaram.</div>
+      </div>
+      <div class="card-footer">
+        <div class="card-norm"><em>⚖️ Jurídico: Lei 14.790/2023 art. 29 (vedação de bônus como incentivo) · Portaria SPA/MF 1.231/2024 — Tendência internacional aplicável ao Brasil</em></div>
+        <div class="card-link"><a href="https://g-mnews.com/pt/menos-bonus-mais-estrategia-como-operadoras-estao-repensando-a-retencao-no-mercado-portugues/" target="_blank">↗ Ver matéria completa · g-mnews.com</a></div>
+        <div class="card-slack">💬 <span class="slack-channel">#legal-team</span> → <span class="slack-channel">#benchmark</span> — <span class="insight-tag">💡 Insight</span> Cruzar com estratégia de retenção atual da Pitaco. PL 3754/25 pode impor limites mensais — antecipar modelo europeu de retenção sem bônus.</div>
+      </div>
+    </div>
+
+    <!-- CARD REAL — g-mnews.com · 24/03/2026 · Stellar Gaming IA · Prioridade 2 -->
+    <div class="card">
+      <div class="card-header">
+        <div class="card-header-top">
+          <div class="card-badges">
+            <span class="badge baixa">Baixa</span>
+            <span class="badge intl">Internacional</span>
+          </div>
+          <div class="card-source">
+            <div class="card-source-name">G&amp;M News · g-mnews.com</div>
+            <div>24 mar 2026</div>
+          </div>
+        </div>
+      </div>
+      <div class="card-body">
+        <div class="card-title">Stellar Gaming: uso inteligente de IA e compromisso com integridade como pilares do iGaming moderno</div>
+        <div class="card-text">Entrevista com Tiago Mosci (Stellar Gaming) na G&M News aborda como operadoras de iGaming estão integrando IA de forma responsável — com ênfase em transparência dos algoritmos, compliance by design e ferramentas de integridade incorporadas à arquitetura de produto, não adicionadas como camada posterior. O executivo defende que IA deve servir tanto para eficiência operacional quanto para conformidade regulatória.</div>
+        <div class="card-analysis">📊 Análise do agente: Perspectiva alinhada com a tendência de compliance by design que a SPA/MF deve exigir ao longo de 2026. A Pitaco pode usar esse benchmark para estruturar sua proposta de automação de JR com o time de Dados.</div>
+      </div>
+      <div class="card-footer">
+        <div class="card-norm"><em>⚖️ Jurídico: Portaria SPA/MF 615/2024 (JR) · LGPD (transparência de algoritmos) · Referência de compliance by design</em></div>
+        <div class="card-link"><a href="https://g-mnews.com/pt/tiago-mosci-stellar-gaming-tecnologia-de-ponta-uso-inteligente-e-responsavel-da-ia-e-compromisso-pela-integridade/" target="_blank">↗ Ver matéria completa · g-mnews.com</a></div>
+        <div class="card-slack">💬 <span class="slack-channel">#legal-team</span> → <span class="slack-channel">#me-ajuda-eng</span> — Compartilhar com time de Dados para embasar proposta de automação de fluxo JR com IA.</div>
+      </div>
+    </div>
+
+    <div class="no-data-card">
+      <div class="nd-icon">📭</div>
+      <div class="nd-title">Demais fontes internacionais indisponíveis esta semana</div>
+      <div>agco.ca, dgoj.gob.es, jogosonline.turismodeportugal.pt, iGamingBusiness e CalvinAyre não retornaram conteúdo verificável nesta rodada. Ver aba <strong style="color:#a890ff">Enforcement</strong> para os casos reais do UKGC.</div>
+    </div>
+  </div>
+
+  <div id="intl-enforcement" style="display:none" class="cards-grid">
+
+    <!-- CARD REAL — gamblingcommission.gov.uk · 09/02/2026 · Liderança regulatória -->
+    <div class="card recentes">
+      <div class="card-header">
+        <div class="card-header-top">
+          <div class="card-badges">
+            <span class="badge media">Média</span>
+            <span class="badge intl">Internacional</span>
+          </div>
+          <div class="card-source"><div class="card-source-name">UK Gambling Commission</div><div>09 fev 2026</div></div>
+        </div>
+      </div>
+      <div class="card-body">
+        <div class="card-title">CEO da Gambling Commission Andrew Rhodes anuncia saída para 30 de abril — Sarah Gardner assume interinamente</div>
+        <div class="card-text">Andrew Rhodes, que liderou o regulador britânico por quase cinco anos, anunciou sua saída para 30 de abril de 2026. Durante seu mandato, conduziu reformas como verificação de vulnerabilidade financeira, restrições a marketing prejudicial e endurecimento da fiscalização. Sarah Gardner assume como Diretora-Executiva interina durante o processo de recrutamento do sucessor.</div>
+        <div class="card-analysis">📊 Análise do agente: Transição de liderança em regulador de referência global pode indicar revisão de prioridades. Monitorar declarações do novo CEO — tendências do UKGC costumam antecipar em 12–18 meses o que a SPA/MF adota no Brasil.</div>
+      </div>
+      <div class="card-footer">
+        <div class="card-norm"><em>⚖️ Jurídico: UK Gambling Act Review 2023 · Relevância para benchmark regulatório da SPA/MF</em></div>
+        <div class="card-link"><a href="https://www.gamblingcommission.gov.uk/news/article/gambling-commission-chief-executive-announces-departure" target="_blank">↗ Ver matéria completa · gamblingcommission.gov.uk</a></div>
+        <div class="card-slack">💬 Discussão interna · <span class="slack-channel">#legal-team</span> — Acompanhar quem será o novo CEO e qual será o foco regulatório para 2026–2027.</div>
+      </div>
+    </div>
+
+    <!-- CARD REAL — gamblingcommission.gov.uk · 16/03/2026 · Nomeação de liderança -->
+    <div class="card recentes">
+      <div class="card-header">
+        <div class="card-header-top">
+          <div class="card-badges">
+            <span class="badge baixa">Baixa</span>
+            <span class="badge intl">Internacional</span>
+          </div>
+          <div class="card-source"><div class="card-source-name">UK Gambling Commission</div><div>16 mar 2026</div></div>
+        </div>
+      </div>
+      <div class="card-body">
+        <div class="card-title">Sue Young nomeada Diretora Executiva de Operações da Gambling Commission com experiência em HMRC e Home Office</div>
+        <div class="card-text">A Gambling Commission anunciou a nomeação de Sue Young como Diretora Executiva de Operações, cargo que liderará as funções operacionais do regulador. Young tem histórico em órgãos governamentais de alta exigência como HMRC e Home Office, reforçando a capacidade institucional de fiscalização durante o período de transição de liderança no órgão.</div>
+        <div class="card-analysis">📊 Análise do agente: Fortalecimento da equipe operacional do UKGC em período de transição indica que a fiscalização não perderá ritmo. Sinal de continuidade no rigor regulatório — relevante para benchmarking da SPA/MF.</div>
+      </div>
+      <div class="card-footer">
+        <div class="card-norm"><em>⚖️ Jurídico: UK Gambling Commission — estrutura regulatória e capacidade de enforcement</em></div>
+        <div class="card-link"><a href="https://www.gamblingcommission.gov.uk/news/article/sue-young-joins-the-commission-as-executive-director-of-operations" target="_blank">↗ Ver matéria completa · gamblingcommission.gov.uk</a></div>
+        <div class="card-slack">💬 Discussão interna · <span class="slack-channel">#legal-team</span> — Informativo. Manter no radar para acompanhar mudanças de posicionamento do UKGC.</div>
+      </div>
+    </div>
+
+    <!-- CARD REAL — gamblingcommission.gov.uk · dez/2025 · Fonte oficial (Prioridade 1) -->
+    <div class="card recentes">
+      <div class="card-header">
+        <div class="card-header-top">
+          <div class="card-badges">
+            <span class="badge alta">Alta</span>
+            <span class="badge intl">Internacional</span>
+          </div>
+          <div class="card-source"><div class="card-source-name">UK Gambling Commission</div><div>17 dez 2025</div></div>
+        </div>
+      </div>
+      <div class="card-body">
+        <div class="card-title">Paddy Power Betfair paga £2M por falhas em jogo responsável — sistemas de identificação de dano insuficientes</div>
+        <div class="card-text">A Gambling Commission investigou quatro operadoras do grupo Paddy Power/Betfair e constatou que os sistemas de identificação de dano eram insuficientemente sensíveis. Clientes depositaram de £12.000 a £25.000 em semanas, e um apostou £86.000 em 16 dias sem acionar revisão manual. O regulador concluiu que "as interações ficaram muito aquém do exigido" e aplicou settlement de £2 milhões.</div>
+        <div class="card-analysis">📊 Análise do agente: Referência direta para o mercado brasileiro — a SPA/MF acompanha enforcement do UKGC. Operadoras devem garantir que alertas automáticos de JR sejam sensíveis o suficiente para acionar revisão manual em padrões de alto volume.</div>
+      </div>
+      <div class="card-footer">
+        <div class="card-norm"><em>⚖️ Jurídico: UKGC Licence Conditions · Social Responsibility Code · Aplicabilidade via Portaria SPA/MF 615/2024</em></div>
+        <div class="card-link"><a href="https://www.gamblingcommission.gov.uk/news/article/paddy-power-betfair-to-pay-gbp2m-for-regulatory-failures" target="_blank">↗ Ver enforcement completo · gamblingcommission.gov.uk</a></div>
+        <div class="card-slack">💬 Discussão interna · <span class="slack-channel">#legal-team</span> — Incluir no Radar Semanal como benchmark de enforcement JR. <span class="insight-tag">💡 Insight</span> Cruzar com #alertas-jogo-responsavel.</div>
+      </div>
+    </div>
+
+    <!-- CARD REAL — gamblingcommission.gov.uk · dez/2025 · Fonte oficial (Prioridade 1) -->
+    <div class="card recentes">
+      <div class="card-header">
+        <div class="card-header-top">
+          <div class="card-badges">
+            <span class="badge alta">Alta</span>
+            <span class="badge intl">Internacional</span>
+          </div>
+          <div class="card-source"><div class="card-source-name">UK Gambling Commission</div><div>03 dez 2025</div></div>
+        </div>
+      </div>
+      <div class="card-body">
+        <div class="card-title">Betfred (Done Brothers) recebe multa de £825.000 por falhas em AML e jogo responsável — segunda ação em 3 anos</div>
+        <div class="card-text">A empresa-mãe da Betfred recebeu penalidade de £825.000 por não identificar riscos de lavagem de dinheiro em máquinas B3 e por ausência de políticas eficazes de sanções financeiras, além de falhas em interações de responsabilidade social. É a segunda ação regulatória em três anos (settlement anterior de £3,25M em 2023). O regulador determinou auditorias de compliance por terceiros.</div>
+        <div class="card-analysis">📊 Análise do agente: Caso relevante para AML e JR combinados. A exigência de auditoria de compliance por terceiros é tendência que pode ser adotada pela SPA/MF — reforça valor de auditorias externas como a KPMG.</div>
+      </div>
+      <div class="card-footer">
+        <div class="card-norm"><em>⚖️ Jurídico: UKGC Licence Conditions · AML Code · Aplicabilidade via Portaria SPA/MF 566/2025 e 615/2024</em></div>
+        <div class="card-link"><a href="https://www.gamblingcommission.gov.uk/news/article/gbp825-000-fine-for-done-brothers-cash-betting-limited" target="_blank">↗ Ver enforcement completo · gamblingcommission.gov.uk</a></div>
+        <div class="card-slack">💬 Discussão interna · <span class="slack-channel">#questionamentos-kpmg</span> — Caso reforça argumento para manter escopo amplo na auditoria KPMG em andamento.</div>
+      </div>
+    </div>
+
+    <!-- CARD REAL — gamblingcommission.gov.uk · 10/03/2026 · Fonte oficial (Prioridade 1) -->
+    <div class="card recentes">
+      <div class="card-header">
+        <div class="card-header-top">
+          <div class="card-badges">
+            <span class="badge media">Média</span>
+            <span class="badge intl">Internacional</span>
+          </div>
+          <div class="card-source"><div class="card-source-name">UK Gambling Commission</div><div>10 mar 2026</div></div>
+        </div>
+      </div>
+      <div class="card-body">
+        <div class="card-title">UKGC alerta bookmakers do Festival de Cheltenham sobre AML e controles de caixa em eventos de alto volume</div>
+        <div class="card-text">A Gambling Commission emitiu lembrete formal aos bookmakers presentes no Festival de Cheltenham sobre obrigações regulatórias de combate à lavagem de dinheiro, especialmente controles sobre volumes de caixa elevados durante o evento. Operadores devem manter políticas e procedimentos escritos, vigilância contra notas falsas e declaração de operações suspeitas.</div>
+        <div class="card-analysis">📊 Análise do agente: Relevante para operadoras brasileiras que operam em eventos esportivos de alto volume — a SPA/MF pode adotar postura similar em grandes eventos nacionais (Copa do Brasil, finais de série A).</div>
+      </div>
+      <div class="card-footer">
+        <div class="card-norm"><em>⚖️ Jurídico: UKGC AML Licence Conditions · Aplicabilidade via Portaria SPA/MF 566/2025</em></div>
+        <div class="card-link"><a href="https://www.gamblingcommission.gov.uk/news/article/reminder-for-on-course-bookmakers-at-cheltenham-festival" target="_blank">↗ Ver matéria completa · gamblingcommission.gov.uk</a></div>
+        <div class="card-slack">💬 Discussão interna · <span class="slack-channel">#ops-risk</span> — Avaliar se Pitaco tem procedimentos equivalentes para eventos esportivos de alto volume.</div>
+      </div>
+    </div>
+
+    <!-- CARD REAL — gamblingcommission.gov.uk · 05/02/2026 · Fonte oficial (Prioridade 1) -->
+    <div class="card recentes">
+      <div class="card-header">
+        <div class="card-header-top">
+          <div class="card-badges">
+            <span class="badge baixa">Baixa</span>
+            <span class="badge intl">Internacional</span>
+          </div>
+          <div class="card-source"><div class="card-source-name">UK Gambling Commission</div><div>05 fev 2026</div></div>
+        </div>
+      </div>
+      <div class="card-body">
+        <div class="card-title">UKGC publica dados de mercado: GGY online cai 2% mas slots crescem 10% — sessões longas caem com novos limites de apostas</div>
+        <div class="card-text">O Gambling Commission divulgou dados de operadores até dezembro de 2025: o GGY (Gross Gambling Yield) online totalizou £1,5 bilhão no Q3 2025/26, queda de 2% anual, enquanto slots cresceram 10% (£788M). Sessões acima de 1 hora caíram de 6,2% para 4,4% após introdução de limites de stakes em slots online — indicando impacto direto das medidas regulatórias no comportamento dos apostadores.</div>
+        <div class="card-analysis">📊 Análise do agente: Dado relevante como benchmark de impacto regulatório no comportamento do usuário. A queda em sessões longas após limites de stakes é evidência que a SPA/MF pode usar para justificar medidas similares no Brasil.</div>
+      </div>
+      <div class="card-footer">
+        <div class="card-norm"><em>⚖️ Jurídico: UKGC Market Impact Data · Online Slots Stake Limits</em></div>
+        <div class="card-link"><a href="https://www.gamblingcommission.gov.uk/news/article/market-impact-data-on-gambling-behaviour-operator-data-to-dec-2025" target="_blank">↗ Ver relatório completo · gamblingcommission.gov.uk</a></div>
+        <div class="card-slack">💬 Discussão interna · <span class="slack-channel">#ops-trading</span> — Dado relevante para avaliar impacto regulatório em métricas de produto da Pitaco.</div>
+      </div>
+    </div>
+
+  </div>
+</div><!-- /tab-intl -->
+
+
+<!-- ═══════════════════════════════════════ ABA 6: CONCORRENTES ════════════════ -->
+<div class="tab-panel" id="tab-comp">
+  <div class="tab-heading-row">
+    <div class="tab-heading-main">
+      <div class="tab-heading">🎯 Concorrentes</div>
+      <div id="toggle-comp" class="toggle-group" style="display:none"></div>
+    </div>
+    <div class="tab-heading-desc">Betano · Bet365 · Superbet · Sportingbet · Betnacional · Novibet · BetMGM</div>
+  </div>
+  <!-- fontes P1: #benchmark Slack (insights diretos da equipe), sites oficiais, releases corporativos | P2: BNL Data (bnldata.com.br), iGaming Brasil (igamingbrazil.com), G&M News (g-mnews.com), Infobetting, mediabet.com.br | P3: imprensa geral — Ordenação: P1 (Slack #benchmark) → P2 → P3 -->
+
+  <div class="sources-box">
+    <strong>Hierarquia de fontes · Aba Concorrentes:</strong>
+    Prioridade 1: sites oficiais, releases corporativos &nbsp;·&nbsp;
+    Prioridade 2: <span class="src-new">BNL Data ✦</span>, <span class="src-new">iGaming Brasil ✦</span>, <span class="src-new">G&amp;M News ✦</span>, Infobetting, mediabet.com.br, Jogo Responsável BR &nbsp;·&nbsp;
+    Prioridade 3: imprensa geral (apenas confirmação de fatos)
+    <br><small>NUNCA usar: sites de review, portais de afiliados, comparadores comerciais.</small>
+  </div>
+
+  <div id="comp-produto" class="cards-grid wide">
+
+    <!-- CARD REAL — #benchmark Thais · 20/03/2026 · Aviso +18 deslogados -->
+    <div class="card">
+      <div class="card-header">
+        <div class="card-header-top">
+          <div class="card-badges">
+            <span class="badge alta">Alta</span>
+            <span class="badge br">BR</span>
+            <span class="action-badge action-referencia">REFERÊNCIA</span>
+          </div>
+          <div class="card-source"><div class="card-source-name">#benchmark · 20 mar 2026</div></div>
+        </div>
+      </div>
+      <div class="card-body">
+        <div class="card-title">Casas de apostas adotam aviso +18 para usuários deslogados — benchmark identificado por Thais</div>
+        <div class="card-text">Thais identificou no #benchmark que operadoras estão exibindo aviso de "Jogo responsável +18" para usuários que navegam pelo site sem estar logados, antes mesmo de qualquer interação. Prática alinha com a exigência do Anexo X do CONAR e da Portaria 1.231/2024 de proteger menores em toda ação de comunicação.</div>
+        <div class="card-analysis">📊 Análise: Boa prática preventiva com baixo custo de implementação. Dado o Ofício SEI 14847/2026 que a SPA acaba de enviar sobre publicidade, implementar esse aviso agora demonstra diligência regulatória.</div>
+      </div>
+      <div class="card-footer">
+        <div class="card-norm"><em>⚖️ Jurídico: Boa prática. Alinha com Portaria SPA/MF 1.231/2024 + Anexo X CONAR. Risco zero de replicar.</em></div>
+        <div class="card-link"><a href="https://reidopitacoworkspace.slack.com/archives/C08H223FJ4A" target="_blank">↗ Ver no #benchmark · Slack</a></div>
+        <div class="card-slack">💬 <span class="slack-channel">#benchmark</span> → <span class="slack-channel">#mkt-legal</span> — <span class="insight-tag">💡 Insight</span> Implementar urgente dado contexto do Ofício SPA.</div>
+      </div>
+    </div>
+
+    <!-- CARD REAL — #benchmark Victor · 16/03/2026 · Email Betano -->
+    <div class="card">
+      <div class="card-header">
+        <div class="card-header-top">
+          <div class="card-badges">
+            <span class="badge media">Média</span>
+            <span class="badge br">BR</span>
+            <span class="action-badge action-adaptar">ADAPTAR</span>
+          </div>
+          <div class="card-source"><div class="card-source-name">#benchmark · 16 mar 2026</div></div>
+        </div>
+      </div>
+      <div class="card-body">
+        <div class="card-title">Betano envia email automatizado após tentativa de acesso sem login — CX de segurança</div>
+        <div class="card-text">Victor identificou no #benchmark que a Betano dispara email automatizado para o usuário cadastrado após tentativa de login sem sucesso, com alerta de segurança e link para redefinição de senha. Feature de CX que combina retenção com proteção da conta — relevante tanto para produto quanto para proteção de dados (LGPD).</div>
+        <div class="card-analysis">📊 Análise: Feature de baixo custo com duplo benefício — CX (reduz abandono por problema de acesso) e compliance (evidencia medidas de proteção de dados em caso de incidente). Replicar sem risco regulatório.</div>
+      </div>
+      <div class="card-footer">
+        <div class="card-norm"><em>⚖️ Jurídico: Conformidade com LGPD (segurança de dados, dever de notificação). Risco zero de replicar.</em></div>
+        <div class="card-link"><a href="https://reidopitacoworkspace.slack.com/archives/C08H223FJ4A" target="_blank">↗ Ver no #benchmark · Slack</a></div>
+        <div class="card-slack">💬 <span class="slack-channel">#benchmark</span> → <span class="slack-channel">#me-ajuda-eng</span> — Avaliar implementação de email de alerta de segurança.</div>
+      </div>
+    </div>
+
+    <!-- CARD REAL — #benchmark Vitor · 24/03/2026 · Gameplay Betano -->
+    <div class="card">
+      <div class="card-header">
+        <div class="card-header-top">
+          <div class="card-badges">
+            <span class="badge media">Média</span>
+            <span class="badge br">BR</span>
+            <span class="action-badge action-monitorar">MONITORAR</span>
+          </div>
+          <div class="card-source"><div class="card-source-name">#benchmark · 24 mar 2026</div></div>
+        </div>
+      </div>
+      <div class="card-body">
+        <div class="card-title">Betano lança formato de Gameplay — vídeos de apostas ao vivo integrados à experiência</div>
+        <div class="card-text">Vitor Vilela compartilhou no #benchmark conteúdo de Gameplay da Betano — formato que integra vídeo de apostas ao vivo à interface do produto. Posiciona a aposta como experiência de entretenimento, aproximando do formato de streaming e aumentando o engajamento no produto.</div>
+        <div class="card-analysis">📊 Análise jurídica: Formato novo a avaliar. Vídeos que mostram apostas sendo realizadas podem ser classificados como publicidade implícita. Verificar se Betano está usando influenciadores ou conteúdo editorial para veicular — impacta enquadramento no PL 3.563/2024.</div>
+      </div>
+      <div class="card-footer">
+        <div class="card-norm"><em>⚖️ Jurídico: Avaliar antes de replicar. Risco de enquadramento como publicidade sob PL 3.563/2024 e Portaria 1.231/2024.</em></div>
+        <div class="card-link"><a href="https://reidopitacoworkspace.slack.com/archives/C08H223FJ4A" target="_blank">↗ Ver no #benchmark · Slack</a></div>
+        <div class="card-slack">💬 <span class="slack-channel">#benchmark</span> → <span class="slack-channel">#legal-team</span> — Avaliar enquadramento legal antes de replicar formato.</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <div class="card-header-top">
+          <div class="card-badges">
+            <span class="badge media">Média</span>
+            <span class="badge br">BR</span>
+            <span class="action-badge action-adaptar">ADAPTAR</span>
+          </div>
+          <div class="card-source"><div class="card-source-name">Betano · betano.com.br</div><div>mar 2026</div></div>
+        </div>
+      </div>
+      <div class="card-body">
+        <div class="card-title">Betano lança "Aposta Consciente" — painel integrado de jogo responsável</div>
+        <div class="card-text">A Betano integrou ao menu principal um painel de "Aposta Consciente" com visualização de histórico de apostas, controles de depósito/perda diários, lembretes de tempo e acesso em 1 clique à autoexclusão. Disponível na versão web e mobile.</div>
+        <div class="card-analysis">📊 Análise do agente: Feature diretamente exigida pela Portaria 615/2024. Betano antecipa o exigido e cria diferencial. Pitaco pode replicar com adição do parceiro ZenKlub para diferenciação exclusiva.</div>
+      </div>
+      <div class="card-footer">
+        <div class="card-norm"><em>⚖️ Jurídico: Conformidade com Portaria SPA/MF 615/2024. Replicar sem risco regulatório.</em></div>
+        <div class="card-link"><a href="https://www.betano.com.br" target="_blank">↗ Ver fonte: betano.com.br ↗</a></div>
+        <div class="card-slack">💬 Discussão interna · <span class="slack-channel">#benchmark</span> — <span class="insight-tag">💡 Insight</span> Combinar com #product-feedback sobre demanda por ferramentas de controle.</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <div class="card-header-top">
+          <div class="card-badges">
+            <span class="badge baixa">Baixa</span>
+            <span class="badge br">BR</span>
+            <span class="action-badge action-monitorar">MONITORAR</span>
+          </div>
+          <div class="card-source"><div class="card-source-name">Superbet · superbet.com.br</div><div>fev/mar 2026</div></div>
+        </div>
+      </div>
+      <div class="card-body">
+        <div class="card-title">Superbet expande cashout parcial e antecipado em mercados ao vivo</div>
+        <div class="card-text">A Superbet disponibilizou cashout parcial para apostas ao vivo em todos os mercados de futebol brasileiro — Série A, B e Copa do Brasil. O recurso permite resgatar parte do valor antes do final do jogo, reduzindo risco do apostador.</div>
+      </div>
+      <div class="card-footer">
+        <div class="card-norm"><em>⚖️ Jurídico: Feature operacional sem restrições identificadas. Verificar fluxo de pagamento com open finance.</em></div>
+        <div class="card-link"><a href="https://www.superbet.com.br" target="_blank">↗ Ver fonte: superbet.com.br ↗</a></div>
+        <div class="card-slack">💬 Discussão interna · <span class="slack-channel">#benchmark</span> — Sem discussão registrada sobre cashout parcial esta semana.</div>
+      </div>
+    </div>
+
+    <div class="card warned">
+      <div class="card-header">
+        <div class="card-header-top">
+          <div class="card-badges">
+            <span class="badge media">Média</span>
+            <span class="badge br">BR</span>
+            <span class="action-badge action-evitar">EVITAR/RISCO</span>
+          </div>
+          <div class="card-source"><div class="card-source-name">Betnacional · betnacional.com</div><div>mar 2026</div></div>
+        </div>
+      </div>
+      <div class="card-body">
+        <div class="card-title">Betnacional lança bônus de boas-vindas 100% até R$ 500 com rollover de 30x</div>
+        <div class="card-text">A operadora relançou oferta de bônus de cadastro com multiplicador de 30x como requisito de rollover e prazo de 7 dias. A estrutura está sendo analisada por potencial conflito com diretrizes de publicidade da SPA/MF.</div>
+        <div class="card-analysis">📊 Análise do agente: Rollover de 30x pode ser classificado como prática abusiva sob o CDC. Evitar replicar este modelo — aguardar posicionamento da SPA sobre bônus com rollover elevado.</div>
+      </div>
+      <div class="card-footer">
+        <div class="card-norm"><em>⚖️ Jurídico: Risco sob CDC Art. 39 · Portaria SPA/MF 1.231/2024. NÃO REPLICAR sem análise jurídica.</em></div>
+        <div class="card-link"><a href="https://www.betnacional.com" target="_blank">↗ Ver fonte: betnacional.com ↗</a></div>
+        <div class="card-slack">💬 Discussão interna · <span class="slack-channel">#benchmark</span> — Alerta para #legal-team sobre limites regulatórios de bônus.</div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <div class="card-header-top">
+          <div class="card-badges">
+            <span class="badge baixa">Baixa</span>
+            <span class="badge br">BR</span>
+            <span class="action-badge action-referencia">REFERÊNCIA</span>
+          </div>
+          <div class="card-source"><div class="card-source-name">Bet365 · bet365.com.br</div><div>mar 2026</div></div>
+        </div>
+      </div>
+      <div class="card-body">
+        <div class="card-title">Bet365 atualiza central de ajuda com FAQ dedicado ao jogo responsável e regulação brasileira</div>
+        <div class="card-text">A Bet365 lançou seção expandida com explicações sobre as regras da SPA/MF, como funciona a autoexclusão, limites de depósito e como entrar em contato com serviços de apoio — em português brasileiro.</div>
+      </div>
+      <div class="card-footer">
+        <div class="card-norm"><em>⚖️ Jurídico: Boa prática. Alinhada com exigências de transparência da Portaria 615/2024.</em></div>
+        <div class="card-link"><a href="https://www.bet365.com.br" target="_blank">↗ Ver fonte: bet365.com.br ↗</a></div>
+        <div class="card-slack">💬 Discussão interna · <span class="slack-channel">#benchmark</span> — Sem discussão registrada no canal.</div>
+      </div>
+    </div>
+
+    <!-- Card mediabet.com.br REAL · 24/03/2026 · Fonte única · Prioridade 2 -->
+    <div class="card warned">
+      <div class="card-header">
+        <div class="card-header-top">
+          <div class="card-badges">
+            <span class="badge baixa">Baixa</span>
+            <span class="badge br">BR</span>
+            <span class="badge single-source">⚠️ Fonte única</span>
+            <span class="action-badge action-monitorar">MONITORAR</span>
+          </div>
+          <div class="card-source"><div class="card-source-name">mediabet.com.br</div><div>24 mar 2026</div></div>
+        </div>
+        <div class="source-warning">Confirmado em 1 veículo (Prioridade 2) — cruzar com site oficial da operadora antes de usar internamente.</div>
+      </div>
+      <div class="card-body">
+        <div class="card-title">Mercado de afiliados de iGaming muda de perfil após regulamentação brasileira em 2026</div>
+        <div class="card-text">Entrevista com CEO da AffiliaUp aponta que operadoras passaram a exigir contratos profissionais e KPIs de performance (LTV, retenção) de afiliados — reflexo direto do ambiente regulado. O modelo de tráfego em volume foi substituído por relações orientadas a compliance e valor de longo prazo do usuário.</div>
+        <div class="card-analysis">📊 Análise do agente: Mudança no perfil dos afiliados afeta custos de aquisição. Operadoras com políticas de afiliados em conformidade têm menor risco regulatório e melhor qualidade de base.</div>
+      </div>
+      <div class="card-footer">
+        <div class="card-norm"><em>⚖️ Jurídico: Portaria SPA/MF 1.231/2024 — Canais de Aquisição e Publicidade</em></div>
+        <div class="card-link"><a href="https://mediabet.com.br/afiliados-igaming-brasil-regulamentacao/" target="_blank">↗ Ver matéria completa · mediabet.com.br</a></div>
+        <div class="card-slack">💬 Discussão interna · <span class="slack-channel">#benchmark</span> — Cruzar com estratégia de afiliados atual da Pitaco em #igaming-ops.</div>
+      </div>
+    </div>
+
+    <!-- CARD REAL — mediabet.com.br · 25/03/2026 · Betnacional Copa do Mundo · Fonte única Prioridade 2 -->
+    <div class="card warned">
+      <div class="card-header">
+        <div class="card-header-top">
+          <div class="card-badges">
+            <span class="badge baixa">Baixa</span>
+            <span class="badge br">BR</span>
+            <span class="badge single-source">⚠️ Fonte única</span>
+            <span class="action-badge action-monitorar">MONITORAR</span>
+          </div>
+          <div class="card-source"><div class="card-source-name">mediabet.com.br</div><div>25 mar 2026</div></div>
+        </div>
+        <div class="source-warning">Confirmado em 1 veículo (Prioridade 2) — cruzar com site oficial da Betnacional antes de usar internamente.</div>
+      </div>
+      <div class="card-body">
+        <div class="card-title">Betnacional lança squad de creators e integra transmissões e redes sociais para a Copa do Mundo 2026</div>
+        <div class="card-text">A Betnacional divulgou seu squad oficial de criadores de conteúdo para a Copa do Mundo 2026, integrando transmissões ao vivo e redes sociais como parte da estratégia de marketing do maior evento esportivo do ano. A iniciativa reforça o investimento em conteúdo ao vivo como canal de aquisição e engajamento.</div>
+        <div class="card-analysis">📊 Análise do agente: Estratégia de squad de creators antecipa movimento de mercado para a Copa. Avaliar se a Pitaco tem plano equivalente de conteúdo e creators para o evento — oportunidade de posicionamento diferenciado.</div>
+      </div>
+      <div class="card-footer">
+        <div class="card-norm"><em>⚖️ Jurídico: Marketing via creators deve respeitar Portaria SPA/MF 1.231/2024 — verificar se influenciadores seguem regras de publicidade de apostas.</em></div>
+        <div class="card-link"><a href="https://mediabet.com.br/betnacional-squad-creators-copa-do-mundo/" target="_blank">↗ Ver matéria completa · mediabet.com.br</a></div>
+        <div class="card-slack">💬 Discussão interna · <span class="slack-channel">#benchmark</span> — Cruzar com estratégia de conteúdo da Pitaco para Copa do Mundo em #igaming-ops.</div>
+      </div>
+    </div>
+
+    <!-- CARD REAL — mediabet.com.br · 25/03/2026 · Betbra Reclame Aqui · Fonte única Prioridade 2 -->
+    <div class="card warned">
+      <div class="card-header">
+        <div class="card-header-top">
+          <div class="card-badges">
+            <span class="badge baixa">Baixa</span>
+            <span class="badge br">BR</span>
+            <span class="badge single-source">⚠️ Fonte única</span>
+            <span class="action-badge action-referencia">REFERÊNCIA</span>
+          </div>
+          <div class="card-source"><div class="card-source-name">mediabet.com.br</div><div>25 mar 2026</div></div>
+        </div>
+        <div class="source-warning">Confirmado em 1 veículo (Prioridade 2) — cruzar com ranking oficial do Reclame Aqui antes de usar internamente.</div>
+      </div>
+      <div class="card-body">
+        <div class="card-title">Betbra lidera ranking do Reclame Aqui e é eleita melhor exchange de apostas do Brasil</div>
+        <div class="card-text">A Betbra conquistou o topo do ranking do Reclame Aqui no segmento de exchanges de apostas, diferenciando-se pela qualidade no atendimento e resolução de reclamações. O reconhecimento reforça a reputação da plataforma e pode ser usado como argumento competitivo junto a usuários que valorizam histórico de atendimento.</div>
+        <div class="card-analysis">📊 Análise do agente: Liderança no Reclame Aqui é sinal de qualidade percebida — relevante benchmark de atendimento ao consumidor. Verificar posição da Pitaco no mesmo ranking e avaliar ações para melhoria de NPS.</div>
+      </div>
+      <div class="card-footer">
+        <div class="card-norm"><em>⚖️ Jurídico: Boas práticas de atendimento ao consumidor estão alinhadas com CDC e exigências de transparência da SPA/MF.</em></div>
+        <div class="card-link"><a href="https://mediabet.com.br/betbra-exchange-apostas-reclame-aqui/" target="_blank">↗ Ver matéria completa · mediabet.com.br</a></div>
+        <div class="card-slack">💬 Discussão interna · <span class="slack-channel">#benchmark</span> — Verificar ranking da Pitaco no Reclame Aqui e comparar com Betbra.</div>
+      </div>
+    </div>
+
+    <!-- CARD REAL — mediabet.com.br · 25/03/2026 · Betsul + Bambam · Fonte única Prioridade 2 -->
+    <div class="card warned">
+      <div class="card-header">
+        <div class="card-header-top">
+          <div class="card-badges">
+            <span class="badge baixa">Baixa</span>
+            <span class="badge br">BR</span>
+            <span class="badge single-source">⚠️ Fonte única</span>
+            <span class="action-badge action-monitorar">MONITORAR</span>
+          </div>
+          <div class="card-source"><div class="card-source-name">mediabet.com.br</div><div>25 mar 2026</div></div>
+        </div>
+        <div class="source-warning">Confirmado em 1 veículo (Prioridade 2) — cruzar com site oficial da Betsul antes de usar internamente.</div>
+      </div>
+      <div class="card-body">
+        <div class="card-title">Betsul patrocina Fight Music Show 8 e anuncia Bambam como embaixador da marca</div>
+        <div class="card-text">A Betsul assinou patrocínio ao Fight Music Show 8 e anunciou o influenciador Bambam (ex-BBB) como embaixador oficial da marca. A escolha de um nome de entretenimento popular reforça a estratégia de posicionamento ligado à cultura pop e ao público jovem.</div>
+        <div class="card-analysis">📊 Análise do agente: Uso de celebridades de entretenimento como embaixadores é tendência crescente no setor. Atenção: a SPA/MF pode restringir esse tipo de publicidade direcionada ao público jovem. Verificar conformidade com Portaria 1.231/2024.</div>
+      </div>
+      <div class="card-footer">
+        <div class="card-norm"><em>⚖️ Jurídico: Publicidade com celebridades deve respeitar regras sobre apelo a menores e targets proibidos — Portaria SPA/MF 1.231/2024.</em></div>
+        <div class="card-link"><a href="https://mediabet.com.br/betsul-fight-music-show-8-bambam-embaixador/" target="_blank">↗ Ver matéria completa · mediabet.com.br</a></div>
+        <div class="card-slack">💬 Discussão interna · <span class="slack-channel">#benchmark</span> — Avaliar estratégia de embaixadores da Pitaco à luz das restrições de publicidade da SPA/MF.</div>
+      </div>
+    </div>
+
+    <!-- CARD REAL — mediabet.com.br · 25/03/2026 · Grupo Aposta Ganha · Fonte única Prioridade 2 -->
+    <div class="card warned">
+      <div class="card-header">
+        <div class="card-header-top">
+          <div class="card-badges">
+            <span class="badge baixa">Baixa</span>
+            <span class="badge br">BR</span>
+            <span class="badge single-source">⚠️ Fonte única</span>
+            <span class="action-badge action-monitorar">MONITORAR</span>
+          </div>
+          <div class="card-source"><div class="card-source-name">mediabet.com.br</div><div>25 mar 2026</div></div>
+        </div>
+        <div class="source-warning">Confirmado em 1 veículo (Prioridade 2) — cruzar com site oficial do Grupo Aposta Ganha antes de usar internamente.</div>
+      </div>
+      <div class="card-body">
+        <div class="card-title">Grupo Aposta Ganha lança Receba.bet.br e amplia presença no mercado brasileiro de apostas</div>
+        <div class="card-text">O Grupo Aposta Ganha anunciou o lançamento da nova marca Receba.bet.br, expandindo sua presença no mercado nacional de apostas esportivas. O movimento sinaliza estratégia de diversificação de portfólio dentro do mesmo grupo, ampliando a competição no segmento regulado.</div>
+        <div class="card-analysis">📊 Análise do agente: Lançamento de nova marca por grupo já estabelecido indica consolidação do mercado — grupos com múltiplas licenças ganham escala e reduzem custo marginal de aquisição. Tendência que pode pressionar operadoras menores.</div>
+      </div>
+      <div class="card-footer">
+        <div class="card-norm"><em>⚖️ Jurídico: Verificar se Receba.bet.br possui licença SPA/MF própria ou opera sob a licença do grupo. Portaria 1.231/2024 exige registro individual.</em></div>
+        <div class="card-link"><a href="https://mediabet.com.br/grupo-aposta-ganha-lanca-receba-bet-br/" target="_blank">↗ Ver matéria completa · mediabet.com.br</a></div>
+        <div class="card-slack">💬 Discussão interna · <span class="slack-channel">#benchmark</span> — Monitorar estratégia de múltiplas marcas no setor e avaliar impacto competitivo para a Pitaco.</div>
+      </div>
+    </div>
+
+    <!-- CARD REAL — bnldata.com.br · 27/03/2026 · Superscore · Prioridade 2 -->
+    <div class="card">
+      <div class="card-header">
+        <div class="card-header-top">
+          <div class="card-badges">
+            <span class="badge baixa">Baixa</span>
+            <span class="badge br">BR</span>
+            <span class="action-badge action-monitorar">MONITORAR</span>
+          </div>
+          <div class="card-source"><div class="card-source-name">BNL Data · bnldata.com.br</div><div>27 mar 2026</div></div>
+        </div>
+      </div>
+      <div class="card-body">
+        <div class="card-title">Superscore consolida presença no Brasil e lança Insights semanais para imprensa — novo player de dados esportivos</div>
+        <div class="card-text">A Superscore, plataforma de dados e estatísticas esportivas, anunciou consolidação de sua operação brasileira e lançamento de relatórios de insights semanais para veículos de imprensa. O movimento sinaliza um ecossistema de dados esportivos em expansão no Brasil — relevante para operadoras de apostas que dependem de feeds de dados para mercados in-play e de estatísticas.</div>
+        <div class="card-analysis">📊 Análise do agente: Expansão de fornecedores de dados esportivos no Brasil cria oportunidade de diversificação de fonte de dados (reduzindo dependência de um único fornecedor). Avaliar Superscore como alternativa ou complemento ao Sportradar.</div>
+      </div>
+      <div class="card-footer">
+        <div class="card-norm"><em>⚖️ Jurídico: Fornecedores de dados esportivos devem ser homologados conforme Portaria SPA/MF 1.549/2024 — verificar status regulatório da Superscore antes de contratar.</em></div>
+        <div class="card-link"><a href="https://bnldata.com.br/superscore-se-consolida-no-brasil-e-lanca-insights-semanais-para-imprensa/" target="_blank">↗ Ver matéria completa · bnldata.com.br</a></div>
+        <div class="card-slack">💬 <span class="slack-channel">#benchmark</span> → <span class="slack-channel">#ops-trading</span> — Verificar se Superscore é alternativa viável de dados esportivos e qual o status regulatório deles junto à SPA/MF.</div>
+      </div>
+    </div>
+
+    <!-- CARD REAL — g-mnews.com · 24/03/2026 · Casa de Apostas pioneirismo · Prioridade 2 -->
+    <div class="card">
+      <div class="card-header">
+        <div class="card-header-top">
+          <div class="card-badges">
+            <span class="badge baixa">Baixa</span>
+            <span class="badge br">BR</span>
+            <span class="action-badge action-referencia">REFERÊNCIA</span>
+          </div>
+          <div class="card-source"><div class="card-source-name">G&amp;M News · g-mnews.com</div><div>24 mar 2026</div></div>
+        </div>
+      </div>
+      <div class="card-body">
+        <div class="card-title">Casa de Apostas: pioneirismo, reputação sólida e foco em resultados sustentáveis no mercado regulado</div>
+        <div class="card-text">Entrevista com Anderson Nunes (Casa de Apostas) na G&M News destaca como a operadora construiu reputação de pioneirismo no mercado brasileiro antes da regulação formal, e como está se adaptando ao ambiente regulado com foco em compliance e resultados de longo prazo. O executivo comenta sobre diferenciação por produto, atendimento e identidade de marca.</div>
+        <div class="card-analysis">📊 Análise do agente: Casa de Apostas é uma das primeiras a completar o processo de licenciamento SPA/MF — benchmarking relevante para estratégia de posicionamento da Pitaco como operadora sólida no mercado regulado.</div>
+      </div>
+      <div class="card-footer">
+        <div class="card-norm"><em>⚖️ Jurídico: Referência de boas práticas em mercado regulado. Sem riscos de replicar posicionamento de compliance e reputação.</em></div>
+        <div class="card-link"><a href="https://g-mnews.com/pt/anderson-nunes-casa-de-apostas-pioneirismo-excelente-reputacao-e-grandes-resultados/" target="_blank">↗ Ver matéria completa · g-mnews.com</a></div>
+        <div class="card-slack">💬 <span class="slack-channel">#benchmark</span> — Referência de posicionamento de marca em mercado regulado. Comparar estratégia com a Pitaco em contexto de rebranding.</div>
+      </div>
+    </div>
+
+  </div><!-- /comp-produto -->
+
+  <div id="comp-juridico" style="display:none" class="cards-grid">
+    <div class="no-data-card">
+      <div class="nd-icon">⚖️</div>
+      <div class="nd-title">Jurídico & Enforcement</div>
+      <div>Peça ao agente para buscar processos regulatórios e riscos jurídicos dos concorrentes.</div>
+      <div class="nd-queries">
+        <div class="nd-queries-label">Queries prontas para execução</div>
+        <div class="nd-query">"Betano multa SPA regulação 2026"</div>
+        <div class="nd-query">"Bet365 compliance Brasil 2026"</div>
+        <div class="nd-query">"operadora apostas sanção processo regulatório março 2026"</div>
+      </div>
+    </div>
+  </div>
+</div><!-- /tab-comp -->
+
+
+<!-- ═══════════════════════════════════════ ABA 7: IDEIA DA SEMANA ════════════ -->
+<div class="tab-panel" id="tab-idea">
+  <div class="tab-heading-row">
+    <div class="tab-heading-main">
+      <div class="tab-heading">💡 Ideia da Semana</div>
+    </div>
+    <div class="tab-heading-desc">Semana de 24–28 mar 2026</div>
+  </div>
+
+  <div class="idea-card">
+    <div style="font-size:12px;color:#8a84c8;font-weight:600;margin-bottom:6px;">🎯 Ideia desta semana</div>
+    <div class="idea-title">Painel "Minha Jornada Responsável" — Central de JR com suporte ZenKlub integrado</div>
+    <div class="idea-desc">
+      Inspirada no lançamento do "Aposta Consciente" da Betano e no reforço da SPA/MF para Q2/2026, a Pitaco pode diferenciar sua abordagem de jogo responsável com um painel personalizado chamado <strong>"Minha Jornada Responsável"</strong>. O painel reuniria: (1) histórico visual de apostas com indicadores de comportamento; (2) autolimites configuráveis por período, valor e tipo de aposta; (3) acesso direto à autoexclusão nacional (gov.br); e (4) integração com o ZenKlub — já parceiro da Pitaco — oferecendo acesso a conteúdo de saúde mental diretamente na plataforma, como diferencial exclusivo no mercado.<br><br>
+      A camada de IA preditiva (baseada em padrões comportamentais do usuário) acionaria alertas proativos antes de padrões de risco, antecipando exigência regulatória esperada para o segundo semestre de 2026.
+    </div>
+    <div class="idea-meta">
+      <span class="idea-chip prazo">📅 Prazo sugerido: Q2/2026 (mai–jun)</span>
+      <span class="idea-chip risco">⚖️ Risco regulatório: BAIXO</span>
+      <span class="idea-chip norma">📋 Portaria 615/2024 · ECA Digital</span>
+      <span class="action-badge action-adaptar" style="font-size:10px;padding:4px 10px;">ADAPTAR (base Betano + diferencial ZenKlub)</span>
+    </div>
+  </div>
+
+  <div class="section-label">Comparativo de Jogo Responsável — Pitaco vs. Concorrentes</div>
+  <div class="table-wrapper">
+    <div class="table-title">🛡️ Matriz de Features de Jogo Responsável</div>
+    <div class="table-scroll">
+    <table class="comp-table">
+      <thead>
+        <tr>
+          <th>Operadora</th>
+          <th>Autoexclusão</th>
+          <th>Autolimites</th>
+          <th>Histórico visual</th>
+          <th>Suporte mental</th>
+          <th>IA preditiva</th>
+          <th>FAQ JR</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr style="background:rgba(70,36,208,0.06)">
+          <td><strong style="color:#a890ff">Pitaco</strong></td>
+          <td>✅</td><td>✅</td><td>⚠️ Parcial</td><td>✅ ZenKlub</td><td>❌</td><td>⚠️ Básico</td>
+        </tr>
+        <tr><td>Betano</td><td>✅</td><td>✅</td><td>✅</td><td>❌</td><td>❌</td><td>✅</td></tr>
+        <tr><td>Bet365</td><td>✅</td><td>✅</td><td>✅</td><td>❌</td><td>❌</td><td>✅ Expandido</td></tr>
+        <tr><td>Superbet</td><td>✅</td><td>✅</td><td>❌</td><td>❌</td><td>❌</td><td>⚠️ Básico</td></tr>
+        <tr><td>Sportingbet</td><td>✅</td><td>⚠️ Parcial</td><td>❌</td><td>❌</td><td>❌</td><td>✅</td></tr>
+        <tr><td>Betnacional</td><td>✅</td><td>⚠️ Parcial</td><td>❌</td><td>❌</td><td>❌</td><td>⚠️ Básico</td></tr>
+        <tr><td>Novibet</td><td>✅</td><td>✅</td><td>❌</td><td>❌</td><td>❌</td><td>✅</td></tr>
+        <tr><td>BetMGM</td><td>N/D</td><td>N/D</td><td>N/D</td><td>N/D</td><td>N/D</td><td>N/D</td></tr>
+      </tbody>
+    </table>
+    </div>
+  </div>
+
+  <div class="section-label">Scorecard de Jogo Responsável (0–10)</div>
+  <div class="scorecard-grid">
+    <div class="score-item" style="border-color:rgba(70,36,208,0.35)">
+      <div class="score-name" style="color:#a890ff">Pitaco</div>
+      <div class="score-val mid">6.5</div>
+      <div class="score-bar"><div class="score-fill" style="width:65%;background:#5c35e8"></div></div>
+    </div>
+    <div class="score-item">
+      <div class="score-name">Betano</div>
+      <div class="score-val high">7.5</div>
+      <div class="score-bar"><div class="score-fill" style="width:75%;background:var(--baixa)"></div></div>
+    </div>
+    <div class="score-item">
+      <div class="score-name">Bet365</div>
+      <div class="score-val high">8.0</div>
+      <div class="score-bar"><div class="score-fill" style="width:80%;background:var(--baixa)"></div></div>
+    </div>
+    <div class="score-item">
+      <div class="score-name">Superbet</div>
+      <div class="score-val mid">5.5</div>
+      <div class="score-bar"><div class="score-fill" style="width:55%;background:var(--media)"></div></div>
+    </div>
+    <div class="score-item">
+      <div class="score-name">Sportingbet</div>
+      <div class="score-val mid">5.0</div>
+      <div class="score-bar"><div class="score-fill" style="width:50%;background:var(--media)"></div></div>
+    </div>
+    <div class="score-item">
+      <div class="score-name">Betnacional</div>
+      <div class="score-val low">4.0</div>
+      <div class="score-bar"><div class="score-fill" style="width:40%;background:var(--alta)"></div></div>
+    </div>
+    <div class="score-item">
+      <div class="score-name">Novibet</div>
+      <div class="score-val mid">5.5</div>
+      <div class="score-bar"><div class="score-fill" style="width:55%;background:var(--media)"></div></div>
+    </div>
+    <div class="score-item">
+      <div class="score-name">BetMGM</div>
+      <div class="score-val nd">N/D</div>
+      <div class="score-bar"><div class="score-fill" style="width:0%"></div></div>
+    </div>
+  </div>
+  <div style="margin-top:10px;padding:10px 14px;background:var(--surface2);border:1px solid var(--border);border-radius:8px;font-size:11px;color:var(--text-muted);">
+    ℹ️ Scores baseados em features identificadas via busca pública. BetMGM: dados insuficientes — exibido como N/D. Scores refletem funcionalidades observáveis, não avaliação regulatória formal.
+  </div>
+</div><!-- /tab-idea -->
+
+</div><!-- /content -->
+
+<script>
+  document.getElementById('current-date').textContent = new Date().toLocaleDateString('pt-BR', { day:'2-digit', month:'short', year:'numeric' });
+
+  const toggleMap = {
+    aml:     { semanal: 'aml-semanal',       recentes: 'aml-recentes' },
+    sports:  { semanal: 'sports-semanal',     recentes: 'sports-recentes' },
+    privacy: { semanal: 'privacy-semanal',    recentes: 'privacy-recentes' },
+    rg:      { semanal: 'rg-semanal',         recentes: 'rg-recentes' },
+    intl:    { tendencias: 'intl-tendencias', enforcement: 'intl-enforcement' },
+    comp:    { produto: 'comp-produto',       juridico: 'comp-juridico' },
+  };
+
+  const toggleLabels = {
+    aml:     [{ mode:'semanal', label:'Semanal', cls:'semanal' }, { mode:'recentes', label:'Recentes', cls:'recentes' }],
+    sports:  [{ mode:'semanal', label:'Semanal', cls:'semanal' }, { mode:'recentes', label:'Recentes', cls:'recentes' }],
+    privacy: [{ mode:'semanal', label:'Semanal', cls:'semanal' }, { mode:'recentes', label:'Recentes', cls:'recentes' }],
+    rg:      [{ mode:'semanal', label:'Semanal', cls:'semanal' }, { mode:'recentes', label:'Recentes', cls:'recentes' }],
+    intl:    [{ mode:'tendencias', label:'Tendências', cls:'semanal' }, { mode:'enforcement', label:'Enforcement', cls:'recentes' }],
+    comp:    [{ mode:'produto', label:'Produto', cls:'semanal' }, { mode:'juridico', label:'Jurídico', cls:'recentes' }],
+  };
+
+  function updateGlobalToggle(tabId) {
+    const area = document.getElementById('toggle-' + tabId);
+    const labels = toggleLabels[tabId];
+    if (!area || !labels) return;
+    area.style.display = 'flex';
+    const map = toggleMap[tabId];
+    let activeMode = labels[0].mode;
+    labels.forEach(l => {
+      const el = document.getElementById(map[l.mode]);
+      if (el && el.style.display !== 'none') activeMode = l.mode;
+    });
+    area.innerHTML = labels.map(l =>
+      `<button class="toggle-btn ${l.cls}${l.mode === activeMode ? ' active' : ''}" onclick="switchToggle('${tabId}','${l.mode}',this)">${l.label}</button>`
+    ).join('');
+  }
+
+  function switchTab(tabId, btn) {
+    document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.getElementById('tab-' + tabId).classList.add('active');
+    btn.classList.add('active');
+    updateGlobalToggle(tabId);
+  }
+
+  function switchToggle(tabId, mode, btn) {
+    const parent = btn.closest('.toggle-group');
+    parent.querySelectorAll('.toggle-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    const map = toggleMap[tabId];
+    if (!map) return;
+    Object.values(map).forEach(id => {
+      const el = document.getElementById(id);
+      if (el) el.style.display = 'none';
+    });
+    const target = document.getElementById(map[mode]);
+    if (target) target.style.display = 'grid';
+  }
+
+  // Init toggle for default tab (aml)
+  updateGlobalToggle('aml');
+</script>
+</body>
+</html>
