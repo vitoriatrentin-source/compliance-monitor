@@ -168,8 +168,12 @@ body {
   background: var(--bg-surface); border-bottom: 1px solid var(--border);
   padding: 0 20px; position: sticky; top: 64px; z-index: 90;
 }
-.tabs-inner {
+.tabs-section-inner {
   max-width: 1100px; margin: 0 auto;
+  display: flex; align-items: center; gap: 12px;
+}
+.tabs-inner {
+  flex: 1; min-width: 0;
   display: flex; gap: 2px; overflow-x: auto;
   -webkit-overflow-scrolling: touch; scrollbar-width: none; padding: 10px 0;
 }
@@ -210,12 +214,13 @@ body {
   display: flex; align-items: center; justify-content: center; font-size: 14px;
 }
 .section-name { font-size: 18px; font-weight: 700; letter-spacing: -0.4px; color: var(--text-primary); }
-.section-tags { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 6px; }
-.section-tag {
-  font-size: 10px; color: var(--text-muted);
+.section-tags { display: none; }
+.global-view-toggle {
+  display: flex; gap: 2px; flex-shrink: 0;
   background: var(--bg-elevated); border: 1px solid var(--border);
-  border-radius: var(--radius-pill); padding: 2px 8px;
+  border-radius: var(--radius-md); padding: 3px;
 }
+.global-view-toggle.hidden { display: none; }
 .view-toggle {
   display: flex; gap: 2px;
   background: var(--bg-elevated); border: 1px solid var(--border);
@@ -551,17 +556,23 @@ body {
 
 <!-- TABS NAV -->
 <nav class="tabs-section">
-  <div class="tabs-inner">
-    <button class="tab-btn active" data-tab="aml">🏦 AML / CFT <span class="tab-count">11</span></button>
-    <button class="tab-btn" data-tab="sports">⚽ Sports Integrity <span class="tab-count">3</span></button>
-    <button class="tab-btn" data-tab="privacy">🔐 Data Privacy <span class="tab-count">5</span></button>
-    <button class="tab-btn" data-tab="rg">🛡️ Responsible Gaming <span class="tab-count">5</span></button>
-    <button class="tab-btn" data-tab="intl">🌍 Cenário Internacional <span class="tab-count">11</span></button>
-    <button class="tab-btn" data-tab="competitors">🎯 Concorrentes <span class="tab-count">14</span></button>
-    <button class="tab-btn" data-tab="mexico">🇲🇽 BETS – México <span class="tab-count">5</span></button>
-    <button class="tab-btn" data-tab="pm">📊 Prediction Markets <span class="tab-count">7</span></button>
-    <button class="tab-btn" data-tab="prazos">⏱ Prazos</button>
-    <button class="tab-btn" data-tab="ideia">💡 Ideia da Semana</button>
+  <div class="tabs-section-inner">
+    <div class="tabs-inner">
+      <button class="tab-btn active" data-tab="aml">🏦 AML / CFT <span class="tab-count">11</span></button>
+      <button class="tab-btn" data-tab="sports">⚽ Sports Integrity <span class="tab-count">3</span></button>
+      <button class="tab-btn" data-tab="privacy">🔐 Data Privacy <span class="tab-count">5</span></button>
+      <button class="tab-btn" data-tab="rg">🛡️ Responsible Gaming <span class="tab-count">5</span></button>
+      <button class="tab-btn" data-tab="intl">🌍 Cenário Internacional <span class="tab-count">11</span></button>
+      <button class="tab-btn" data-tab="competitors">🎯 Concorrentes <span class="tab-count">14</span></button>
+      <button class="tab-btn" data-tab="mexico">🇲🇽 BETS – México <span class="tab-count">5</span></button>
+      <button class="tab-btn" data-tab="pm">📊 Prediction Markets <span class="tab-count">7</span></button>
+      <button class="tab-btn" data-tab="prazos">⏱ Prazos</button>
+      <button class="tab-btn" data-tab="ideia">💡 Ideia da Semana</button>
+    </div>
+    <div class="global-view-toggle" id="global-view-toggle">
+      <button class="view-btn active" id="gvt-semanal">Semanal</button>
+      <button class="view-btn" id="gvt-recentes">Recentes</button>
+    </div>
   </div>
 </nav>
 
@@ -575,10 +586,6 @@ body {
       <div class="section-tags">
         <span class="section-tag">Lavagem de dinheiro</span><span class="section-tag">COAF</span><span class="section-tag">SIGAP</span><span class="section-tag">FATF/GAFI</span><span class="section-tag">ativos virtuais</span>
       </div>
-    </div>
-    <div class="view-toggle" id="aml-view-toggle">
-      <button class="view-btn active" onclick="switchView('aml','semanal',this)">Semanal</button>
-      <button class="view-btn" onclick="switchView('aml','recentes',this)">Recentes</button>
     </div>
   </div>
 
@@ -772,10 +779,6 @@ body {
       <div class="section-label"><div class="section-icon">⚽</div><h2 class="section-name">Sports Integrity</h2></div>
       <div class="section-tags"><span class="section-tag">Manipulação de resultados</span><span class="section-tag">IBIA</span><span class="section-tag">Sportradar</span><span class="section-tag">Ministério do Esporte</span></div>
     </div>
-    <div class="view-toggle">
-      <button class="view-btn active" onclick="switchView('sports','semanal',this)">Semanal</button>
-      <button class="view-btn" onclick="switchView('sports','recentes',this)">Recentes</button>
-    </div>
   </div>
 
   <div id="sports-semanal" class="news-list">
@@ -849,10 +852,6 @@ body {
     <div class="section-title-block">
       <div class="section-label"><div class="section-icon">🔐</div><h2 class="section-name">Data Privacy</h2></div>
       <div class="section-tags"><span class="section-tag">LGPD</span><span class="section-tag">ANPD</span><span class="section-tag">ECA Digital (Lei 15.211/2025)</span><span class="section-tag">GDPR</span></div>
-    </div>
-    <div class="view-toggle">
-      <button class="view-btn active" onclick="switchView('privacy','semanal',this)">Semanal</button>
-      <button class="view-btn" onclick="switchView('privacy','recentes',this)">Recentes</button>
     </div>
   </div>
 
@@ -954,10 +953,6 @@ body {
     <div class="section-title-block">
       <div class="section-label"><div class="section-icon">🛡️</div><h2 class="section-name">Responsible Gaming</h2></div>
       <div class="section-tags"><span class="section-tag">Autoexclusão</span><span class="section-tag">Autolimites</span><span class="section-tag">Saúde mental</span><span class="section-tag">Benchmark JR</span></div>
-    </div>
-    <div class="view-toggle">
-      <button class="view-btn active" onclick="switchView('rg','semanal',this)">Semanal</button>
-      <button class="view-btn" onclick="switchView('rg','recentes',this)">Recentes</button>
     </div>
   </div>
 
@@ -1065,10 +1060,6 @@ body {
     <div class="section-title-block">
       <div class="section-label"><div class="section-icon">🌍</div><h2 class="section-name">Cenário Internacional</h2></div>
       <div class="section-tags"><span class="section-tag">UK</span><span class="section-tag">Austrália</span><span class="section-tag">Portugal</span><span class="section-tag">Espanha</span><span class="section-tag">UE</span></div>
-    </div>
-    <div class="view-toggle">
-      <button class="view-btn active" onclick="switchView('intl','tendencias',this)">Tendências</button>
-      <button class="view-btn" onclick="switchView('intl','enforcement',this)">Enforcement</button>
     </div>
   </div>
 
@@ -1256,10 +1247,6 @@ body {
     <div class="section-title-block">
       <div class="section-label"><div class="section-icon">🎯</div><h2 class="section-name">Concorrentes</h2></div>
       <div class="section-tags"><span class="section-tag">Betano</span><span class="section-tag">Bet365</span><span class="section-tag">Superbet</span><span class="section-tag">Sportingbet</span><span class="section-tag">Betnacional</span><span class="section-tag">Novibet</span></div>
-    </div>
-    <div class="view-toggle">
-      <button class="view-btn active" onclick="switchView('comp','produto',this)">Produto</button>
-      <button class="view-btn" onclick="switchView('comp','juridico',this)">Jurídico</button>
     </div>
   </div>
 
@@ -1901,9 +1888,47 @@ themeBtn.addEventListener('click', () => {
   setTheme(html.getAttribute('data-theme') === 'dark' ? 'light' : 'dark');
 });
 
-// TABS
+// TABS + GLOBAL VIEW TOGGLE
 const tabBtns = document.querySelectorAll('.tab-btn[data-tab]');
 const tabPanes = document.querySelectorAll('.tab-pane');
+const globalToggle = document.getElementById('global-view-toggle');
+const gvtSemanal = document.getElementById('gvt-semanal');
+const gvtRecentes = document.getElementById('gvt-recentes');
+
+// tabs que suportam global Semanal/Recentes
+const viewMap = {
+  aml:         { semanal: 'aml-semanal',     recentes: 'aml-recentes' },
+  sports:      { semanal: 'sports-semanal',  recentes: 'sports-recentes' },
+  privacy:     { semanal: 'privacy-semanal', recentes: 'privacy-recentes' },
+  rg:          { semanal: 'rg-semanal',      recentes: 'rg-recentes' },
+  intl:        { semanal: 'intl-tendencias', recentes: 'intl-enforcement' },
+  competitors: { semanal: 'comp-produto',    recentes: 'comp-juridico' },
+  mexico:      { semanal: 'mexico-noticias', recentes: 'mexico-produto' },
+  pm:          { semanal: 'pm-juridico',     recentes: 'pm-concorrentes' },
+};
+
+let currentView = 'semanal';
+let currentTab = 'aml';
+
+function applyView(tabId, view) {
+  const map = viewMap[tabId];
+  if (!map) return;
+  const semEl = document.getElementById(map.semanal);
+  const recEl = document.getElementById(map.recentes);
+  if (semEl) semEl.style.display = view === 'semanal' ? 'flex' : 'none';
+  if (recEl) recEl.style.display = view === 'recentes' ? 'flex' : 'none';
+}
+
+function updateGlobalToggle(tabId) {
+  if (viewMap[tabId]) {
+    globalToggle.classList.remove('hidden');
+  } else {
+    globalToggle.classList.add('hidden');
+  }
+  gvtSemanal.classList.toggle('active', currentView === 'semanal');
+  gvtRecentes.classList.toggle('active', currentView === 'recentes');
+}
+
 tabBtns.forEach(btn => {
   btn.addEventListener('click', () => {
     const target = btn.dataset.tab;
@@ -1912,31 +1937,32 @@ tabBtns.forEach(btn => {
     btn.classList.add('active');
     const pane = document.getElementById('tab-' + target);
     if (pane) pane.classList.add('active');
+    currentTab = target;
+    applyView(target, currentView);
+    updateGlobalToggle(target);
   });
 });
 
-// GENERIC VIEW TOGGLE (Semanal/Recentes inside tabs)
-function switchView(tabId, mode, btn) {
-  const views = {
-    aml:     { semanal: 'aml-semanal', recentes: 'aml-recentes' },
-    sports:  { semanal: 'sports-semanal', recentes: 'sports-recentes' },
-    privacy: { semanal: 'privacy-semanal', recentes: 'privacy-recentes' },
-    rg:      { semanal: 'rg-semanal', recentes: 'rg-recentes' },
-    intl:    { tendencias: 'intl-tendencias', enforcement: 'intl-enforcement' },
-    comp:    { produto: 'comp-produto', juridico: 'comp-juridico' },
-  };
-  const map = views[tabId];
-  if (!map) return;
-  const toggle = btn.closest('.view-toggle');
-  toggle.querySelectorAll('.view-btn').forEach(b => b.classList.remove('active'));
-  btn.classList.add('active');
-  Object.values(map).forEach(id => {
-    const el = document.getElementById(id);
-    if (el) el.style.display = 'none';
-  });
-  const target = document.getElementById(map[mode]);
-  if (target) target.style.display = 'flex';
-}
+gvtSemanal.addEventListener('click', () => {
+  currentView = 'semanal';
+  applyView(currentTab, 'semanal');
+  gvtSemanal.classList.add('active');
+  gvtRecentes.classList.remove('active');
+});
+
+gvtRecentes.addEventListener('click', () => {
+  currentView = 'recentes';
+  applyView(currentTab, 'recentes');
+  gvtRecentes.classList.add('active');
+  gvtSemanal.classList.remove('active');
+});
+
+// init
+applyView(currentTab, currentView);
+updateGlobalToggle(currentTab);
+
+// legacy switchView (compatibilidade)
+function switchView() {}
 
 // MEXICO SUB-TABS
 function switchMexicoSub(sub, btn) {

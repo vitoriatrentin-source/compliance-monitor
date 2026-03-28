@@ -181,6 +181,18 @@ Atualize o dashboard. Regras obrigatórias:
    - Primeiro: P1 mais recentes → P2 mais recentes → P3 mais recentes
    - Por último: cards com badge "⚠ Fonte única" (single source)
    NÃO use a classe "priority-alta" no article — use apenas as classes: "news-card".
+
+   DIVISÃO SEMANAL vs RECENTES (obrigatório em TODOS os tabs com news-list):
+   - id="TABID-semanal": notícias dos últimos 7 dias (semana corrente)
+   - id="TABID-recentes": notícias com mais de 7 dias (histórico)
+   - Isso se aplica a AML (aml-semanal/aml-recentes), Sports (sports-semanal/sports-recentes),
+     Privacy (privacy-semanal/privacy-recentes), RG (rg-semanal/rg-recentes),
+     Internacional (intl-tendencias para semanal, intl-enforcement para recentes),
+     Concorrentes (comp-produto para semanal, comp-juridico para recentes),
+     México (mexico-noticias para semanal, mexico-produto para recentes),
+     PM (pm-juridico para semanal, pm-concorrentes para recentes).
+   - Ao adicionar um card novo: coloque em -semanal se a notícia for dos últimos 7 dias.
+   - Não mova cards existentes entre semanal e recentes.
    Fontes P2: BNL Data, iGaming Brasil, G&M News, Mediabet.
    Fontes internacionais PM: Kalshi Blog, Polymarket Blog, Reuters, Bloomberg, CFTC.
    Cards de Concorrentes e Prediction Markets DEVEM ter fonte externa — Slack apenas como insight em card-slack.
