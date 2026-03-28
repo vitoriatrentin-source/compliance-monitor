@@ -177,26 +177,47 @@ Atualize o dashboard. Regras obrigatórias:
 1. NOVOS CARDS — adicione apenas cards com informação NOVA (não duplicar os existentes).
    Aba correta: AML, LGPD, RG, Sports Integrity, Cenário Internacional, Concorrentes, BETS-México ou Prediction Markets.
    Fontes P1 (prioridade máxima): gov.br/coaf, gov.br/anpd, in.gov.br (DOU — apostas/bets), SPA/MF.
+   ORDENAÇÃO dentro de cada aba (respeitar sempre):
+   - Primeiro: P1 mais recentes → P2 mais recentes → P3 mais recentes
+   - Por último: cards com badge "⚠ Fonte única" (single source)
+   NÃO use a classe "priority-alta" no article — use apenas as classes: "news-card".
    Fontes P2: BNL Data, iGaming Brasil, G&M News, Mediabet.
    Fontes internacionais PM: Kalshi Blog, Polymarket Blog, Reuters, Bloomberg, CFTC.
    Cards de Concorrentes e Prediction Markets DEVEM ter fonte externa — Slack apenas como insight em card-slack.
    Aba Prediction Markets tem duas sub-abas: "Notícias & Jurídico" (id=pm-juridico) e "Concorrentes" (id=pm-concorrentes).
    Para a aba Prediction Markets, use o #i-prediction-markets como fonte de insights internos (card-slack).
    Use o #regulatory-updates para insights jurídicos e regulatórios dos reports mensais do time de legal.
-   Estrutura de cada card:
-   <div class="card">
-     <div class="card-header">
-       <span class="card-title">TÍTULO</span>
-       <span class="tag tag-CATEGORIA">FONTE</span>
+   Estrutura de cada card (use EXATAMENTE estas classes — não use as antigas):
+   <article class="news-card">
+     <div class="news-card-header">
+       <div class="news-badges">
+         <span class="badge badge-PRIORIDADE">Alta|Média|Baixa</span>
+         <span class="badge badge-br">BR</span>  <!-- ou badge-intl para internacional -->
+         <!-- se fonte única: <span class="badge badge-warning">⚠ Fonte única</span> -->
+       </div>
+       <div class="news-meta">
+         <span class="news-source">NOME DA FONTE</span>
+         <span class="news-date">DD mmm YYYY</span>
+       </div>
      </div>
-     <p>Resumo em 2 linhas.</p>
-     <div class="card-norm"><em>⚖️ Jurídico: análise normativa relevante</em></div>
-     <div class="card-link"><a href="URL_REAL" target="_blank">↗ Ver matéria completa · FONTE</a></div>
-     <div class="card-slack">💬 #canal-slack — insight ou ação sugerida para a equipe</div>
-   </div>
+     <!-- se fonte única, adicionar aviso: -->
+     <!-- <div class="source-warning"><span class="source-warning-icon">⚠️</span><span>Confirmado em 1 veículo — verificar em X antes de usar.</span></div> -->
+     <h3 class="news-title">TÍTULO DO CARD</h3>
+     <p class="news-body">Resumo em 2-3 linhas.</p>
+     <div class="agent-box">
+       <div class="agent-header"><span class="agent-icon">📊</span><span class="agent-label">Análise do agente</span></div>
+       <p class="agent-text">Análise de impacto para a Pitaco.</p>
+     </div>
+     <div class="legal-ref"><span class="legal-icon">⚖️</span><span class="legal-text">Norma · Portaria · Lei relevante</span></div>
+     <div class="news-card-footer">
+       <a href="URL_REAL" class="footer-link" target="_blank"><span class="footer-link-icon">↗</span> Ver matéria completa · FONTE</a>
+       <span class="slack-thread">💬 <span class="slack-channel">#canal-slack</span> insight ou ação para a equipe</span>
+     </div>
+   </article>
 
-2. DEADLINE BAR — prazos confirmados como concluídos no Slack → adicione chip-status="done"
-   Novos prazos mencionados no Slack → adicione nos chips corretos (urgente/atenção).
+2. TICKER BAR (id="tickerTrack") — prazos confirmados como concluídos no Slack → mude a classe do ticker-dot para "green" e o ticker-deadline para "✓ concluído".
+   Novos prazos mencionados no Slack → adicione novo ticker-item com ticker-dot "red" (vencido), "orange" (urgente) ou "green" (ok).
+   IMPORTANTE: mantenha os itens duplicados para o loop infinito funcionar (os itens aparecem duas vezes no HTML).
 
 3. CONTADORES DAS ABAS — atualize (ex: "AML · 7").
 
