@@ -29,10 +29,26 @@ NEWS_SOURCES = [
 ]
 
 SLACK_CHANNELS = {
-    "legal-team":           "C02RHL9GMHC",
-    "benchmark":            "C08H223FJ4A",
-    "i-prediction-markets": "C09HD5YDM38",  # canal dedicado ao produto de PM
-    "regulatory-updates":   "C03J0RWK72M",  # reports mensais do time de legal
+    # ── Legal & Compliance ──────────────────────────────────────────
+    "legal-team":                    "C02RHL9GMHC",
+    "legal-finance":                 "C061CELPX5L",
+    "legal-cx":                      "C05HEMXEJRL",
+    "legal-monitoramento-entries":   "C0A2LFG4X1S",
+    "mkt-legal":                     "C08AM6S7R47",
+    "p-legal-limites-boqueio-sigap": "C09U4MHR5TK",  # limites, bloqueios, SIGAP
+    "solicitacoes-kpmg-legal":       "C09TVKGD02X",  # auditoria KPMG
+    "regulatory-updates":            "C03J0RWK72M",
+    "compliance":                    "C03N4C6LBN3",
+    "i-compliance":                  "C097EDPJYGZ",
+    "compliance-alerts":             "C066KQD4P0E",
+    # ── Integridade & Operações ─────────────────────────────────────
+    "integrity":                     "C08M57LG8HL",
+    "ops-trading":                   "C0AM19UCH5H",
+    "ops-sportsbook":                "C0AM18Z5AJF",
+    "duvidas-igaming":               "C09K9T9BTD5",
+    # ── Benchmark & Produto ─────────────────────────────────────────
+    "benchmark":                     "C08H223FJ4A",
+    "i-prediction-markets":          "C09HD5YDM38",
 }
 
 # ── Helpers ───────────────────────────────────────────────────────────────────
@@ -100,49 +116,53 @@ def fmt_search(matches: list) -> str:
 # ── Core ──────────────────────────────────────────────────────────────────────
 
 def collect_slack() -> str:
-    print("  📱 Slack: lendo #legal-team...")
-    legal = slack_channel(SLACK_CHANNELS["legal-team"])
+    ch = SLACK_CHANNELS
+    parts = []
 
-    print("  📱 Slack: lendo #benchmark...")
-    bench = slack_channel(SLACK_CHANNELS["benchmark"])
+    # ── Canais de leitura direta ───────────────────────────────────
+    reads = [
+        ("legal-team",                    40),
+        ("compliance",                    40),
+        ("i-compliance",                  40),
+        ("compliance-alerts",             40),
+        ("regulatory-updates",            20),
+        ("legal-finance",                 30),
+        ("legal-cx",                      20),
+        ("legal-monitoramento-entries",   20),
+        ("mkt-legal",                     20),
+        ("p-legal-limites-boqueio-sigap", 20),
+        ("solicitacoes-kpmg-legal",       20),
+        ("integrity",                     30),
+        ("ops-trading",                   20),
+        ("ops-sportsbook",                20),
+        ("duvidas-igaming",               20),
+        ("benchmark",                     30),
+        ("i-prediction-markets",          30),
+    ]
+    for name, limit in reads:
+        print(f"  📱 Slack: lendo #{name}...")
+        msgs = slack_channel(ch[name], limit=limit)
+        parts.append(f"=== #{name} ===\n{fmt_messages(msgs)}")
 
-    print("  📱 Slack: lendo #i-prediction-markets...")
-    pm = slack_channel(SLACK_CHANNELS["i-prediction-markets"])
+    # ── Buscas temáticas ───────────────────────────────────────────
+    searches = [
+        ("prazos concluídos",    "prazo concluído OR entregue OR enviado OR aprovado"),
+        ("prazos novos",         "prazo OR deadline OR vencimento OR entrega"),
+        ("COAF SIGAP",           "COAF OR SIGAP OR PLD OR AML"),
+        ("concorrentes",         "betano OR sportingbet OR bet365 OR blaze OR superbet OR novibet"),
+        ("prediction markets",   "prediction markets OR kalshi OR polymarket OR previsões OR mercado de previsão"),
+        ("auditoria KPMG",       "KPMG OR auditoria OR questionamento"),
+        ("licença SPA",          "SPA/MF OR licença OR portaria OR resolução"),
+        ("publicidade mkt",      "publicidade OR marketing OR criativo OR aprovação legal"),
+        ("jogo responsável",     "jogo responsável OR autoexclusão OR autolimite OR JR"),
+        ("integridade esportiva","integridade OR IBIA OR SIGAP OR manipulação"),
+    ]
+    for label, query in searches:
+        print(f"  🔍 Slack: buscando '{label}'...")
+        results = slack_search(query)
+        parts.append(f"=== Busca '{label}' ===\n{fmt_search(results)}")
 
-    print("  📱 Slack: lendo #regulatory-updates...")
-    reg = slack_channel(SLACK_CHANNELS["regulatory-updates"], limit=10)
-
-    print("  🔍 Slack: buscando prazos concluídos...")
-    done  = slack_search("prazo concluído OR entregue OR enviado OR aprovado")
-
-    print("  🔍 Slack: buscando concorrentes...")
-    comp  = slack_search("concorrente OR betano OR sportingbet OR bet365 OR blaze OR superbet")
-
-    print("  🔍 Slack: buscando prediction markets...")
-    pm_search = slack_search("prediction markets OR kalshi OR polymarket OR previsões OR BTG Trends")
-
-    return f"""
-=== #legal-team ===
-{fmt_messages(legal)}
-
-=== #benchmark ===
-{fmt_messages(bench)}
-
-=== #i-prediction-markets ===
-{fmt_messages(pm)}
-
-=== #regulatory-updates (últimas atualizações do time legal) ===
-{fmt_messages(reg)}
-
-=== Busca "prazos concluídos" ===
-{fmt_search(done)}
-
-=== Busca "concorrentes" ===
-{fmt_search(comp)}
-
-=== Busca "prediction markets" ===
-{fmt_search(pm_search)}
-""".strip()
+    return "\n\n".join(parts)
 
 
 def collect_news() -> str:
@@ -246,11 +266,20 @@ Esta atualização roda automaticamente a cada poucas horas. Trate o dashboard c
      · Novo prazo → adicione dl-item na seção correta (Vencidos / Urgentes / Atenção / Concluídos)
      · Stats (Vencidos / Urgentes / Atenção / Concluídos) → recalcule os números
 
-3. SLACK — conecte ativamente os dados do Slack ao conteúdo:
-   - Menções a prazos, audiências, decisões ou alertas no #legal-team → atualizar prazos e criar card se relevante
-   - Discussões sobre concorrentes no #benchmark → criar/atualizar card na aba Concorrentes
-   - Mensagens sobre prediction markets em #i-prediction-markets → criar/atualizar card na aba PM
-   - Updates jurídicos em #regulatory-updates → criar/atualizar card na aba relevante
+3. SLACK — conecte ativamente os dados de TODOS os canais ao conteúdo:
+   Canais e seus usos:
+   - #legal-team, #legal-finance, #legal-cx → prazos, decisões, alertas jurídicos → AML/Privacy/RG/Sports
+   - #compliance, #i-compliance, #compliance-alerts → alertas de compliance → aba correta conforme tema
+   - #regulatory-updates → updates regulatórios do time legal → qualquer aba relevante
+   - #legal-monitoramento-entries → monitoramento de entradas suspeitas → AML/CFT
+   - #p-legal-limites-boqueio-sigap → limites, bloqueios, SIGAP → Sports Integrity / AML
+   - #solicitacoes-kpmg-legal → auditoria KPMG em andamento → AML/CFT
+   - #mkt-legal → aprovações de publicidade → prazos de publicidade
+   - #integrity → integridade esportiva → Sports Integrity
+   - #ops-trading, #ops-sportsbook → operações e alertas de trading → Sports Integrity / AML
+   - #duvidas-igaming → dúvidas sobre regulação de iGaming → qualquer aba relevante
+   - #benchmark → concorrentes → Concorrentes
+   - #i-prediction-markets → prediction markets → PM
 
 4. CONTADORES DAS ABAS — recalcule o total de cards em cada aba (semanal + recentes).
 
