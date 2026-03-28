@@ -29,26 +29,65 @@ NEWS_SOURCES = [
 ]
 
 SLACK_CHANNELS = {
-    # ── Legal & Compliance ──────────────────────────────────────────
+    # ── Compliance Central ──────────────────────────────────────────
+    "compliance":                    "C03N4C6LBN3",
+    "i-compliance":                  "C097EDPJYGZ",
+    "compliance-alerts":             "C066KQD4P0E",
+    "regulatory-updates":            "C03J0RWK72M",
+    "regulatory-tech-alerts":        "C095WRCJBU0",
+    # ── Legal ───────────────────────────────────────────────────────
     "legal-team":                    "C02RHL9GMHC",
     "legal-finance":                 "C061CELPX5L",
     "legal-cx":                      "C05HEMXEJRL",
     "legal-monitoramento-entries":   "C0A2LFG4X1S",
     "mkt-legal":                     "C08AM6S7R47",
-    "p-legal-limites-boqueio-sigap": "C09U4MHR5TK",  # limites, bloqueios, SIGAP
-    "solicitacoes-kpmg-legal":       "C09TVKGD02X",  # auditoria KPMG
-    "regulatory-updates":            "C03J0RWK72M",
-    "compliance":                    "C03N4C6LBN3",
-    "i-compliance":                  "C097EDPJYGZ",
-    "compliance-alerts":             "C066KQD4P0E",
-    # ── Integridade & Operações ─────────────────────────────────────
+    "aprovacoes-criativos-legal":    "C071YJPMB52",
+    "p-legal-limites-boqueio-sigap": "C09U4MHR5TK",
+    "solicitacoes-kpmg-legal":       "C09TVKGD02X",
+    "questionamentos-kpmg":          "C0ADKVB2U20",
+    # ── AML / PLD ───────────────────────────────────────────────────
+    "aml-rg-vip-hub":                "C091VGU5LPN",   # hub central AML + JR + VIP
+    "aml-alerts":                    "C07U18M098Q",
+    "aml-lupa-entries":              "C09B7VCUHE3",
+    # ── SIGAP ───────────────────────────────────────────────────────
+    "sigap-alerts":                  "C0854U81WAY",
+    "p-sigap-impedimentos":          "C09K17GR4Q1",
+    # ── Jogo Responsável ────────────────────────────────────────────
+    "temp-jogo-responsavel":         "C0944K2R5FB",
+    "alertas-jogo-responsavel":      "C0A36KSLZNC",
+    "vips-jr":                       "C0A8RKTL6H0",
+    "p-alerta-jogo-cassino":         "C0AJCLPK0A0",
+    # ── KYC / Usuários ──────────────────────────────────────────────
+    "p-integracao-idwall":           "C08VCGS2W7K",
+    "vip-solicitacao-comprovantes":  "C09SQNW10JJ",
+    "limited-users":                 "C07N181P0K0",
+    "checkpoint-alerts":             "C07U7RVK4RH",
+    "temp-anti-fraude-cx":           "C07JJ30FQV9",
+    "p-salve-aceite-no-cadastro":    "C0AKF29VA8G",
+    "p-geolocalizacao":              "C0ABBC5BF9A",
+    # ── Integridade Esportiva ────────────────────────────────────────
     "integrity":                     "C08M57LG8HL",
     "ops-trading":                   "C0AM19UCH5H",
     "ops-sportsbook":                "C0AM18Z5AJF",
-    "duvidas-igaming":               "C09K9T9BTD5",
-    # ── Benchmark & Produto ─────────────────────────────────────────
+    # ── Risco / Fraude ───────────────────────────────────────────────
+    "risk-alerts":                   "C07J41Z494K",
+    "betting-risk-notifications":    "C07TH8RD1D2",
+    "withdrawal-alerts":             "C08EKM9ERFD",
+    "vip-withdraws-alerts":          "C09419GL52P",
+    "annomaly-alerts":               "C09C7S86LH1",
+    "security-alerts":               "C04UAALC069",
+    "security-news":                 "C0A2ZFKRK1U",
+    # ── Benchmark & PM ──────────────────────────────────────────────
     "benchmark":                     "C08H223FJ4A",
     "i-prediction-markets":          "C09HD5YDM38",
+    "prediction-alerts":             "C0AATMVHF8R",
+    # ── Operações com impacto regulatório ───────────────────────────
+    "duvidas-igaming":               "C09K9T9BTD5",
+    "igaming-ops":                   "C083HNNFU94",
+    "ops-apr":                       "C0AN1UY40Q0",
+    "mercado-abertura-fechamento":   "C02E0DJQWKF",
+    # ── Parceiro KYC externo ─────────────────────────────────────────
+    "caf-reidopitaco":               "C089TPHLBS5",   # CAF — provedor KYC
 }
 
 # ── Helpers ───────────────────────────────────────────────────────────────────
@@ -119,25 +158,61 @@ def collect_slack() -> str:
     ch = SLACK_CHANNELS
     parts = []
 
-    # ── Canais de leitura direta ───────────────────────────────────
+    # ── Canais de leitura direta (ordenados por prioridade) ────────
     reads = [
-        ("legal-team",                    40),
+        # Compliance central
         ("compliance",                    40),
         ("i-compliance",                  40),
         ("compliance-alerts",             40),
-        ("regulatory-updates",            20),
+        ("regulatory-updates",            30),
+        ("regulatory-tech-alerts",        30),
+        # AML / PLD
+        ("aml-rg-vip-hub",               40),
+        ("aml-alerts",                    40),
+        ("aml-lupa-entries",              30),
+        # SIGAP
+        ("sigap-alerts",                  40),
+        ("p-sigap-impedimentos",          20),
+        # Legal
+        ("legal-team",                    40),
         ("legal-finance",                 30),
         ("legal-cx",                      20),
-        ("legal-monitoramento-entries",   20),
+        ("legal-monitoramento-entries",   30),
         ("mkt-legal",                     20),
+        ("aprovacoes-criativos-legal",    20),
         ("p-legal-limites-boqueio-sigap", 20),
         ("solicitacoes-kpmg-legal",       20),
+        ("questionamentos-kpmg",          20),
+        # Jogo Responsável
+        ("temp-jogo-responsavel",         30),
+        ("alertas-jogo-responsavel",      30),
+        ("vips-jr",                       20),
+        ("p-alerta-jogo-cassino",         20),
+        # KYC / Usuários
+        ("p-integracao-idwall",           20),
+        ("vip-solicitacao-comprovantes",  20),
+        ("limited-users",                 20),
+        ("checkpoint-alerts",             20),
+        ("temp-anti-fraude-cx",           20),
+        # Integridade Esportiva
         ("integrity",                     30),
         ("ops-trading",                   20),
         ("ops-sportsbook",                20),
-        ("duvidas-igaming",               20),
+        # Risco / Fraude
+        ("risk-alerts",                   20),
+        ("betting-risk-notifications",    20),
+        ("withdrawal-alerts",             20),
+        ("annomaly-alerts",               20),
+        ("security-alerts",               20),
+        # Benchmark & PM
         ("benchmark",                     30),
         ("i-prediction-markets",          30),
+        ("prediction-alerts",             20),
+        # Operações
+        ("duvidas-igaming",               20),
+        ("mercado-abertura-fechamento",   20),
+        # KYC externo
+        ("caf-reidopitaco",               20),
     ]
     for name, limit in reads:
         print(f"  📱 Slack: lendo #{name}...")
@@ -146,16 +221,18 @@ def collect_slack() -> str:
 
     # ── Buscas temáticas ───────────────────────────────────────────
     searches = [
-        ("prazos concluídos",    "prazo concluído OR entregue OR enviado OR aprovado"),
-        ("prazos novos",         "prazo OR deadline OR vencimento OR entrega"),
-        ("COAF SIGAP",           "COAF OR SIGAP OR PLD OR AML"),
-        ("concorrentes",         "betano OR sportingbet OR bet365 OR blaze OR superbet OR novibet"),
-        ("prediction markets",   "prediction markets OR kalshi OR polymarket OR previsões OR mercado de previsão"),
-        ("auditoria KPMG",       "KPMG OR auditoria OR questionamento"),
-        ("licença SPA",          "SPA/MF OR licença OR portaria OR resolução"),
-        ("publicidade mkt",      "publicidade OR marketing OR criativo OR aprovação legal"),
-        ("jogo responsável",     "jogo responsável OR autoexclusão OR autolimite OR JR"),
-        ("integridade esportiva","integridade OR IBIA OR SIGAP OR manipulação"),
+        ("prazos concluídos",     "prazo concluído OR entregue OR enviado OR aprovado"),
+        ("prazos novos",          "prazo OR deadline OR vencimento OR entrega"),
+        ("COAF SIGAP PLD",        "COAF OR SIGAP OR PLD OR AML OR lavagem"),
+        ("concorrentes",          "betano OR sportingbet OR bet365 OR blaze OR superbet OR novibet"),
+        ("prediction markets",    "prediction markets OR kalshi OR polymarket OR previsões"),
+        ("auditoria KPMG",        "KPMG OR auditoria OR questionamento"),
+        ("licença SPA portaria",  "SPA/MF OR licença OR portaria OR resolução OR SPA"),
+        ("publicidade aprovação", "publicidade OR criativo OR aprovação legal"),
+        ("jogo responsável JR",   "jogo responsável OR autoexclusão OR autolimite OR JR"),
+        ("integridade esportiva", "integridade OR IBIA OR manipulação OR aposta suspeita"),
+        ("fraude KYC",            "fraude OR KYC OR idwall OR identidade OR documento"),
+        ("LGPD privacidade",      "LGPD OR ANPD OR dados pessoais OR privacidade"),
     ]
     for label, query in searches:
         print(f"  🔍 Slack: buscando '{label}'...")
@@ -267,19 +344,19 @@ Esta atualização roda automaticamente a cada poucas horas. Trate o dashboard c
      · Stats (Vencidos / Urgentes / Atenção / Concluídos) → recalcule os números
 
 3. SLACK — conecte ativamente os dados de TODOS os canais ao conteúdo:
-   Canais e seus usos:
-   - #legal-team, #legal-finance, #legal-cx → prazos, decisões, alertas jurídicos → AML/Privacy/RG/Sports
-   - #compliance, #i-compliance, #compliance-alerts → alertas de compliance → aba correta conforme tema
-   - #regulatory-updates → updates regulatórios do time legal → qualquer aba relevante
-   - #legal-monitoramento-entries → monitoramento de entradas suspeitas → AML/CFT
-   - #p-legal-limites-boqueio-sigap → limites, bloqueios, SIGAP → Sports Integrity / AML
-   - #solicitacoes-kpmg-legal → auditoria KPMG em andamento → AML/CFT
-   - #mkt-legal → aprovações de publicidade → prazos de publicidade
-   - #integrity → integridade esportiva → Sports Integrity
-   - #ops-trading, #ops-sportsbook → operações e alertas de trading → Sports Integrity / AML
-   - #duvidas-igaming → dúvidas sobre regulação de iGaming → qualquer aba relevante
-   - #benchmark → concorrentes → Concorrentes
-   - #i-prediction-markets → prediction markets → PM
+   Compliance: #compliance, #i-compliance, #compliance-alerts, #regulatory-updates, #regulatory-tech-alerts
+   AML/PLD: #aml-rg-vip-hub (hub central), #aml-alerts, #aml-lupa-entries → aba AML/CFT
+   SIGAP: #sigap-alerts, #p-sigap-impedimentos, #p-legal-limites-boqueio-sigap → Sports Integrity / AML
+   Legal: #legal-team, #legal-finance, #legal-cx, #legal-monitoramento-entries → prazos e decisões
+   Publicidade: #mkt-legal, #aprovacoes-criativos-legal → prazos de aprovação de criativos
+   KPMG: #solicitacoes-kpmg-legal, #questionamentos-kpmg → AML/CFT
+   Jogo Responsável: #temp-jogo-responsavel, #alertas-jogo-responsavel, #vips-jr, #p-alerta-jogo-cassino → aba RG
+   KYC/Fraude: #p-integracao-idwall, #vip-solicitacao-comprovantes, #limited-users, #checkpoint-alerts, #temp-anti-fraude-cx → Privacy/AML
+   Integridade: #integrity, #ops-trading, #ops-sportsbook → Sports Integrity
+   Risco: #risk-alerts, #betting-risk-notifications, #withdrawal-alerts, #annomaly-alerts, #security-alerts → AML/Sports
+   Benchmark: #benchmark → Concorrentes
+   PM: #i-prediction-markets, #prediction-alerts → Prediction Markets
+   KYC externo: #caf-reidopitaco → Privacy / AML
 
 4. CONTADORES DAS ABAS — recalcule o total de cards em cada aba (semanal + recentes).
 
