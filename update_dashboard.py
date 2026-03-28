@@ -32,8 +32,10 @@ NEWS_SOURCES = [
 ]
 
 SLACK_CHANNELS = {
-    "legal-team": "C02RHL9GMHC",
-    "benchmark":  "C08H223FJ4A",
+    "legal-team":           "C02RHL9GMHC",
+    "benchmark":            "C08H223FJ4A",
+    "i-prediction-markets": "C09HD5YDM38",  # canal dedicado ao produto de PM
+    "regulatory-updates":   "C03J0RWK72M",  # reports mensais do time de legal
 }
 
 # ── Helpers ───────────────────────────────────────────────────────────────────
@@ -107,11 +109,20 @@ def collect_slack() -> str:
     print("  📱 Slack: lendo #benchmark...")
     bench = slack_channel(SLACK_CHANNELS["benchmark"])
 
+    print("  📱 Slack: lendo #i-prediction-markets...")
+    pm = slack_channel(SLACK_CHANNELS["i-prediction-markets"])
+
+    print("  📱 Slack: lendo #regulatory-updates...")
+    reg = slack_channel(SLACK_CHANNELS["regulatory-updates"], limit=10)
+
     print("  🔍 Slack: buscando prazos concluídos...")
     done  = slack_search("prazo concluído OR entregue OR enviado OR aprovado")
 
     print("  🔍 Slack: buscando concorrentes...")
     comp  = slack_search("concorrente OR betano OR sportingbet OR bet365 OR blaze OR superbet")
+
+    print("  🔍 Slack: buscando prediction markets...")
+    pm_search = slack_search("prediction markets OR kalshi OR polymarket OR previsões OR BTG Trends")
 
     return f"""
 === #legal-team ===
@@ -120,11 +131,20 @@ def collect_slack() -> str:
 === #benchmark ===
 {fmt_messages(bench)}
 
+=== #i-prediction-markets ===
+{fmt_messages(pm)}
+
+=== #regulatory-updates (últimas atualizações do time legal) ===
+{fmt_messages(reg)}
+
 === Busca "prazos concluídos" ===
 {fmt_search(done)}
 
 === Busca "concorrentes" ===
 {fmt_search(comp)}
+
+=== Busca "prediction markets" ===
+{fmt_search(pm_search)}
 """.strip()
 
 
@@ -164,6 +184,8 @@ Atualize o dashboard. Regras obrigatórias:
    Fontes internacionais PM: Kalshi Blog, Polymarket Blog, Reuters, Bloomberg, CFTC.
    Cards de Concorrentes e Prediction Markets DEVEM ter fonte externa — Slack apenas como insight em card-slack.
    Aba Prediction Markets tem duas sub-abas: "Notícias & Jurídico" (id=pm-juridico) e "Concorrentes" (id=pm-concorrentes).
+   Para a aba Prediction Markets, use o #i-prediction-markets como fonte de insights internos (card-slack).
+   Use o #regulatory-updates para insights jurídicos e regulatórios dos reports mensais do time de legal.
    Estrutura de cada card:
    <div class="card">
      <div class="card-header">
