@@ -20,6 +20,7 @@ NETLIFY_SITE_ID    = os.environ.get("NETLIFY_SITE_ID", "0a81f462-de30-46e3-900a-
 NEWS_SOURCES = [
     ("COAF",                "https://www.gov.br/coaf/pt-br/assuntos/noticias"),
     ("ANPD",                "https://www.gov.br/anpd/pt-br/assuntos/noticias"),
+    ("DOU",                 "https://www.in.gov.br/consulta/-/buscar/dou?q=apostas+bets+jogos&s=todos&exactDate=mes&sortType=0"),
     ("Gambling Commission", "https://www.gamblingcommission.gov.uk/news-action-and-statistics/news"),
     ("Mediabet",            "https://mediabet.com.br/noticias/"),
     ("BNL Data",            "https://bnldata.com.br/noticias/"),
@@ -154,7 +155,10 @@ HORÁRIO ATUAL (BRT): {timestamp}
 Atualize o dashboard. Regras obrigatórias:
 
 1. NOVOS CARDS — adicione apenas cards com informação NOVA (não duplicar os existentes).
-   Aba correta: AML, LGPD, RG, Sports Integrity, Concorrentes ou Internacional.
+   Aba correta: AML, LGPD, RG, Sports Integrity, Cenário Internacional, Concorrentes ou BETS-México.
+   Fontes P1 (prioridade máxima): gov.br/coaf, gov.br/anpd, in.gov.br (DOU — apostas/bets), SPA/MF.
+   Fontes P2: BNL Data, iGaming Brasil, G&M News, Mediabet.
+   Cards de Concorrentes DEVEM ter fonte externa (P1/P2/P3) — Slack apenas como insight na seção card-slack.
    Estrutura de cada card:
    <div class="card">
      <div class="card-header">
