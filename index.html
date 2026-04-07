@@ -1985,61 +1985,6 @@ function checkPwd(){
 
   <!-- Board gerado por JS -->
   <div id="pz-board"></div>
-
-  <!-- Modal -->
-  <div class="pz-modal-overlay" id="pz-modal">
-    <div class="pz-modal">
-      <div class="pz-modal-header">
-        <span class="pz-modal-title" id="pz-modal-title">Novo Prazo</span>
-        <button class="pz-modal-close" id="pz-modal-close">✕</button>
-      </div>
-      <div class="pz-form-grid">
-        <div class="pz-form-field pz-form-full">
-          <label class="pz-form-label">Título *</label>
-          <input type="text" class="pz-form-input" id="pz-f-titulo" placeholder="Nome do prazo ou obrigação...">
-        </div>
-        <div class="pz-form-field">
-          <label class="pz-form-label">Data de Vencimento</label>
-          <input type="date" class="pz-form-input" id="pz-f-vencimento">
-        </div>
-        <div class="pz-form-field">
-          <label class="pz-form-label">Área</label>
-          <select class="pz-form-select" id="pz-f-area">
-            <option value="">Selecione...</option>
-            <option value="AML">AML</option>
-            <option value="Sports Integrity">Sports Integrity</option>
-            <option value="Data Privacy">Data Privacy</option>
-            <option value="JR">JR</option>
-            <option value="Regulatório">Regulatório</option>
-            <option value="Contratos">Contratos</option>
-          </select>
-        </div>
-        <div class="pz-form-field">
-          <label class="pz-form-label">Responsável (Owner)</label>
-          <input type="text" class="pz-form-input" id="pz-f-responsavel" placeholder="Nome do owner...">
-        </div>
-        <div class="pz-form-field">
-          <label class="pz-form-label">Revisor Final</label>
-          <input type="text" class="pz-form-input" id="pz-f-revisor" placeholder="Nome do revisor...">
-        </div>
-        <div class="pz-form-field">
-          <label class="pz-form-label">Status</label>
-          <select class="pz-form-select" id="pz-f-status">
-            <option value="">Automático (por data)</option>
-            <option value="concluido">✅ Concluído</option>
-          </select>
-        </div>
-        <div class="pz-form-field pz-form-full">
-          <label class="pz-form-label">Descrição / Observação</label>
-          <textarea class="pz-form-textarea" id="pz-f-descricao" placeholder="Contexto, riscos, observações..."></textarea>
-        </div>
-      </div>
-      <div class="pz-modal-footer">
-        <button class="pz-btn-cancel" id="pz-btn-cancel">Cancelar</button>
-        <button class="pz-btn-save" id="pz-btn-save">Salvar Prazo</button>
-      </div>
-    </div>
-  </div>
 </div><!-- /tab-prazos -->
 
 <!-- ═══════════ ABA 10: IDEIA DA SEMANA ═══════════ -->
@@ -2480,5 +2425,59 @@ function switchPMSub(sub, btn) {
   setInterval(renderBoard, 60000);
 })();
 </script>
+<!-- ═══ MODAL PRAZOS (fora de qualquer tab-pane) ═══ -->
+<div class="pz-modal-overlay" id="pz-modal">
+  <div class="pz-modal">
+    <div class="pz-modal-header">
+      <span class="pz-modal-title" id="pz-modal-title">Novo Prazo</span>
+      <button class="pz-modal-close" id="pz-modal-close">✕</button>
+    </div>
+    <div class="pz-form-grid">
+      <div class="pz-form-field pz-form-full">
+        <label class="pz-form-label">Título *</label>
+        <input type="text" class="pz-form-input" id="pz-f-titulo" placeholder="Nome do prazo ou obrigação...">
+      </div>
+      <div class="pz-form-field">
+        <label class="pz-form-label">Data de Vencimento</label>
+        <input type="date" class="pz-form-input" id="pz-f-vencimento">
+      </div>
+      <div class="pz-form-field">
+        <label class="pz-form-label">Área</label>
+        <select class="pz-form-select" id="pz-f-area">
+          <option value="">Selecione...</option>
+          <option value="AML">AML</option>
+          <option value="Sports Integrity">Sports Integrity</option>
+          <option value="Data Privacy">Data Privacy</option>
+          <option value="JR">JR</option>
+          <option value="Regulatório">Regulatório</option>
+          <option value="Contratos">Contratos</option>
+        </select>
+      </div>
+      <div class="pz-form-field">
+        <label class="pz-form-label">Responsável (Owner)</label>
+        <input type="text" class="pz-form-input" id="pz-f-responsavel" placeholder="Nome do owner...">
+      </div>
+      <div class="pz-form-field">
+        <label class="pz-form-label">Revisor Final</label>
+        <input type="text" class="pz-form-input" id="pz-f-revisor" placeholder="Nome do revisor...">
+      </div>
+      <div class="pz-form-field">
+        <label class="pz-form-label">Status</label>
+        <select class="pz-form-select" id="pz-f-status">
+          <option value="">Automático (por data)</option>
+          <option value="concluido">✅ Concluído</option>
+        </select>
+      </div>
+      <div class="pz-form-field pz-form-full">
+        <label class="pz-form-label">Descrição / Observação</label>
+        <textarea class="pz-form-textarea" id="pz-f-descricao" placeholder="Contexto, riscos, observações..."></textarea>
+      </div>
+    </div>
+    <div class="pz-modal-footer">
+      <button class="pz-btn-cancel" id="pz-btn-cancel">Cancelar</button>
+      <button class="pz-btn-save" id="pz-btn-save">Salvar Prazo</button>
+    </div>
+  </div>
+</div>
 </body>
 </html>
