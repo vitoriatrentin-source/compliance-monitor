@@ -568,6 +568,64 @@ body {
 .pz-btn-save { padding:9px 20px; border-radius:var(--radius-pill); border:none; background:var(--brand); color:#fff; font-family:var(--font); font-size:13px; font-weight:600; cursor:pointer; transition:all var(--transition); }
 .pz-btn-save:hover { background:var(--brand-light); box-shadow:0 4px 12px rgba(124,58,237,0.4); }
 
+/* ── PRAZOS: IDENTITY ── */
+.pz-identity { padding:12px 16px; background:var(--bg-surface); border:1px solid var(--border); border-radius:var(--radius-lg); margin-bottom:14px; display:flex; align-items:center; gap:8px; flex-wrap:wrap; }
+.pz-identity-edit { background:none; border:1px solid var(--border); color:var(--text-muted); cursor:pointer; font-size:11px; padding:4px 10px; border-radius:var(--radius-pill); transition:all var(--transition); font-family:var(--font); margin-left:4px; }
+.pz-identity-edit:hover { border-color:var(--border-md); color:var(--text-primary); background:var(--bg-hover); }
+
+/* ── PRAZOS: HEALTH PANEL ── */
+.pz-health { display:grid; grid-template-columns:repeat(3,1fr); gap:12px; margin-bottom:20px; }
+@media(max-width:700px){.pz-health{grid-template-columns:1fr}}
+.pz-health-card { background:var(--bg-surface); border:1px solid var(--border); border-radius:var(--radius-lg); padding:14px 16px; }
+.pz-health-label { font-size:10px; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.5px; font-weight:600; margin-bottom:4px; }
+.pz-health-value { font-size:20px; font-weight:700; line-height:1.2; }
+.pz-health-sub { font-size:11px; color:var(--text-muted); margin-top:3px; line-height:1.4; }
+.pz-health-bar { height:4px; background:var(--border); border-radius:2px; margin-top:10px; overflow:hidden; }
+.pz-health-fill { height:100%; border-radius:2px; transition:width .7s ease; }
+
+/* ── PRAZOS: PULSE ANIMATION ── */
+@keyframes pz-pulse-red    { 0%,100%{box-shadow:0 0 0 0 rgba(239,68,68,0.35)} 50%{box-shadow:0 0 0 7px rgba(239,68,68,0)} }
+@keyframes pz-pulse-orange { 0%,100%{box-shadow:0 0 0 0 rgba(249,115,22,0.25)} 50%{box-shadow:0 0 0 5px rgba(249,115,22,0)} }
+.pz-card.vencido { animation:pz-pulse-red    2.5s ease-in-out infinite; }
+.pz-card.urgente { animation:pz-pulse-orange 3s   ease-in-out infinite; }
+
+/* ── PRAZOS: SEARCH ── */
+.pz-search-wrap { position:relative; flex:1; min-width:180px; }
+.pz-search-ico  { position:absolute; left:11px; top:50%; transform:translateY(-50%); color:var(--text-muted); font-size:13px; pointer-events:none; }
+.pz-search-input { width:100%; background:var(--bg-elevated); border:1px solid var(--border); color:var(--text-primary); font-family:var(--font); font-size:13px; padding:7px 12px 7px 32px; border-radius:var(--radius-pill); outline:none; transition:border-color var(--transition); }
+.pz-search-input:focus { border-color:var(--brand); }
+.pz-search-input::placeholder { color:var(--text-muted); }
+
+/* ── PRAZOS: TOOLBAR EXTRAS ── */
+.pz-toolbar-actions { display:flex; gap:8px; flex-shrink:0; flex-wrap:wrap; }
+.pz-focus-btn { padding:7px 13px; border-radius:var(--radius-pill); border:1px solid var(--border); background:transparent; color:var(--text-secondary); font-family:var(--font); font-size:12px; cursor:pointer; transition:all var(--transition); white-space:nowrap; }
+.pz-focus-btn:hover { border-color:rgba(124,58,237,0.4); color:var(--brand-light); }
+.pz-focus-btn.active { background:var(--brand-dim); border-color:rgba(124,58,237,0.35); color:var(--brand-light); }
+.pz-export-btn { padding:7px 13px; border-radius:var(--radius-pill); border:1px solid var(--border); background:transparent; color:var(--text-secondary); font-family:var(--font); font-size:12px; cursor:pointer; transition:all var(--transition); white-space:nowrap; }
+.pz-export-btn:hover { border-color:var(--border-md); color:var(--text-primary); }
+
+/* ── PRAZOS: CARD ENHANCEMENTS ── */
+.pz-card.is-mine { border-color:rgba(124,58,237,0.3); }
+.pz-quick { display:flex; gap:6px; padding-top:10px; margin-top:8px; border-top:1px solid var(--border); }
+.pz-quick-btn { flex:1; padding:5px 4px; border-radius:var(--radius-sm); border:1px solid var(--border); background:var(--bg-elevated); color:var(--text-muted); font-family:var(--font); font-size:11px; cursor:pointer; transition:all var(--transition); display:flex; align-items:center; justify-content:center; gap:3px; }
+.pz-quick-btn.complete:hover { border-color:rgba(34,197,94,0.45); color:#22C55E; background:rgba(34,197,94,0.08); }
+.pz-quick-btn.postpone:hover { border-color:rgba(234,179,8,0.45); color:#EAB308; background:rgba(234,179,8,0.08); }
+.pz-quick-btn.notify:hover   { border-color:rgba(124,58,237,0.4); color:var(--brand-light); background:var(--brand-dim); }
+.pz-history-toggle { font-size:10px; color:var(--text-muted); cursor:pointer; margin-top:6px; display:inline-flex; align-items:center; gap:3px; user-select:none; }
+.pz-history-toggle:hover { color:var(--text-secondary); }
+.pz-history-log { display:none; margin-top:6px; padding:8px 10px; background:var(--bg-base); border-radius:var(--radius-sm); border:1px solid var(--border); }
+.pz-history-log.open { display:block; }
+.pz-history-entry { font-size:10.5px; color:var(--text-muted); padding:3px 0; border-bottom:1px solid var(--border); line-height:1.5; }
+.pz-history-entry:last-child { border-bottom:none; }
+.pz-history-entry strong { color:var(--text-secondary); }
+.pz-history-entry em { font-style:normal; color:var(--brand-light); }
+
+/* ── PRAZOS: TOAST ── */
+.pz-toast { position:fixed; bottom:24px; right:24px; z-index:9999; background:var(--bg-elevated); border:1px solid var(--border-md); border-radius:var(--radius-lg); padding:11px 18px; font-size:13px; color:var(--text-primary); box-shadow:0 8px 28px rgba(0,0,0,0.5); max-width:320px; border-left:3px solid var(--brand); transition:opacity .3s; }
+
+/* ── PRAZOS: MINI MODAL (adiamento) ── */
+.pz-mini-modal { background:var(--bg-surface); border:1px solid var(--border-md); border-radius:var(--radius-xl); padding:24px; width:100%; max-width:380px; box-shadow:0 24px 64px rgba(0,0,0,0.7); animation:pz-in .2s ease; }
+
 /* ── TAB PANE ── */
 .tab-pane { display: none; }
 .tab-pane.active { display: block; }
@@ -1932,7 +1990,13 @@ function checkPwd(){
     <div class="section-label"><div class="section-icon">⏱</div><h2 class="section-name">Prazos &amp; Deadlines</h2></div>
   </div>
 
-  <!-- Stats dinâmicos -->
+  <!-- Identificação pessoal -->
+  <div class="pz-identity" id="pz-identity"></div>
+
+  <!-- Painel de saúde da equipe -->
+  <div class="pz-health" id="pz-health"></div>
+
+  <!-- Stats -->
   <div class="stats-row">
     <div class="stat-card">
       <div class="stat-label">Vencidos</div>
@@ -1956,8 +2020,12 @@ function checkPwd(){
     </div>
   </div>
 
-  <!-- Toolbar: filtros + botão -->
+  <!-- Toolbar: busca + filtros + ações -->
   <div class="pz-toolbar">
+    <div class="pz-search-wrap">
+      <span class="pz-search-ico">🔍</span>
+      <input type="text" class="pz-search-input" id="pz-search" placeholder="Buscar título, área, responsável...">
+    </div>
     <div class="pz-filters">
       <select class="pz-filter-select" id="pz-filter-area">
         <option value="">Todas as áreas</option>
@@ -1980,10 +2048,13 @@ function checkPwd(){
         <option value="">Todos os responsáveis</option>
       </select>
     </div>
-    <button class="pz-add-btn" id="pz-add-btn">+ Novo Prazo</button>
+    <div class="pz-toolbar-actions">
+      <button class="pz-focus-btn" id="pz-focus-btn">🎯 Modo Foco</button>
+      <button class="pz-export-btn" id="pz-export-btn">📤 Exportar</button>
+      <button class="pz-add-btn" id="pz-add-btn">+ Novo Prazo</button>
+    </div>
   </div>
 
-  <!-- Board gerado por JS -->
   <div id="pz-board"></div>
 </div><!-- /tab-prazos -->
 
@@ -2215,123 +2286,212 @@ function switchPMSub(sub, btn) {
 
 // ─── PRAZOS KANBAN ─────────────────────────────────────────────────────────
 (function () {
-  const STORE_KEY = 'pitaco-prazos-v2';
+  const STORE_KEY = 'pitaco-prazos-v3';
+  const USER_KEY  = 'pitaco-prazos-user';
 
   const SEED = [
-    { id:'s1',  titulo:'Política Integridade AQF',             vencimento:'2026-03-16', area:'Sports Integrity', responsavel:'',        revisor:'', descricao:'',         manualStatus:null },
-    { id:'s2',  titulo:'Política JR AQF',                      vencimento:'2026-03-23', area:'JR',               responsavel:'',        revisor:'', descricao:'',         manualStatus:null },
-    { id:'s3',  titulo:'Cert. GLI',                            vencimento:'2026-03-31', area:'Regulatório',      responsavel:'',        revisor:'', descricao:'',         manualStatus:null },
-    { id:'s4',  titulo:'COAF Rafael',                          vencimento:'2026-04-01', area:'AML',              responsavel:'Rafael',  revisor:'', descricao:'',         manualStatus:null },
-    { id:'s5',  titulo:'Resp. Ofício SEI 14847 (Publicidade)', vencimento:'2026-04-03', area:'Regulatório',      responsavel:'',        revisor:'', descricao:'',         manualStatus:null },
-    { id:'s6',  titulo:'COAF Omar',                            vencimento:'2026-04-04', area:'AML',              responsavel:'Omar',    revisor:'', descricao:'',         manualStatus:null },
-    { id:'s7',  titulo:'Termos de Uso AQF',                    vencimento:'2026-04-06', area:'Regulatório',      responsavel:'',        revisor:'', descricao:'',         manualStatus:null },
-    { id:'s8',  titulo:'Manual PLD',                           vencimento:'2026-04-06', area:'AML',              responsavel:'',        revisor:'', descricao:'',         manualStatus:null },
-    { id:'s9',  titulo:'Manual Publicidade',                   vencimento:'2026-04-06', area:'Regulatório',      responsavel:'',        revisor:'', descricao:'',         manualStatus:null },
-    { id:'s10', titulo:'COAF Fábio',                           vencimento:'2026-04-10', area:'AML',              responsavel:'Fábio',   revisor:'', descricao:'',         manualStatus:null },
-    { id:'s11', titulo:'Cert. Seg. pitaco.bet.br',             vencimento:'2026-04-10', area:'Regulatório',      responsavel:'',        revisor:'', descricao:'EM RISCO', manualStatus:null },
-    { id:'s12', titulo:'Política PLD/FTP',                     vencimento:'2026-04-13', area:'AML',              responsavel:'',        revisor:'', descricao:'',         manualStatus:null },
-    { id:'s13', titulo:'Treinamento PDADOS',                   vencimento:'2026-04-15', area:'Data Privacy',     responsavel:'',        revisor:'', descricao:'',         manualStatus:null },
-    { id:'s14', titulo:'Regras de Jogos AQF',                  vencimento:'2026-04-20', area:'Regulatório',      responsavel:'',        revisor:'', descricao:'',         manualStatus:null },
-    { id:'s15', titulo:'COAF Ivanline',                        vencimento:'2026-03-26', area:'AML',              responsavel:'Ivanline',revisor:'', descricao:'',         manualStatus:'concluido' },
-    { id:'s16', titulo:'Ofício SPA 392/2026',                  vencimento:'2026-03-19', area:'Regulatório',      responsavel:'',        revisor:'', descricao:'',         manualStatus:'concluido' },
-    { id:'s17', titulo:'Treinamento JR',                       vencimento:null,          area:'JR',               responsavel:'',        revisor:'', descricao:'Realizado',manualStatus:'concluido' },
-    { id:'s18', titulo:'Treinamento PLD',                      vencimento:null,          area:'AML',              responsavel:'',        revisor:'', descricao:'Realizado',manualStatus:'concluido' },
+    { id:'s1',  titulo:'Política Integridade AQF',             vencimento:'2026-03-16', area:'Sports Integrity', responsavel:'',        revisor:'', descricao:'',         manualStatus:null, history:[] },
+    { id:'s2',  titulo:'Política JR AQF',                      vencimento:'2026-03-23', area:'JR',               responsavel:'',        revisor:'', descricao:'',         manualStatus:null, history:[] },
+    { id:'s3',  titulo:'Cert. GLI',                            vencimento:'2026-03-31', area:'Regulatório',      responsavel:'',        revisor:'', descricao:'',         manualStatus:null, history:[] },
+    { id:'s4',  titulo:'COAF Rafael',                          vencimento:'2026-04-01', area:'AML',              responsavel:'Rafael',  revisor:'', descricao:'',         manualStatus:null, history:[] },
+    { id:'s5',  titulo:'Resp. Ofício SEI 14847 (Publicidade)', vencimento:'2026-04-03', area:'Regulatório',      responsavel:'',        revisor:'', descricao:'',         manualStatus:null, history:[] },
+    { id:'s6',  titulo:'COAF Omar',                            vencimento:'2026-04-04', area:'AML',              responsavel:'Omar',    revisor:'', descricao:'',         manualStatus:null, history:[] },
+    { id:'s7',  titulo:'Termos de Uso AQF',                    vencimento:'2026-04-06', area:'Regulatório',      responsavel:'',        revisor:'', descricao:'',         manualStatus:null, history:[] },
+    { id:'s8',  titulo:'Manual PLD',                           vencimento:'2026-04-06', area:'AML',              responsavel:'',        revisor:'', descricao:'',         manualStatus:null, history:[] },
+    { id:'s9',  titulo:'Manual Publicidade',                   vencimento:'2026-04-06', area:'Regulatório',      responsavel:'',        revisor:'', descricao:'',         manualStatus:null, history:[] },
+    { id:'s10', titulo:'COAF Fábio',                           vencimento:'2026-04-10', area:'AML',              responsavel:'Fábio',   revisor:'', descricao:'',         manualStatus:null, history:[] },
+    { id:'s11', titulo:'Cert. Seg. pitaco.bet.br',             vencimento:'2026-04-10', area:'Regulatório',      responsavel:'',        revisor:'', descricao:'EM RISCO', manualStatus:null, history:[] },
+    { id:'s12', titulo:'Política PLD/FTP',                     vencimento:'2026-04-13', area:'AML',              responsavel:'',        revisor:'', descricao:'',         manualStatus:null, history:[] },
+    { id:'s13', titulo:'Treinamento PDADOS',                   vencimento:'2026-04-15', area:'Data Privacy',     responsavel:'',        revisor:'', descricao:'',         manualStatus:null, history:[] },
+    { id:'s14', titulo:'Regras de Jogos AQF',                  vencimento:'2026-04-20', area:'Regulatório',      responsavel:'',        revisor:'', descricao:'',         manualStatus:null, history:[] },
+    { id:'s15', titulo:'COAF Ivanline',                        vencimento:'2026-03-26', area:'AML',              responsavel:'Ivanline',revisor:'', descricao:'',         manualStatus:'concluido', history:[] },
+    { id:'s16', titulo:'Ofício SPA 392/2026',                  vencimento:'2026-03-19', area:'Regulatório',      responsavel:'',        revisor:'', descricao:'',         manualStatus:'concluido', history:[] },
+    { id:'s17', titulo:'Treinamento JR',                       vencimento:null,         area:'JR',               responsavel:'',        revisor:'', descricao:'Realizado',manualStatus:'concluido', history:[] },
+    { id:'s18', titulo:'Treinamento PLD',                      vencimento:null,         area:'AML',              responsavel:'',        revisor:'', descricao:'Realizado',manualStatus:'concluido', history:[] },
   ];
 
+  // ── Storage ────────────────────────────────────────────────────────────────
   function load() {
-    try { const r = localStorage.getItem(STORE_KEY); if (r) return JSON.parse(r); } catch(e) {}
-    const d = SEED.map(p => ({...p}));
-    save(d); return d;
+    try { const r=localStorage.getItem(STORE_KEY); if(r) return JSON.parse(r).map(p=>({history:[],...p})); } catch(e){}
+    const d=SEED.map(p=>({...p})); save(d); return d;
   }
-  function save(data) { localStorage.setItem(STORE_KEY, JSON.stringify(data)); }
+  function save(data) { localStorage.setItem(STORE_KEY,JSON.stringify(data)); }
+  function getUser()     { return localStorage.getItem(USER_KEY)||''; }
+  function setUser(name) { name?localStorage.setItem(USER_KEY,name):localStorage.removeItem(USER_KEY); }
 
+  // ── Status ─────────────────────────────────────────────────────────────────
   function computeStatus(item) {
-    if (item.manualStatus === 'concluido') return 'concluido';
+    if (item.manualStatus==='concluido') return 'concluido';
     if (!item.vencimento) return 'normal';
-    const today = new Date(); today.setHours(0,0,0,0);
-    const due = new Date(item.vencimento + 'T00:00:00');
-    const diff = Math.floor((due - today) / 86400000);
-    if (diff < 0) return 'vencido';
-    if (diff <= 3) return 'urgente';
-    if (diff <= 7) return 'atencao';
+    const today=new Date(); today.setHours(0,0,0,0);
+    const due=new Date(item.vencimento+'T00:00:00');
+    const diff=Math.floor((due-today)/86400000);
+    if(diff<0) return 'vencido';
+    if(diff<=3) return 'urgente';
+    if(diff<=7) return 'atencao';
     return 'normal';
   }
 
-  const STATUS_LABELS = { vencido:'🔴 Vencido', urgente:'🟠 Urgente', atencao:'🟡 Atenção', normal:'🔵 Em Dia', concluido:'🟢 Concluído' };
-  const GROUP_TITLES  = { vencido:'🚨 Vencidos', urgente:'⚡ Urgentes — próximos 3 dias', atencao:'⚠️ Atenção — 4 a 7 dias', normal:'📅 Em Dia', concluido:'✅ Concluídos' };
+  // ── Utils ──────────────────────────────────────────────────────────────────
+  const STATUS_LABELS = {vencido:'🔴 Vencido',urgente:'🟠 Urgente',atencao:'🟡 Atenção',normal:'🔵 Em Dia',concluido:'🟢 Concluído'};
+  const GROUP_TITLES  = {vencido:'🚨 Vencidos',urgente:'⚡ Urgentes — próximos 3 dias',atencao:'⚠️ Atenção — 4 a 7 dias',normal:'📅 Em Dia',concluido:'✅ Concluídos'};
   const STATUS_ORDER  = ['vencido','urgente','atencao','normal','concluido'];
 
-  function fmtDate(iso) {
-    if (!iso) return 'sem data';
-    const [y,m,d] = iso.split('-'); return `${d}/${m}/${y}`;
-  }
+  function fmtDate(iso) { if(!iso)return'sem data'; const[y,m,d]=iso.split('-'); return`${d}/${m}/${y}`; }
+  function fmtTs(iso)   { const d=new Date(iso); return`${String(d.getDate()).padStart(2,'0')}/${String(d.getMonth()+1).padStart(2,'0')} ${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`; }
   function daysLabel(item) {
-    if (!item.vencimento) return '';
-    const today = new Date(); today.setHours(0,0,0,0);
-    const due = new Date(item.vencimento + 'T00:00:00');
-    const diff = Math.floor((due - today) / 86400000);
-    if (diff < 0) return `venceu há ${Math.abs(diff)} dia${Math.abs(diff)>1?'s':''}`;
-    if (diff === 0) return 'HOJE';
-    if (diff === 1) return 'amanhã';
-    return `em ${diff} dias`;
+    if(!item.vencimento)return'';
+    const today=new Date(); today.setHours(0,0,0,0);
+    const due=new Date(item.vencimento+'T00:00:00');
+    const diff=Math.floor((due-today)/86400000);
+    if(diff<0) return`venceu há ${Math.abs(diff)} dia${Math.abs(diff)>1?'s':''}`;
+    if(diff===0)return'HOJE'; if(diff===1)return'amanhã';
+    return`em ${diff} dias`;
   }
-  function esc(s) { return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+  function esc(s){return(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');}
 
-  let editingId = null;
+  let _toastTimer;
+  function showToast(msg,color){
+    const t=document.getElementById('pz-toast'); if(!t)return;
+    t.style.borderLeftColor=color||'var(--brand)'; t.innerHTML=msg;
+    t.style.display='block'; t.style.opacity='1';
+    clearTimeout(_toastTimer);
+    _toastTimer=setTimeout(()=>{t.style.opacity='0';setTimeout(()=>{t.style.display='none';},300);},3200);
+  }
+
+  // ── Identity bar ───────────────────────────────────────────────────────────
+  function renderIdentity() {
+    const el=document.getElementById('pz-identity'); if(!el)return;
+    if(document.activeElement?.id==='pz-name-inp')return; // don't interrupt typing
+    const user=getUser();
+    const prazos=load();
+    const names=[...new Set(prazos.map(p=>p.responsavel).filter(Boolean))].sort();
+    const dl=`<datalist id="pz-names-dl">${names.map(n=>`<option value="${esc(n)}">`).join('')}</datalist>`;
+    if(!user){
+      el.innerHTML=`<span style="color:var(--text-muted);font-size:13px">👋 Quem é você?</span>
+        <span style="font-size:12px;color:var(--text-muted)">Identifique-se para ver seus prazos em destaque.</span>
+        ${dl}
+        <div style="display:flex;gap:8px;align-items:center;width:100%;margin-top:4px">
+          <input type="text" class="pz-form-input" id="pz-name-inp" list="pz-names-dl" placeholder="Seu nome..." style="flex:1;max-width:240px;padding:7px 12px">
+          <button class="pz-btn-save" id="pz-name-ok" style="padding:7px 14px;font-size:12px">Confirmar</button>
+        </div>`;
+      document.getElementById('pz-name-ok').onclick=()=>{const v=document.getElementById('pz-name-inp')?.value.trim();if(v){setUser(v);renderIdentity();renderBoard();}};
+      document.getElementById('pz-name-inp').onkeydown=e=>{if(e.key==='Enter')document.getElementById('pz-name-ok').click();};
+    } else {
+      const myActive=prazos.map(p=>({...p,_s:computeStatus(p)})).filter(p=>p._s!=='concluido'&&(p.responsavel===user||p.revisor===user)).length;
+      el.innerHTML=`<span style="color:var(--text-muted);font-size:13px">👋 Olá,&nbsp;</span>
+        <span style="font-weight:600;color:var(--text-primary)">${esc(user)}</span>
+        ${myActive>0
+          ?`<span style="font-size:12px;color:var(--text-muted)"> · ${myActive} prazo${myActive>1?'s':''} ativo${myActive>1?'s':''} seus</span>`
+          :`<span style="font-size:12px;color:#22C55E"> · nenhum prazo ativo 🎉</span>`}
+        <button class="pz-identity-edit" id="pz-id-change">✏️ trocar</button>`;
+      document.getElementById('pz-id-change').onclick=()=>{setUser('');renderIdentity();renderBoard();};
+    }
+  }
+
+  // ── Health panel ───────────────────────────────────────────────────────────
+  function renderHealth() {
+    const panel=document.getElementById('pz-health'); if(!panel)return;
+    const all=load().map(p=>({...p,_s:computeStatus(p)}));
+    const active=all.filter(p=>p._s!=='concluido');
+    const onTime=active.filter(p=>p._s==='normal');
+    const pct=active.length?Math.round(onTime.length/active.length*100):100;
+    const pctClr=pct>=70?'#22C55E':pct>=40?'#EAB308':'#EF4444';
+    const critical=[...all].filter(p=>['vencido','urgente'].includes(p._s)&&p.vencimento).sort((a,b)=>a.vencimento.localeCompare(b.vencimento))[0];
+    const counts={}; active.forEach(p=>{if(p.responsavel)counts[p.responsavel]=(counts[p.responsavel]||0)+1;});
+    const top=Object.entries(counts).sort((a,b)=>b[1]-a[1])[0];
+    panel.innerHTML=`
+      <div class="pz-health-card">
+        <div class="pz-health-label">Saúde da Equipe</div>
+        <div class="pz-health-value" style="color:${pctClr}">${pct}%</div>
+        <div class="pz-health-sub">${onTime.length} em dia · ${active.length-onTime.length} em risco · ${active.length} ativos</div>
+        <div class="pz-health-bar"><div class="pz-health-fill" style="width:${pct}%;background:${pctClr}"></div></div>
+      </div>
+      <div class="pz-health-card">
+        <div class="pz-health-label">Próximo Crítico</div>
+        ${critical
+          ?`<div class="pz-health-value" style="color:#EF4444;font-size:13px;font-weight:600;line-height:1.4">${esc(critical.titulo)}</div>
+            <div class="pz-health-sub">${fmtDate(critical.vencimento)} · ${daysLabel(critical)}${critical.responsavel?' · '+esc(critical.responsavel):''}</div>`
+          :`<div class="pz-health-value" style="color:#22C55E;font-size:15px">✓ Tudo em dia</div>
+            <div class="pz-health-sub">Nenhum prazo crítico</div>`}
+      </div>
+      <div class="pz-health-card">
+        <div class="pz-health-label">Mais Sobrecarregado</div>
+        ${top
+          ?`<div class="pz-health-value" style="font-size:15px">${esc(top[0])}</div>
+            <div class="pz-health-sub">${top[1]} prazo${top[1]>1?'s':''} ativo${top[1]>1?'s':''}</div>`
+          :`<div class="pz-health-value" style="color:var(--text-muted);font-size:14px">—</div>
+            <div class="pz-health-sub">Sem responsáveis atribuídos</div>`}
+      </div>`;
+  }
+
+  // ── Board ──────────────────────────────────────────────────────────────────
+  let focusMode=false, editingId=null;
 
   function renderBoard() {
-    const prazos = load();
-    const fArea   = document.getElementById('pz-filter-area')?.value   || '';
-    const fStatus = document.getElementById('pz-filter-status')?.value || '';
-    const fResp   = document.getElementById('pz-filter-resp')?.value   || '';
+    renderIdentity();
+    renderHealth();
+    const prazos=load();
+    const user=getUser();
+    const search=(document.getElementById('pz-search')?.value||'').toLowerCase().trim();
+    const fArea  =document.getElementById('pz-filter-area')?.value||'';
+    const fStatus=document.getElementById('pz-filter-status')?.value||'';
+    const fResp  =document.getElementById('pz-filter-resp')?.value||'';
 
-    // rebuild responsável filter
-    const respSel = document.getElementById('pz-filter-resp');
-    if (respSel) {
-      const cur   = respSel.value;
-      const names = [...new Set(prazos.map(p => p.responsavel).filter(Boolean))].sort();
-      respSel.innerHTML = '<option value="">Todos os responsáveis</option>' +
-        names.map(n => `<option value="${esc(n)}"${cur===n?' selected':''}>${esc(n)}</option>`).join('');
+    const respSel=document.getElementById('pz-filter-resp');
+    if(respSel){
+      const cur=respSel.value;
+      const names=[...new Set(prazos.map(p=>p.responsavel).filter(Boolean))].sort();
+      respSel.innerHTML='<option value="">Todos os responsáveis</option>'+names.map(n=>`<option value="${esc(n)}"${cur===n?' selected':''}>${esc(n)}</option>`).join('');
     }
+    document.getElementById('pz-focus-btn')?.classList.toggle('active',focusMode);
 
-    // stats (always from full list)
-    const all = prazos.map(p => ({...p, _s: computeStatus(p)}));
-    document.getElementById('pz-count-vencido').textContent  = all.filter(p => p._s==='vencido').length;
-    document.getElementById('pz-count-urgente').textContent  = all.filter(p => p._s==='urgente').length;
-    document.getElementById('pz-count-atencao').textContent  = all.filter(p => p._s==='atencao').length;
-    const now = new Date(); const cm = now.getMonth(); const cy = now.getFullYear();
-    document.getElementById('pz-count-concluido').textContent = all.filter(p => {
-      if (p._s !== 'concluido') return false;
-      if (!p.vencimento) return true;
-      const d = new Date(p.vencimento+'T00:00:00');
-      return d.getMonth()===cm && d.getFullYear()===cy;
+    const allWS=prazos.map(p=>({...p,_s:computeStatus(p)}));
+    document.getElementById('pz-count-vencido').textContent =allWS.filter(p=>p._s==='vencido').length;
+    document.getElementById('pz-count-urgente').textContent =allWS.filter(p=>p._s==='urgente').length;
+    document.getElementById('pz-count-atencao').textContent =allWS.filter(p=>p._s==='atencao').length;
+    const now=new Date();const cm=now.getMonth(),cy=now.getFullYear();
+    document.getElementById('pz-count-concluido').textContent=allWS.filter(p=>{
+      if(p._s!=='concluido')return false; if(!p.vencimento)return true;
+      const d=new Date(p.vencimento+'T00:00:00'); return d.getMonth()===cm&&d.getFullYear()===cy;
     }).length;
 
-    // filter
-    let filtered = all.slice();
-    if (fArea)   filtered = filtered.filter(p => p.area        === fArea);
-    if (fStatus) filtered = filtered.filter(p => p._s          === fStatus);
-    if (fResp)   filtered = filtered.filter(p => p.responsavel === fResp);
+    let filtered=allWS.slice();
+    if(focusMode){
+      if(!user){focusMode=false;showToast('👤 Identifique-se primeiro para usar o Modo Foco.','#7C3AED');renderBoard();return;}
+      const wEnd=new Date();wEnd.setDate(wEnd.getDate()+7);wEnd.setHours(23,59,59,999);
+      filtered=filtered.filter(p=>{
+        if(p._s==='concluido')return false;
+        if(p.responsavel!==user&&p.revisor!==user)return false;
+        if(!p.vencimento)return true;
+        return new Date(p.vencimento+'T00:00:00')<=wEnd;
+      });
+    }
+    if(search)  filtered=filtered.filter(p=>[p.titulo,p.area,p.responsavel,p.revisor,p.descricao].some(f=>(f||'').toLowerCase().includes(search)));
+    if(fArea)   filtered=filtered.filter(p=>p.area===fArea);
+    if(fStatus) filtered=filtered.filter(p=>p._s===fStatus);
+    if(fResp)   filtered=filtered.filter(p=>p.responsavel===fResp);
 
-    // group
-    const groups = {};
-    filtered.forEach(p => { (groups[p._s] = groups[p._s]||[]).push(p); });
-    Object.keys(groups).forEach(s => groups[s].sort((a,b) => (!a.vencimento?1:!b.vencimento?-1:a.vencimento.localeCompare(b.vencimento))));
+    const groups={};
+    filtered.forEach(p=>{(groups[p._s]=groups[p._s]||[]).push(p);});
+    Object.keys(groups).forEach(s=>groups[s].sort((a,b)=>!a.vencimento?1:!b.vencimento?-1:a.vencimento.localeCompare(b.vencimento)));
 
-    const board = document.getElementById('pz-board');
-    if (!board) return;
-
-    const keys = STATUS_ORDER.filter(k => groups[k]?.length);
-    if (!keys.length) {
-      board.innerHTML = '<div class="pz-no-results">Nenhum prazo encontrado com esses filtros.</div>';
+    const board=document.getElementById('pz-board'); if(!board)return;
+    const keys=STATUS_ORDER.filter(k=>groups[k]?.length);
+    if(!keys.length){
+      board.innerHTML=`<div class="pz-no-results">${focusMode?'🎯 Nenhum dos seus prazos vence nesta semana.':'Nenhum prazo encontrado com esses filtros.'}</div>`;
       return;
     }
-
-    board.innerHTML = keys.map(status => {
-      const items = groups[status];
-      const cards = items.map(p => {
-        const dl = daysLabel(p);
-        return `<div class="pz-card ${esc(p._s)}" data-id="${esc(p.id)}">
+    board.innerHTML=keys.map(status=>{
+      const items=groups[status];
+      const cards=items.map(p=>{
+        const isMine=user&&(p.responsavel===user||p.revisor===user);
+        const dl=daysLabel(p);
+        const hist=p.history||[];
+        const histBlock=hist.length?`
+          <span class="pz-history-toggle" onclick="this.nextElementSibling.classList.toggle('open')">📋 ${hist.length} registro${hist.length>1?'s':''} ▾</span>
+          <div class="pz-history-log">${[...hist].reverse().map(h=>`<div class="pz-history-entry"><strong>${esc(h.action==='completed'?'Concluído':h.action==='postponed'?'Adiado':h.action==='notified'?'Notificado':'Criado')}</strong> por <em>${esc(h.by||'—')}</em> em ${fmtTs(h.at)}${h.note?' · '+esc(h.note):''}${h.oldDate?' (era '+fmtDate(h.oldDate)+')':''}</div>`).join('')}</div>`:'' ;
+        return`<div class="pz-card ${esc(p._s)}${isMine?' is-mine':''}" data-id="${esc(p.id)}">
           <div class="pz-card-top">
             <div class="pz-card-title">${esc(p.titulo)}</div>
             <div class="pz-card-actions">
@@ -2340,19 +2500,25 @@ function switchPMSub(sub, btn) {
             </div>
           </div>
           <div class="pz-card-meta">
-            ${p.area ? `<span class="pz-area-badge">${esc(p.area)}</span>` : ''}
+            ${p.area?`<span class="pz-area-badge">${esc(p.area)}</span>`:''}
             <span class="pz-status-badge ${esc(p._s)}">${STATUS_LABELS[p._s]}</span>
+            ${isMine?`<span style="font-size:9px;padding:2px 6px;border-radius:4px;background:rgba(124,58,237,0.12);color:var(--brand-light);border:1px solid rgba(124,58,237,0.2);font-weight:600">👤 meu</span>`:''}
           </div>
-          <div class="pz-card-due">📅 ${fmtDate(p.vencimento)}${dl ? ` · <em style="color:${p._s==='vencido'?'#EF4444':p._s==='urgente'?'#F97316':'inherit'}">${esc(dl)}</em>` : ''}</div>
-          ${(p.responsavel||p.revisor) ? `<div class="pz-card-people">
+          <div class="pz-card-due">📅 ${fmtDate(p.vencimento)}${dl?` · <em style="color:${p._s==='vencido'?'#EF4444':p._s==='urgente'?'#F97316':'inherit'}">${esc(dl)}</em>`:''}</div>
+          ${(p.responsavel||p.revisor)?`<div class="pz-card-people">
             ${p.responsavel?`<span class="pz-person"><span class="pz-person-label">Owner</span> ${esc(p.responsavel)}</span>`:''}
             ${p.revisor?`<span class="pz-person"><span class="pz-person-label">Revisor</span> ${esc(p.revisor)}</span>`:''}
-          </div>` : ''}
-          ${p.descricao ? `<div class="pz-card-desc">${esc(p.descricao)}</div>` : ''}
+          </div>`:''}
+          ${p.descricao?`<div class="pz-card-desc">${esc(p.descricao)}</div>`:''}
+          ${histBlock}
+          ${p._s!=='concluido'?`<div class="pz-quick">
+            <button class="pz-quick-btn complete" onclick="pzComplete('${esc(p.id)}')">✓ Concluir</button>
+            <button class="pz-quick-btn postpone" onclick="pzPostpone('${esc(p.id)}')">↷ Adiar</button>
+            <button class="pz-quick-btn notify"   onclick="pzNotify('${esc(p.id)}')">💬 Avisar</button>
+          </div>`:''}
         </div>`;
       }).join('');
-
-      return `<div class="pz-group ${esc(status)}">
+      return`<div class="pz-group ${esc(status)}">
         <div class="pz-group-header">
           <span class="pz-group-title">${GROUP_TITLES[status]}</span>
           <span class="pz-group-count">${items.length}</span>
@@ -2363,66 +2529,135 @@ function switchPMSub(sub, btn) {
     }).join('');
   }
 
-  function openModal(item) {
-    editingId = item?.id || null;
-    document.getElementById('pz-modal-title').textContent   = item ? 'Editar Prazo' : 'Novo Prazo';
-    document.getElementById('pz-f-titulo').value            = item?.titulo      || '';
-    document.getElementById('pz-f-vencimento').value        = item?.vencimento  || '';
-    document.getElementById('pz-f-area').value              = item?.area        || '';
-    document.getElementById('pz-f-responsavel').value       = item?.responsavel || '';
-    document.getElementById('pz-f-revisor').value           = item?.revisor     || '';
-    document.getElementById('pz-f-status').value            = item?.manualStatus|| '';
-    document.getElementById('pz-f-descricao').value         = item?.descricao   || '';
-    document.getElementById('pz-modal').classList.add('open');
-    document.getElementById('pz-f-titulo').focus();
-  }
-  function closeModal() {
-    document.getElementById('pz-modal').classList.remove('open');
-    editingId = null;
-  }
-  function saveModal() {
-    const titulo = document.getElementById('pz-f-titulo').value.trim();
-    if (!titulo) { document.getElementById('pz-f-titulo').style.borderColor='#EF4444'; document.getElementById('pz-f-titulo').focus(); return; }
-    document.getElementById('pz-f-titulo').style.borderColor = '';
-    const prazos = load();
-    const item = {
-      titulo,
-      vencimento:   document.getElementById('pz-f-vencimento').value  || null,
-      area:         document.getElementById('pz-f-area').value,
-      responsavel:  document.getElementById('pz-f-responsavel').value.trim(),
-      revisor:      document.getElementById('pz-f-revisor').value.trim(),
-      manualStatus: document.getElementById('pz-f-status').value      || null,
-      descricao:    document.getElementById('pz-f-descricao').value.trim(),
+  // ── Quick actions ──────────────────────────────────────────────────────────
+  window.pzComplete=function(id){
+    const prazos=load(); const p=prazos.find(x=>x.id===id); if(!p)return;
+    p.history.push({action:'completed',by:getUser()||'alguém',at:new Date().toISOString()});
+    p.manualStatus='concluido'; save(prazos);
+    showToast(`✅ <strong>${esc(p.titulo)}</strong> concluído!`,'#22C55E'); renderBoard();
+  };
+
+  window.pzPostpone=function(id){
+    const p=load().find(x=>x.id===id); if(!p)return;
+    const def=new Date(); def.setDate(def.getDate()+7);
+    const overlay=document.getElementById('pz-postpone-modal');
+    document.getElementById('pz-pp-title').textContent=p.titulo;
+    document.getElementById('pz-pp-date').value=p.vencimento||def.toISOString().slice(0,10);
+    document.getElementById('pz-pp-reason').value='';
+    overlay.classList.add('open');
+    setTimeout(()=>document.getElementById('pz-pp-date').focus(),50);
+    document.getElementById('pz-pp-save').onclick=()=>{
+      const newDate=document.getElementById('pz-pp-date').value;
+      const reason=document.getElementById('pz-pp-reason').value.trim();
+      if(!newDate)return;
+      const prazos=load(); const idx=prazos.findIndex(x=>x.id===id); if(idx<0)return;
+      prazos[idx].history.push({action:'postponed',by:getUser()||'alguém',at:new Date().toISOString(),oldDate:prazos[idx].vencimento,note:reason||undefined});
+      prazos[idx].vencimento=newDate; save(prazos);
+      overlay.classList.remove('open');
+      showToast(`↷ Adiado para ${fmtDate(newDate)}`,'#EAB308'); renderBoard();
     };
-    if (editingId) {
-      const i = prazos.findIndex(p => p.id === editingId);
-      if (i > -1) prazos[i] = {...prazos[i], ...item};
+  };
+
+  window.pzNotify=function(id){
+    const p=load().find(x=>x.id===id); if(!p)return;
+    const dl=daysLabel(p);
+    const msg=(p.responsavel?`@${p.responsavel} — `:'')
+      +`lembrete: o prazo *${p.titulo}* vence ${dl?`*${dl}*`:'em breve'} (${fmtDate(p.vencimento)}).`
+      +(p.revisor?`\nRevisor: @${p.revisor}`:'');
+    navigator.clipboard.writeText(msg).then(()=>{
+      const prazos=load(); const idx=prazos.findIndex(x=>x.id===id);
+      if(idx>=0){prazos[idx].history.push({action:'notified',by:getUser()||'alguém',at:new Date().toISOString()});save(prazos);}
+      showToast('💬 Mensagem copiada! Cole no Slack.','#7C3AED'); renderBoard();
+    }).catch(()=>showToast('⚠️ Copiar falhou. Tente de novo.','#EF4444'));
+  };
+
+  // ── Export ─────────────────────────────────────────────────────────────────
+  function exportSummary(){
+    const prazos=load().map(p=>({...p,_s:computeStatus(p)}));
+    const d=new Date(); const ds=`${String(d.getDate()).padStart(2,'0')}/${String(d.getMonth()+1).padStart(2,'0')}/${d.getFullYear()}`;
+    const v=prazos.filter(p=>p._s==='vencido'), u=prazos.filter(p=>p._s==='urgente'),
+          a=prazos.filter(p=>p._s==='atencao'),
+          c=prazos.filter(p=>p._s==='concluido'&&(p.history||[]).some(h=>h.action==='completed'));
+    let txt=`📊 *Resumo de Prazos — ${ds}*\n\n`;
+    if(v.length){txt+=`🔴 *Vencidos (${v.length}):*\n`;v.forEach(p=>{txt+=`• ${p.titulo}${p.responsavel?' — '+p.responsavel:''} — venceu ${fmtDate(p.vencimento)}\n`;});txt+='\n';}
+    if(u.length){txt+=`🟠 *Urgentes (${u.length}):*\n`;u.forEach(p=>{txt+=`• ${p.titulo}${p.responsavel?' — '+p.responsavel:''} — vence ${fmtDate(p.vencimento)}\n`;});txt+='\n';}
+    if(a.length){txt+=`🟡 *Atenção (${a.length}):*\n`;a.forEach(p=>{txt+=`• ${p.titulo}${p.responsavel?' — '+p.responsavel:''} — ${daysLabel(p)}\n`;});txt+='\n';}
+    if(c.length){
+      txt+=`✅ *Concluídos recentemente (${c.length}):*\n`;
+      c.forEach(p=>{const last=[...(p.history||[])].reverse().find(h=>h.action==='completed');txt+=`• ${p.titulo}${last?' — por '+last.by+' em '+fmtTs(last.at):''}${p.responsavel?' — '+p.responsavel:''}\n`;});
+      txt+='\n';
+    }
+    if(!v.length&&!u.length&&!a.length)txt+=`🟢 *Todos os prazos em dia!*\n\n`;
+    txt+=`_Monitor de Compliance · Pitaco_`;
+    navigator.clipboard.writeText(txt)
+      .then(()=>showToast('📤 Resumo copiado! Cole no Slack.','#7C3AED'))
+      .catch(()=>{const w=window.open('','_blank');if(w)w.document.write('<pre style="font-family:monospace;padding:20px">'+txt.replace(/</g,'&lt;')+'</pre>');});
+  }
+
+  // ── Modal create/edit ──────────────────────────────────────────────────────
+  function openModal(item){
+    editingId=item?.id||null;
+    document.getElementById('pz-modal-title').textContent=item?'Editar Prazo':'Novo Prazo';
+    document.getElementById('pz-f-titulo').value     =item?.titulo      ||'';
+    document.getElementById('pz-f-vencimento').value =item?.vencimento  ||'';
+    document.getElementById('pz-f-area').value       =item?.area        ||'';
+    document.getElementById('pz-f-responsavel').value=item?.responsavel ||'';
+    document.getElementById('pz-f-revisor').value    =item?.revisor     ||'';
+    document.getElementById('pz-f-status').value     =item?.manualStatus||'';
+    document.getElementById('pz-f-descricao').value  =item?.descricao   ||'';
+    document.getElementById('pz-btn-save').textContent=item?'Salvar Alterações':'Salvar Prazo';
+    document.getElementById('pz-modal').classList.add('open');
+    setTimeout(()=>document.getElementById('pz-f-titulo').focus(),50);
+  }
+  function closeModal(){document.getElementById('pz-modal').classList.remove('open');editingId=null;}
+  function saveModal(){
+    const titulo=document.getElementById('pz-f-titulo').value.trim();
+    if(!titulo){document.getElementById('pz-f-titulo').style.borderColor='#EF4444';document.getElementById('pz-f-titulo').focus();return;}
+    document.getElementById('pz-f-titulo').style.borderColor='';
+    const prazos=load();
+    const item={
+      titulo,
+      vencimento:  document.getElementById('pz-f-vencimento').value||null,
+      area:        document.getElementById('pz-f-area').value,
+      responsavel: document.getElementById('pz-f-responsavel').value.trim(),
+      revisor:     document.getElementById('pz-f-revisor').value.trim(),
+      manualStatus:document.getElementById('pz-f-status').value||null,
+      descricao:   document.getElementById('pz-f-descricao').value.trim(),
+    };
+    if(editingId){
+      const i=prazos.findIndex(p=>p.id===editingId);
+      if(i>-1)prazos[i]={history:[],...prazos[i],...item};
     } else {
-      item.id = 'p' + Date.now();
+      item.id='p'+Date.now();
+      item.history=[{action:'created',by:getUser()||'—',at:new Date().toISOString()}];
       prazos.push(item);
     }
-    save(prazos);
-    closeModal();
-    renderBoard();
+    save(prazos); closeModal(); renderBoard();
   }
 
-  // global handlers for inline onclick
-  window.pzEdit = id => { const p = load().find(x => x.id===id); if(p) openModal(p); };
-  window.pzDel  = id => { if(!confirm('Excluir este prazo?')) return; save(load().filter(p=>p.id!==id)); renderBoard(); };
+  // ── Global onclick handlers ────────────────────────────────────────────────
+  window.pzEdit=id=>{const p=load().find(x=>x.id===id);if(p)openModal(p);};
+  window.pzDel =id=>{if(!confirm('Excluir este prazo?'))return;save(load().filter(p=>p.id!==id));renderBoard();};
 
-  // setup direto — DOM já está pronto (script no fim do body)
-  document.getElementById('pz-add-btn')    ?.addEventListener('click', () => openModal(null));
-  document.getElementById('pz-modal-close')?.addEventListener('click', closeModal);
-  document.getElementById('pz-btn-cancel') ?.addEventListener('click', closeModal);
-  document.getElementById('pz-btn-save')   ?.addEventListener('click', saveModal);
-  document.getElementById('pz-modal')      ?.addEventListener('click', e => { if(e.target.id==='pz-modal') closeModal(); });
-  document.getElementById('pz-filter-area')  ?.addEventListener('change', renderBoard);
-  document.getElementById('pz-filter-status')?.addEventListener('change', renderBoard);
-  document.getElementById('pz-filter-resp')  ?.addEventListener('change', renderBoard);
-  document.querySelectorAll('.tab-btn[data-tab="prazos"]').forEach(b => b.addEventListener('click', () => setTimeout(renderBoard, 40)));
-  document.addEventListener('keydown', e => { if(e.key==='Escape') closeModal(); });
+  // ── Events ─────────────────────────────────────────────────────────────────
+  document.getElementById('pz-add-btn')       ?.addEventListener('click',()=>openModal(null));
+  document.getElementById('pz-modal-close')   ?.addEventListener('click',closeModal);
+  document.getElementById('pz-btn-cancel')    ?.addEventListener('click',closeModal);
+  document.getElementById('pz-btn-save')      ?.addEventListener('click',saveModal);
+  document.getElementById('pz-modal')         ?.addEventListener('click',e=>{if(e.target.id==='pz-modal')closeModal();});
+  document.getElementById('pz-filter-area')   ?.addEventListener('change',renderBoard);
+  document.getElementById('pz-filter-status') ?.addEventListener('change',renderBoard);
+  document.getElementById('pz-filter-resp')   ?.addEventListener('change',renderBoard);
+  document.getElementById('pz-focus-btn')     ?.addEventListener('click',()=>{focusMode=!focusMode;renderBoard();});
+  document.getElementById('pz-export-btn')    ?.addEventListener('click',exportSummary);
+  document.getElementById('pz-postpone-modal')?.addEventListener('click',e=>{if(e.target.id==='pz-postpone-modal')document.getElementById('pz-postpone-modal').classList.remove('open');});
+  document.getElementById('pz-pp-cancel-btn') ?.addEventListener('click',()=>document.getElementById('pz-postpone-modal').classList.remove('open'));
+  let _sTimer; document.getElementById('pz-search')?.addEventListener('input',()=>{clearTimeout(_sTimer);_sTimer=setTimeout(renderBoard,220);});
+  document.querySelectorAll('.tab-btn[data-tab="prazos"]').forEach(b=>b.addEventListener('click',()=>setTimeout(renderBoard,40)));
+  document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeModal();document.getElementById('pz-postpone-modal')?.classList.remove('open');}});
+
   renderBoard();
-  setInterval(renderBoard, 60000);
+  setInterval(renderBoard,60000);
 })();
 </script>
 <!-- ═══ MODAL PRAZOS (fora de qualquer tab-pane) ═══ -->
@@ -2479,5 +2714,34 @@ function switchPMSub(sub, btn) {
     </div>
   </div>
 </div>
+
+<!-- ═══ MODAL ADIAMENTO ═══ -->
+<div class="pz-modal-overlay" id="pz-postpone-modal">
+  <div class="pz-mini-modal">
+    <div class="pz-modal-header">
+      <span class="pz-modal-title">↷ Adiar Prazo</span>
+      <button class="pz-modal-close" id="pz-pp-cancel-btn">✕</button>
+    </div>
+    <p id="pz-pp-title" style="font-size:13px;color:var(--text-secondary);margin-bottom:18px;font-weight:500;line-height:1.4"></p>
+    <div style="display:flex;flex-direction:column;gap:14px">
+      <div class="pz-form-field">
+        <label class="pz-form-label">Nova Data de Vencimento</label>
+        <input type="date" class="pz-form-input" id="pz-pp-date">
+      </div>
+      <div class="pz-form-field">
+        <label class="pz-form-label">Motivo (opcional)</label>
+        <input type="text" class="pz-form-input" id="pz-pp-reason" placeholder="Descreva o motivo do adiamento...">
+      </div>
+    </div>
+    <div class="pz-modal-footer">
+      <button class="pz-btn-cancel" id="pz-pp-cancel-btn2" onclick="document.getElementById('pz-postpone-modal').classList.remove('open')">Cancelar</button>
+      <button class="pz-btn-save" id="pz-pp-save">Confirmar Adiamento</button>
+    </div>
+  </div>
+</div>
+
+<!-- ═══ TOAST ═══ -->
+<div id="pz-toast" class="pz-toast" style="display:none"></div>
+
 </body>
 </html>
