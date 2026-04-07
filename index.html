@@ -2642,7 +2642,21 @@ function switchPMSub(sub, btn) {
   }
 
   // ── Global onclick handlers ────────────────────────────────────────────────
-  window.pzOpenNew=()=>openModal(null);
+  window.pzOpenNew=()=>{
+    try{
+      const m=document.getElementById('pz-modal');
+      if(!m){alert('ERRO: modal não encontrado no DOM');return;}
+      m.style.cssText='display:flex!important;position:fixed;inset:0;z-index:9000;background:rgba(0,0,0,0.75);align-items:center;justify-content:center;padding:20px;';
+      const t=document.getElementById('pz-modal-title');if(t)t.textContent='Novo Prazo';
+      const s=document.getElementById('pz-f-titulo');if(s){s.value='';setTimeout(()=>s.focus(),50);}
+      ['pz-f-vencimento','pz-f-area','pz-f-responsavel','pz-f-revisor','pz-f-status','pz-f-descricao'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
+      const btn=document.getElementById('pz-btn-save');if(btn){btn.textContent='Salvar Prazo';btn.onclick=()=>{saveModal();m.style.display='none';};}
+      const cc=document.getElementById('pz-btn-cancel');if(cc)cc.onclick=()=>m.style.display='none';
+      const cx=document.getElementById('pz-modal-close');if(cx)cx.onclick=()=>m.style.display='none';
+      m.onclick=e=>{if(e.target===m)m.style.display='none';};
+      editingId=null;
+    }catch(err){alert('Erro ao abrir modal: '+err.message);}
+  };
   window.pzEdit=id=>{const p=load().find(x=>x.id===id);if(p)openModal(p);};
   window.pzDel =id=>{if(!confirm('Excluir este prazo?'))return;save(load().filter(p=>p.id!==id));renderBoard();};
 
