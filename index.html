@@ -486,6 +486,8 @@ body {
   transition: all var(--transition); white-space: nowrap;
 }
 .pz-add-btn:hover { background: var(--brand-light); box-shadow: 0 4px 12px rgba(124,58,237,0.4); }
+/* CSS toggle para o form de novo prazo */
+#pz-form-toggle:checked ~ #pz-inline-form { display: block; }
 .pz-group { margin-bottom: 28px; }
 .pz-group-header { display:flex; align-items:center; gap:10px; margin-bottom:12px; }
 .pz-group-title { font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:0.6px; white-space:nowrap; }
@@ -2051,15 +2053,18 @@ function checkPwd(){
     <div class="pz-toolbar-actions">
       <button class="pz-focus-btn" id="pz-focus-btn">🎯 Modo Foco</button>
       <button class="pz-export-btn" id="pz-export-btn">📤 Exportar</button>
-      <button class="pz-add-btn" id="pz-add-btn" onclick="pzToggleForm()">+ Novo Prazo</button>
+      <label for="pz-form-toggle" class="pz-add-btn" style="cursor:pointer">+ Novo Prazo</label>
     </div>
   </div>
+
+  <!-- toggle CSS puro — sem JavaScript -->
+  <input type="checkbox" id="pz-form-toggle" style="display:none">
 
   <!-- Formulário inline de novo prazo -->
   <div id="pz-inline-form" style="display:none;background:var(--bg-surface);border:1px solid var(--border-md);border-radius:var(--radius-lg);padding:22px;margin-bottom:20px;">
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;">
       <span style="font-size:15px;font-weight:700;color:var(--text-primary)" id="pz-form-heading">Novo Prazo</span>
-      <button onclick="pzToggleForm()" style="background:none;border:1px solid var(--border);color:var(--text-muted);cursor:pointer;border-radius:6px;width:28px;height:28px;font-size:14px;">✕</button>
+      <label for="pz-form-toggle" style="background:none;border:1px solid var(--border);color:var(--text-muted);cursor:pointer;border-radius:6px;width:28px;height:28px;font-size:14px;display:flex;align-items:center;justify-content:center;">✕</label>
     </div>
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
       <div style="grid-column:1/-1">
@@ -2103,7 +2108,7 @@ function checkPwd(){
       </div>
     </div>
     <div style="display:flex;gap:10px;justify-content:flex-end;margin-top:16px;">
-      <button onclick="pzToggleForm()" class="pz-btn-cancel">Cancelar</button>
+      <label for="pz-form-toggle" class="pz-btn-cancel" style="cursor:pointer">Cancelar</label>
       <button onclick="pzSaveInlineForm()" class="pz-btn-save" id="pz-if-save-btn">Salvar Prazo</button>
     </div>
   </div>
