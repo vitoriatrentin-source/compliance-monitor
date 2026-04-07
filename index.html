@@ -2648,7 +2648,7 @@ function switchPMSub(sub, btn) {
   // ── Events ─────────────────────────────────────────────────────────────────
   document.getElementById('pz-add-btn')       ?.addEventListener('click',()=>openModal(null));
   // pz-modal-close / pz-btn-cancel / pz-btn-save / pz-modal click-outside
-  // são atribuídos via .onclick em openModal() porque o HTML do modal vem após o </script>
+  // são atribuídos via .onclick em openModal() porque o HTML do modal vem após o bloco script
   document.getElementById('pz-filter-area')   ?.addEventListener('change',renderBoard);
   document.getElementById('pz-filter-status') ?.addEventListener('change',renderBoard);
   document.getElementById('pz-filter-resp')   ?.addEventListener('change',renderBoard);
