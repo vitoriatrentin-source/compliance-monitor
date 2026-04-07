@@ -469,6 +469,105 @@ body {
 }
 .sub-toggle-btn.active { background: var(--brand-dim); border-color: rgba(124,58,237,0.3); color: var(--brand-light); }
 
+/* ── PRAZOS KANBAN ── */
+.pz-toolbar { display:flex; align-items:center; justify-content:space-between; gap:12px; margin-bottom:24px; flex-wrap:wrap; }
+.pz-filters { display:flex; gap:8px; flex-wrap:wrap; }
+.pz-filter-select {
+  background: var(--bg-elevated); border: 1px solid var(--border);
+  color: var(--text-secondary); font-family: var(--font); font-size: 12px;
+  padding: 7px 12px; border-radius: var(--radius-pill); cursor: pointer;
+  outline: none; transition: all var(--transition);
+}
+.pz-filter-select:hover, .pz-filter-select:focus { border-color: var(--border-md); color: var(--text-primary); }
+.pz-add-btn {
+  background: var(--brand); color: #fff; font-family: var(--font);
+  font-size: 12px; font-weight: 600; padding: 8px 16px;
+  border: none; border-radius: var(--radius-pill); cursor: pointer;
+  transition: all var(--transition); white-space: nowrap;
+}
+.pz-add-btn:hover { background: var(--brand-light); box-shadow: 0 4px 12px rgba(124,58,237,0.4); }
+.pz-group { margin-bottom: 28px; }
+.pz-group-header { display:flex; align-items:center; gap:10px; margin-bottom:12px; }
+.pz-group-title { font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:0.6px; white-space:nowrap; }
+.pz-group-count { font-size:11px; font-weight:700; min-width:20px; height:20px; border-radius:var(--radius-pill); display:flex; align-items:center; justify-content:center; padding:0 6px; }
+.pz-group-line { flex:1; height:1px; background:var(--border); }
+.pz-group.vencido  .pz-group-title { color:#EF4444; }
+.pz-group.vencido  .pz-group-count { background:rgba(239,68,68,0.12); color:#EF4444; }
+.pz-group.urgente  .pz-group-title { color:#F97316; }
+.pz-group.urgente  .pz-group-count { background:rgba(249,115,22,0.12); color:#F97316; }
+.pz-group.atencao  .pz-group-title { color:#EAB308; }
+.pz-group.atencao  .pz-group-count { background:rgba(234,179,8,0.12); color:#EAB308; }
+.pz-group.normal   .pz-group-title { color:#60A5FA; }
+.pz-group.normal   .pz-group-count { background:rgba(96,165,250,0.12); color:#60A5FA; }
+.pz-group.concluido .pz-group-title { color:#22C55E; }
+.pz-group.concluido .pz-group-count { background:rgba(34,197,94,0.12); color:#22C55E; }
+.pz-cards { display:grid; grid-template-columns:repeat(auto-fill,minmax(295px,1fr)); gap:12px; }
+@media (max-width:700px) { .pz-cards { grid-template-columns:1fr; } }
+.pz-card {
+  background:var(--bg-card); border:1px solid var(--border);
+  border-radius:var(--radius-lg); padding:16px;
+  transition:border-color var(--transition), box-shadow var(--transition);
+  position:relative; overflow:hidden;
+}
+.pz-card::before { content:''; position:absolute; left:0; top:0; bottom:0; width:3px; border-radius:3px 0 0 3px; }
+.pz-card.vencido::before  { background:#EF4444; box-shadow:0 0 8px rgba(239,68,68,0.5); }
+.pz-card.urgente::before  { background:#F97316; }
+.pz-card.atencao::before  { background:#EAB308; }
+.pz-card.normal::before   { background:#60A5FA; }
+.pz-card.concluido::before { background:#22C55E; }
+.pz-card:hover { border-color:var(--border-md); box-shadow:0 4px 16px rgba(0,0,0,0.3); }
+.pz-card-top { display:flex; align-items:flex-start; gap:8px; margin-bottom:10px; }
+.pz-card-title { flex:1; font-size:13px; font-weight:600; color:var(--text-primary); line-height:1.4; }
+.pz-card-actions { display:flex; gap:4px; opacity:0; transition:opacity var(--transition); flex-shrink:0; }
+.pz-card:hover .pz-card-actions { opacity:1; }
+.pz-card-act-btn {
+  width:26px; height:26px; border-radius:var(--radius-sm);
+  border:1px solid var(--border); background:var(--bg-elevated);
+  color:var(--text-muted); cursor:pointer; font-size:11px;
+  display:flex; align-items:center; justify-content:center;
+  transition:all var(--transition);
+}
+.pz-card-act-btn:hover { border-color:var(--border-md); color:var(--text-primary); }
+.pz-card-act-btn.delete:hover { border-color:rgba(239,68,68,0.4); color:#EF4444; background:rgba(239,68,68,0.08); }
+.pz-card-meta { display:flex; align-items:center; gap:6px; flex-wrap:wrap; margin-bottom:10px; }
+.pz-area-badge { font-size:9.5px; font-weight:600; padding:2px 8px; border-radius:var(--radius-pill); text-transform:uppercase; letter-spacing:0.3px; background:var(--brand-dim); color:var(--brand-light); border:1px solid rgba(124,58,237,0.2); }
+.pz-status-badge { font-size:9.5px; font-weight:600; padding:2px 8px; border-radius:var(--radius-pill); text-transform:uppercase; letter-spacing:0.3px; }
+.pz-status-badge.vencido  { background:rgba(239,68,68,0.12);  color:#EF4444; border:1px solid rgba(239,68,68,0.2); }
+.pz-status-badge.urgente  { background:rgba(249,115,22,0.12); color:#F97316; border:1px solid rgba(249,115,22,0.2); }
+.pz-status-badge.atencao  { background:rgba(234,179,8,0.12);  color:#EAB308; border:1px solid rgba(234,179,8,0.2); }
+.pz-status-badge.normal   { background:rgba(96,165,250,0.12); color:#60A5FA; border:1px solid rgba(96,165,250,0.2); }
+.pz-status-badge.concluido { background:rgba(34,197,94,0.12); color:#22C55E; border:1px solid rgba(34,197,94,0.2); }
+.pz-card-due { font-family:var(--mono); font-size:11px; color:var(--text-muted); display:flex; align-items:center; gap:5px; margin-bottom:8px; }
+.pz-card-people { display:flex; gap:12px; flex-wrap:wrap; margin-bottom:8px; }
+.pz-person { font-size:11px; color:var(--text-secondary); display:flex; align-items:center; gap:4px; }
+.pz-person-label { color:var(--text-muted); font-size:10px; font-weight:600; text-transform:uppercase; letter-spacing:0.3px; }
+.pz-card-desc { font-size:11.5px; color:var(--text-muted); line-height:1.5; border-top:1px solid var(--border); padding-top:8px; margin-top:4px; }
+.pz-no-results { text-align:center; padding:60px 20px; color:var(--text-muted); font-size:13px; background:var(--bg-surface); border:1px dashed var(--border); border-radius:var(--radius-lg); }
+
+/* ── PRAZOS MODAL ── */
+.pz-modal-overlay { display:none; position:fixed; inset:0; z-index:1000; background:rgba(0,0,0,0.75); backdrop-filter:blur(4px); align-items:center; justify-content:center; padding:20px; }
+.pz-modal-overlay.open { display:flex; }
+.pz-modal { background:var(--bg-surface); border:1px solid var(--border-md); border-radius:var(--radius-xl); padding:28px; width:100%; max-width:520px; max-height:90vh; overflow-y:auto; box-shadow:0 24px 64px rgba(0,0,0,0.7); animation:pz-in .2s ease; }
+@keyframes pz-in { from{opacity:0;transform:translateY(14px) scale(0.97)} to{opacity:1;transform:translateY(0) scale(1)} }
+.pz-modal-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:22px; }
+.pz-modal-title { font-size:16px; font-weight:700; color:var(--text-primary); }
+.pz-modal-close { width:30px; height:30px; border-radius:var(--radius-sm); border:1px solid var(--border); background:var(--bg-elevated); color:var(--text-muted); cursor:pointer; font-size:14px; display:flex; align-items:center; justify-content:center; transition:all var(--transition); }
+.pz-modal-close:hover { color:var(--text-primary); border-color:var(--border-md); }
+.pz-form-grid { display:grid; grid-template-columns:1fr 1fr; gap:14px; }
+.pz-form-grid .pz-form-full { grid-column:1 / -1; }
+.pz-form-field { display:flex; flex-direction:column; gap:5px; }
+.pz-form-label { font-size:10.5px; font-weight:600; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.4px; }
+.pz-form-input, .pz-form-select, .pz-form-textarea { background:var(--bg-elevated); border:1px solid var(--border); color:var(--text-primary); font-family:var(--font); font-size:13px; padding:9px 12px; border-radius:var(--radius-md); outline:none; transition:border-color var(--transition); }
+.pz-form-input:focus, .pz-form-select:focus, .pz-form-textarea:focus { border-color:var(--brand); }
+.pz-form-input::placeholder { color:var(--text-muted); }
+.pz-form-textarea { resize:vertical; min-height:72px; }
+.pz-form-select option { background:var(--bg-elevated); }
+.pz-modal-footer { display:flex; gap:10px; justify-content:flex-end; margin-top:22px; }
+.pz-btn-cancel { padding:9px 18px; border-radius:var(--radius-pill); border:1px solid var(--border); background:transparent; color:var(--text-secondary); font-family:var(--font); font-size:13px; cursor:pointer; transition:all var(--transition); }
+.pz-btn-cancel:hover { border-color:var(--border-md); color:var(--text-primary); }
+.pz-btn-save { padding:9px 20px; border-radius:var(--radius-pill); border:none; background:var(--brand); color:#fff; font-family:var(--font); font-size:13px; font-weight:600; cursor:pointer; transition:all var(--transition); }
+.pz-btn-save:hover { background:var(--brand-light); box-shadow:0 4px 12px rgba(124,58,237,0.4); }
+
 /* ── TAB PANE ── */
 .tab-pane { display: none; }
 .tab-pane.active { display: block; }
@@ -1833,68 +1932,112 @@ function checkPwd(){
     <div class="section-label"><div class="section-icon">⏱</div><h2 class="section-name">Prazos &amp; Deadlines</h2></div>
   </div>
 
+  <!-- Stats dinâmicos -->
   <div class="stats-row">
     <div class="stat-card">
       <div class="stat-label">Vencidos</div>
-      <div class="stat-value" style="color:var(--danger)">2</div>
-      <div class="stat-delta">Política JR + Integridade AQF</div>
+      <div class="stat-value" id="pz-count-vencido" style="color:#EF4444">–</div>
+      <div class="stat-delta">Requerem ação imediata</div>
     </div>
     <div class="stat-card">
       <div class="stat-label">Urgentes</div>
-      <div class="stat-value" style="color:var(--warning)">4</div>
-      <div class="stat-delta">Próximos 7 dias</div>
+      <div class="stat-value" id="pz-count-urgente" style="color:#F97316">–</div>
+      <div class="stat-delta">Próximos 3 dias</div>
     </div>
     <div class="stat-card">
       <div class="stat-label">Atenção</div>
-      <div class="stat-value" style="color:#F97316">7</div>
-      <div class="stat-delta">Próximos 30 dias</div>
+      <div class="stat-value" id="pz-count-atencao" style="color:#EAB308">–</div>
+      <div class="stat-delta">4 a 7 dias</div>
     </div>
     <div class="stat-card">
       <div class="stat-label">Concluídos</div>
-      <div class="stat-value" style="color:var(--success)">4</div>
+      <div class="stat-value" id="pz-count-concluido" style="color:#22C55E">–</div>
       <div class="stat-delta">Este mês</div>
     </div>
   </div>
 
-  <div class="deadlines-panel">
-    <div class="panel-header"><div class="panel-title">🚨 Vencidos</div></div>
-    <div class="dl-list">
-      <div class="dl-item"><div class="dl-status-dot overdue"></div><span class="dl-name">Política Integridade AQF</span><span class="dl-deadline">16/03/2026</span><span class="dl-tag vencido">Vencido</span></div>
-      <div class="dl-item"><div class="dl-status-dot overdue"></div><span class="dl-name">Política JR AQF</span><span class="dl-deadline">23/03/2026</span><span class="dl-tag vencido">Vencido</span></div>
+  <!-- Toolbar: filtros + botão -->
+  <div class="pz-toolbar">
+    <div class="pz-filters">
+      <select class="pz-filter-select" id="pz-filter-area">
+        <option value="">Todas as áreas</option>
+        <option value="AML">AML</option>
+        <option value="Sports Integrity">Sports Integrity</option>
+        <option value="Data Privacy">Data Privacy</option>
+        <option value="JR">JR</option>
+        <option value="Regulatório">Regulatório</option>
+        <option value="Contratos">Contratos</option>
+      </select>
+      <select class="pz-filter-select" id="pz-filter-status">
+        <option value="">Todos os status</option>
+        <option value="vencido">🔴 Vencido</option>
+        <option value="urgente">🟠 Urgente</option>
+        <option value="atencao">🟡 Atenção</option>
+        <option value="normal">🔵 Em dia</option>
+        <option value="concluido">🟢 Concluído</option>
+      </select>
+      <select class="pz-filter-select" id="pz-filter-resp">
+        <option value="">Todos os responsáveis</option>
+      </select>
     </div>
+    <button class="pz-add-btn" id="pz-add-btn">+ Novo Prazo</button>
   </div>
 
-  <div class="deadlines-panel">
-    <div class="panel-header"><div class="panel-title">⚡ Urgentes — próximos 7 dias</div></div>
-    <div class="dl-list">
-      <div class="dl-item"><div class="dl-status-dot urgent"></div><span class="dl-name">Cert. GLI</span><span class="dl-deadline">31/03/2026</span><span class="dl-tag urgente">Urgente</span></div>
-      <div class="dl-item"><div class="dl-status-dot urgent"></div><span class="dl-name">COAF Rafael</span><span class="dl-deadline">01/04/2026</span><span class="dl-tag urgente">Urgente</span></div>
-      <div class="dl-item"><div class="dl-status-dot urgent"></div><span class="dl-name">Resp. Ofício SEI 14847 (Publicidade)</span><span class="dl-deadline">03/04/2026</span><span class="dl-tag urgente">Urgente</span></div>
-      <div class="dl-item"><div class="dl-status-dot urgent"></div><span class="dl-name">COAF Omar</span><span class="dl-deadline">04/04/2026</span><span class="dl-tag urgente">Urgente</span></div>
-    </div>
-  </div>
+  <!-- Board gerado por JS -->
+  <div id="pz-board"></div>
 
-  <div class="deadlines-panel">
-    <div class="panel-header"><div class="panel-title">⚠️ Atenção — próximos 30 dias</div></div>
-    <div class="dl-list">
-      <div class="dl-item"><div class="dl-status-dot attention"></div><span class="dl-name">Termos de Uso AQF</span><span class="dl-deadline">06/04/2026</span><span class="dl-tag atencao">Atenção</span></div>
-      <div class="dl-item"><div class="dl-status-dot attention"></div><span class="dl-name">Manual PLD</span><span class="dl-deadline">06/04/2026</span><span class="dl-tag atencao">Atenção</span></div>
-      <div class="dl-item"><div class="dl-status-dot attention"></div><span class="dl-name">Manual Publicidade</span><span class="dl-deadline">06/04/2026</span><span class="dl-tag atencao">Atenção</span></div>
-      <div class="dl-item"><div class="dl-status-dot attention"></div><span class="dl-name">COAF Fábio</span><span class="dl-deadline">10/04/2026</span><span class="dl-tag atencao">Atenção</span></div>
-      <div class="dl-item"><div class="dl-status-dot overdue"></div><span class="dl-name">Cert. Seg. pitaco.bet.br</span><span class="dl-deadline">10/04/2026</span><span class="dl-tag em-risco">EM RISCO</span></div>
-      <div class="dl-item"><div class="dl-status-dot attention"></div><span class="dl-name">Política PLD/FTP</span><span class="dl-deadline">13/04/2026</span><span class="dl-tag atencao">Atenção</span></div>
-      <div class="dl-item"><div class="dl-status-dot attention"></div><span class="dl-name">Treinamento PDADOS</span><span class="dl-deadline">15/04/2026</span><span class="dl-tag atencao">Atenção</span></div>
-      <div class="dl-item"><div class="dl-status-dot attention"></div><span class="dl-name">Regras de Jogos AQF</span><span class="dl-deadline">20/04/2026</span><span class="dl-tag atencao">Atenção</span></div>
-    </div>
-  </div>
-
-  <div class="deadlines-panel">
-    <div class="panel-header"><div class="panel-title">✅ Concluídos</div></div>
-    <div class="dl-list">
-      <div class="dl-item"><div class="dl-status-dot ok"></div><span class="dl-name">COAF Ivanline</span><span class="dl-deadline">26/03/2026</span><span class="dl-tag concluido">Concluído</span></div>
-      <div class="dl-item"><div class="dl-status-dot ok"></div><span class="dl-name">Ofício SPA 392/2026</span><span class="dl-deadline">19/03/2026</span><span class="dl-tag concluido">Concluído</span></div>
-      <div class="dl-item"><div class="dl-status-dot ok"></div><span class="dl-name">Treinamento JR</span><span class="dl-deadline">realizado</span><span class="dl-tag concluido">Concluído</span></div>
-      <div class="dl-item"><div class="dl-status-dot ok"></div><span class="dl-name">Treinamento PLD</span><span class="dl-deadline">realizado</span><span class="dl-tag concluido">Concluído</span></div>
+  <!-- Modal -->
+  <div class="pz-modal-overlay" id="pz-modal">
+    <div class="pz-modal">
+      <div class="pz-modal-header">
+        <span class="pz-modal-title" id="pz-modal-title">Novo Prazo</span>
+        <button class="pz-modal-close" id="pz-modal-close">✕</button>
+      </div>
+      <div class="pz-form-grid">
+        <div class="pz-form-field pz-form-full">
+          <label class="pz-form-label">Título *</label>
+          <input type="text" class="pz-form-input" id="pz-f-titulo" placeholder="Nome do prazo ou obrigação...">
+        </div>
+        <div class="pz-form-field">
+          <label class="pz-form-label">Data de Vencimento</label>
+          <input type="date" class="pz-form-input" id="pz-f-vencimento">
+        </div>
+        <div class="pz-form-field">
+          <label class="pz-form-label">Área</label>
+          <select class="pz-form-select" id="pz-f-area">
+            <option value="">Selecione...</option>
+            <option value="AML">AML</option>
+            <option value="Sports Integrity">Sports Integrity</option>
+            <option value="Data Privacy">Data Privacy</option>
+            <option value="JR">JR</option>
+            <option value="Regulatório">Regulatório</option>
+            <option value="Contratos">Contratos</option>
+          </select>
+        </div>
+        <div class="pz-form-field">
+          <label class="pz-form-label">Responsável (Owner)</label>
+          <input type="text" class="pz-form-input" id="pz-f-responsavel" placeholder="Nome do owner...">
+        </div>
+        <div class="pz-form-field">
+          <label class="pz-form-label">Revisor Final</label>
+          <input type="text" class="pz-form-input" id="pz-f-revisor" placeholder="Nome do revisor...">
+        </div>
+        <div class="pz-form-field">
+          <label class="pz-form-label">Status</label>
+          <select class="pz-form-select" id="pz-f-status">
+            <option value="">Automático (por data)</option>
+            <option value="concluido">✅ Concluído</option>
+          </select>
+        </div>
+        <div class="pz-form-field pz-form-full">
+          <label class="pz-form-label">Descrição / Observação</label>
+          <textarea class="pz-form-textarea" id="pz-f-descricao" placeholder="Contexto, riscos, observações..."></textarea>
+        </div>
+      </div>
+      <div class="pz-modal-footer">
+        <button class="pz-btn-cancel" id="pz-btn-cancel">Cancelar</button>
+        <button class="pz-btn-save" id="pz-btn-save">Salvar Prazo</button>
+      </div>
     </div>
   </div>
 </div><!-- /tab-prazos -->
@@ -2124,6 +2267,218 @@ function switchPMSub(sub, btn) {
   document.getElementById('pm-juridico').style.display = sub === 'juridico' ? 'flex' : 'none';
   document.getElementById('pm-concorrentes').style.display = sub === 'concorrentes' ? 'flex' : 'none';
 }
+
+// ─── PRAZOS KANBAN ─────────────────────────────────────────────────────────
+(function () {
+  const STORE_KEY = 'pitaco-prazos-v2';
+
+  const SEED = [
+    { id:'s1',  titulo:'Política Integridade AQF',             vencimento:'2026-03-16', area:'Sports Integrity', responsavel:'',        revisor:'', descricao:'',         manualStatus:null },
+    { id:'s2',  titulo:'Política JR AQF',                      vencimento:'2026-03-23', area:'JR',               responsavel:'',        revisor:'', descricao:'',         manualStatus:null },
+    { id:'s3',  titulo:'Cert. GLI',                            vencimento:'2026-03-31', area:'Regulatório',      responsavel:'',        revisor:'', descricao:'',         manualStatus:null },
+    { id:'s4',  titulo:'COAF Rafael',                          vencimento:'2026-04-01', area:'AML',              responsavel:'Rafael',  revisor:'', descricao:'',         manualStatus:null },
+    { id:'s5',  titulo:'Resp. Ofício SEI 14847 (Publicidade)', vencimento:'2026-04-03', area:'Regulatório',      responsavel:'',        revisor:'', descricao:'',         manualStatus:null },
+    { id:'s6',  titulo:'COAF Omar',                            vencimento:'2026-04-04', area:'AML',              responsavel:'Omar',    revisor:'', descricao:'',         manualStatus:null },
+    { id:'s7',  titulo:'Termos de Uso AQF',                    vencimento:'2026-04-06', area:'Regulatório',      responsavel:'',        revisor:'', descricao:'',         manualStatus:null },
+    { id:'s8',  titulo:'Manual PLD',                           vencimento:'2026-04-06', area:'AML',              responsavel:'',        revisor:'', descricao:'',         manualStatus:null },
+    { id:'s9',  titulo:'Manual Publicidade',                   vencimento:'2026-04-06', area:'Regulatório',      responsavel:'',        revisor:'', descricao:'',         manualStatus:null },
+    { id:'s10', titulo:'COAF Fábio',                           vencimento:'2026-04-10', area:'AML',              responsavel:'Fábio',   revisor:'', descricao:'',         manualStatus:null },
+    { id:'s11', titulo:'Cert. Seg. pitaco.bet.br',             vencimento:'2026-04-10', area:'Regulatório',      responsavel:'',        revisor:'', descricao:'EM RISCO', manualStatus:null },
+    { id:'s12', titulo:'Política PLD/FTP',                     vencimento:'2026-04-13', area:'AML',              responsavel:'',        revisor:'', descricao:'',         manualStatus:null },
+    { id:'s13', titulo:'Treinamento PDADOS',                   vencimento:'2026-04-15', area:'Data Privacy',     responsavel:'',        revisor:'', descricao:'',         manualStatus:null },
+    { id:'s14', titulo:'Regras de Jogos AQF',                  vencimento:'2026-04-20', area:'Regulatório',      responsavel:'',        revisor:'', descricao:'',         manualStatus:null },
+    { id:'s15', titulo:'COAF Ivanline',                        vencimento:'2026-03-26', area:'AML',              responsavel:'Ivanline',revisor:'', descricao:'',         manualStatus:'concluido' },
+    { id:'s16', titulo:'Ofício SPA 392/2026',                  vencimento:'2026-03-19', area:'Regulatório',      responsavel:'',        revisor:'', descricao:'',         manualStatus:'concluido' },
+    { id:'s17', titulo:'Treinamento JR',                       vencimento:null,          area:'JR',               responsavel:'',        revisor:'', descricao:'Realizado',manualStatus:'concluido' },
+    { id:'s18', titulo:'Treinamento PLD',                      vencimento:null,          area:'AML',              responsavel:'',        revisor:'', descricao:'Realizado',manualStatus:'concluido' },
+  ];
+
+  function load() {
+    try { const r = localStorage.getItem(STORE_KEY); if (r) return JSON.parse(r); } catch(e) {}
+    const d = SEED.map(p => ({...p}));
+    save(d); return d;
+  }
+  function save(data) { localStorage.setItem(STORE_KEY, JSON.stringify(data)); }
+
+  function computeStatus(item) {
+    if (item.manualStatus === 'concluido') return 'concluido';
+    if (!item.vencimento) return 'normal';
+    const today = new Date(); today.setHours(0,0,0,0);
+    const due = new Date(item.vencimento + 'T00:00:00');
+    const diff = Math.floor((due - today) / 86400000);
+    if (diff < 0) return 'vencido';
+    if (diff <= 3) return 'urgente';
+    if (diff <= 7) return 'atencao';
+    return 'normal';
+  }
+
+  const STATUS_LABELS = { vencido:'🔴 Vencido', urgente:'🟠 Urgente', atencao:'🟡 Atenção', normal:'🔵 Em Dia', concluido:'🟢 Concluído' };
+  const GROUP_TITLES  = { vencido:'🚨 Vencidos', urgente:'⚡ Urgentes — próximos 3 dias', atencao:'⚠️ Atenção — 4 a 7 dias', normal:'📅 Em Dia', concluido:'✅ Concluídos' };
+  const STATUS_ORDER  = ['vencido','urgente','atencao','normal','concluido'];
+
+  function fmtDate(iso) {
+    if (!iso) return 'sem data';
+    const [y,m,d] = iso.split('-'); return `${d}/${m}/${y}`;
+  }
+  function daysLabel(item) {
+    if (!item.vencimento) return '';
+    const today = new Date(); today.setHours(0,0,0,0);
+    const due = new Date(item.vencimento + 'T00:00:00');
+    const diff = Math.floor((due - today) / 86400000);
+    if (diff < 0) return `venceu há ${Math.abs(diff)} dia${Math.abs(diff)>1?'s':''}`;
+    if (diff === 0) return 'HOJE';
+    if (diff === 1) return 'amanhã';
+    return `em ${diff} dias`;
+  }
+  function esc(s) { return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+
+  let editingId = null;
+
+  function renderBoard() {
+    const prazos = load();
+    const fArea   = document.getElementById('pz-filter-area')?.value   || '';
+    const fStatus = document.getElementById('pz-filter-status')?.value || '';
+    const fResp   = document.getElementById('pz-filter-resp')?.value   || '';
+
+    // rebuild responsável filter
+    const respSel = document.getElementById('pz-filter-resp');
+    if (respSel) {
+      const cur   = respSel.value;
+      const names = [...new Set(prazos.map(p => p.responsavel).filter(Boolean))].sort();
+      respSel.innerHTML = '<option value="">Todos os responsáveis</option>' +
+        names.map(n => `<option value="${esc(n)}"${cur===n?' selected':''}>${esc(n)}</option>`).join('');
+    }
+
+    // stats (always from full list)
+    const all = prazos.map(p => ({...p, _s: computeStatus(p)}));
+    document.getElementById('pz-count-vencido').textContent  = all.filter(p => p._s==='vencido').length;
+    document.getElementById('pz-count-urgente').textContent  = all.filter(p => p._s==='urgente').length;
+    document.getElementById('pz-count-atencao').textContent  = all.filter(p => p._s==='atencao').length;
+    const now = new Date(); const cm = now.getMonth(); const cy = now.getFullYear();
+    document.getElementById('pz-count-concluido').textContent = all.filter(p => {
+      if (p._s !== 'concluido') return false;
+      if (!p.vencimento) return true;
+      const d = new Date(p.vencimento+'T00:00:00');
+      return d.getMonth()===cm && d.getFullYear()===cy;
+    }).length;
+
+    // filter
+    let filtered = all.slice();
+    if (fArea)   filtered = filtered.filter(p => p.area        === fArea);
+    if (fStatus) filtered = filtered.filter(p => p._s          === fStatus);
+    if (fResp)   filtered = filtered.filter(p => p.responsavel === fResp);
+
+    // group
+    const groups = {};
+    filtered.forEach(p => { (groups[p._s] = groups[p._s]||[]).push(p); });
+    Object.keys(groups).forEach(s => groups[s].sort((a,b) => (!a.vencimento?1:!b.vencimento?-1:a.vencimento.localeCompare(b.vencimento))));
+
+    const board = document.getElementById('pz-board');
+    if (!board) return;
+
+    const keys = STATUS_ORDER.filter(k => groups[k]?.length);
+    if (!keys.length) {
+      board.innerHTML = '<div class="pz-no-results">Nenhum prazo encontrado com esses filtros.</div>';
+      return;
+    }
+
+    board.innerHTML = keys.map(status => {
+      const items = groups[status];
+      const cards = items.map(p => {
+        const dl = daysLabel(p);
+        return `<div class="pz-card ${esc(p._s)}" data-id="${esc(p.id)}">
+          <div class="pz-card-top">
+            <div class="pz-card-title">${esc(p.titulo)}</div>
+            <div class="pz-card-actions">
+              <button class="pz-card-act-btn" onclick="pzEdit('${esc(p.id)}')" title="Editar">✏️</button>
+              <button class="pz-card-act-btn delete" onclick="pzDel('${esc(p.id)}')" title="Excluir">🗑</button>
+            </div>
+          </div>
+          <div class="pz-card-meta">
+            ${p.area ? `<span class="pz-area-badge">${esc(p.area)}</span>` : ''}
+            <span class="pz-status-badge ${esc(p._s)}">${STATUS_LABELS[p._s]}</span>
+          </div>
+          <div class="pz-card-due">📅 ${fmtDate(p.vencimento)}${dl ? ` · <em style="color:${p._s==='vencido'?'#EF4444':p._s==='urgente'?'#F97316':'inherit'}">${esc(dl)}</em>` : ''}</div>
+          ${(p.responsavel||p.revisor) ? `<div class="pz-card-people">
+            ${p.responsavel?`<span class="pz-person"><span class="pz-person-label">Owner</span> ${esc(p.responsavel)}</span>`:''}
+            ${p.revisor?`<span class="pz-person"><span class="pz-person-label">Revisor</span> ${esc(p.revisor)}</span>`:''}
+          </div>` : ''}
+          ${p.descricao ? `<div class="pz-card-desc">${esc(p.descricao)}</div>` : ''}
+        </div>`;
+      }).join('');
+
+      return `<div class="pz-group ${esc(status)}">
+        <div class="pz-group-header">
+          <span class="pz-group-title">${GROUP_TITLES[status]}</span>
+          <span class="pz-group-count">${items.length}</span>
+          <span class="pz-group-line"></span>
+        </div>
+        <div class="pz-cards">${cards}</div>
+      </div>`;
+    }).join('');
+  }
+
+  function openModal(item) {
+    editingId = item?.id || null;
+    document.getElementById('pz-modal-title').textContent   = item ? 'Editar Prazo' : 'Novo Prazo';
+    document.getElementById('pz-f-titulo').value            = item?.titulo      || '';
+    document.getElementById('pz-f-vencimento').value        = item?.vencimento  || '';
+    document.getElementById('pz-f-area').value              = item?.area        || '';
+    document.getElementById('pz-f-responsavel').value       = item?.responsavel || '';
+    document.getElementById('pz-f-revisor').value           = item?.revisor     || '';
+    document.getElementById('pz-f-status').value            = item?.manualStatus|| '';
+    document.getElementById('pz-f-descricao').value         = item?.descricao   || '';
+    document.getElementById('pz-modal').classList.add('open');
+    document.getElementById('pz-f-titulo').focus();
+  }
+  function closeModal() {
+    document.getElementById('pz-modal').classList.remove('open');
+    editingId = null;
+  }
+  function saveModal() {
+    const titulo = document.getElementById('pz-f-titulo').value.trim();
+    if (!titulo) { document.getElementById('pz-f-titulo').style.borderColor='#EF4444'; document.getElementById('pz-f-titulo').focus(); return; }
+    document.getElementById('pz-f-titulo').style.borderColor = '';
+    const prazos = load();
+    const item = {
+      titulo,
+      vencimento:   document.getElementById('pz-f-vencimento').value  || null,
+      area:         document.getElementById('pz-f-area').value,
+      responsavel:  document.getElementById('pz-f-responsavel').value.trim(),
+      revisor:      document.getElementById('pz-f-revisor').value.trim(),
+      manualStatus: document.getElementById('pz-f-status').value      || null,
+      descricao:    document.getElementById('pz-f-descricao').value.trim(),
+    };
+    if (editingId) {
+      const i = prazos.findIndex(p => p.id === editingId);
+      if (i > -1) prazos[i] = {...prazos[i], ...item};
+    } else {
+      item.id = 'p' + Date.now();
+      prazos.push(item);
+    }
+    save(prazos);
+    closeModal();
+    renderBoard();
+  }
+
+  // global handlers for inline onclick
+  window.pzEdit = id => { const p = load().find(x => x.id===id); if(p) openModal(p); };
+  window.pzDel  = id => { if(!confirm('Excluir este prazo?')) return; save(load().filter(p=>p.id!==id)); renderBoard(); };
+
+  // setup direto — DOM já está pronto (script no fim do body)
+  document.getElementById('pz-add-btn')    ?.addEventListener('click', () => openModal(null));
+  document.getElementById('pz-modal-close')?.addEventListener('click', closeModal);
+  document.getElementById('pz-btn-cancel') ?.addEventListener('click', closeModal);
+  document.getElementById('pz-btn-save')   ?.addEventListener('click', saveModal);
+  document.getElementById('pz-modal')      ?.addEventListener('click', e => { if(e.target.id==='pz-modal') closeModal(); });
+  document.getElementById('pz-filter-area')  ?.addEventListener('change', renderBoard);
+  document.getElementById('pz-filter-status')?.addEventListener('change', renderBoard);
+  document.getElementById('pz-filter-resp')  ?.addEventListener('change', renderBoard);
+  document.querySelectorAll('.tab-btn[data-tab="prazos"]').forEach(b => b.addEventListener('click', () => setTimeout(renderBoard, 40)));
+  document.addEventListener('keydown', e => { if(e.key==='Escape') closeModal(); });
+  renderBoard();
+  setInterval(renderBoard, 60000);
+})();
 </script>
 </body>
 </html>
