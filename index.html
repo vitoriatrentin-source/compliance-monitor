@@ -2051,7 +2051,60 @@ function checkPwd(){
     <div class="pz-toolbar-actions">
       <button class="pz-focus-btn" id="pz-focus-btn">🎯 Modo Foco</button>
       <button class="pz-export-btn" id="pz-export-btn">📤 Exportar</button>
-      <button class="pz-add-btn" id="pz-add-btn" onclick="pzOpenNew()">+ Novo Prazo</button>
+      <button class="pz-add-btn" id="pz-add-btn" onclick="pzToggleForm()">+ Novo Prazo</button>
+    </div>
+  </div>
+
+  <!-- Formulário inline de novo prazo -->
+  <div id="pz-inline-form" style="display:none;background:var(--bg-surface);border:1px solid var(--border-md);border-radius:var(--radius-lg);padding:22px;margin-bottom:20px;">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;">
+      <span style="font-size:15px;font-weight:700;color:var(--text-primary)" id="pz-form-heading">Novo Prazo</span>
+      <button onclick="pzToggleForm()" style="background:none;border:1px solid var(--border);color:var(--text-muted);cursor:pointer;border-radius:6px;width:28px;height:28px;font-size:14px;">✕</button>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+      <div style="grid-column:1/-1">
+        <label class="pz-form-label">Título *</label>
+        <input type="text" class="pz-form-input" id="pz-if-titulo" placeholder="Nome do prazo ou obrigação..." style="width:100%;margin-top:5px;">
+      </div>
+      <div>
+        <label class="pz-form-label">Data de Vencimento</label>
+        <input type="date" class="pz-form-input" id="pz-if-vencimento" style="width:100%;margin-top:5px;">
+      </div>
+      <div>
+        <label class="pz-form-label">Área</label>
+        <select class="pz-form-select" id="pz-if-area" style="width:100%;margin-top:5px;">
+          <option value="">Selecione...</option>
+          <option value="AML">AML</option>
+          <option value="Sports Integrity">Sports Integrity</option>
+          <option value="Data Privacy">Data Privacy</option>
+          <option value="JR">JR</option>
+          <option value="Regulatório">Regulatório</option>
+          <option value="Contratos">Contratos</option>
+        </select>
+      </div>
+      <div>
+        <label class="pz-form-label">Responsável (Owner)</label>
+        <input type="text" class="pz-form-input" id="pz-if-responsavel" placeholder="Nome..." style="width:100%;margin-top:5px;">
+      </div>
+      <div>
+        <label class="pz-form-label">Revisor</label>
+        <input type="text" class="pz-form-input" id="pz-if-revisor" placeholder="Nome..." style="width:100%;margin-top:5px;">
+      </div>
+      <div>
+        <label class="pz-form-label">Status</label>
+        <select class="pz-form-select" id="pz-if-status" style="width:100%;margin-top:5px;">
+          <option value="">Automático (por data)</option>
+          <option value="concluido">✅ Concluído</option>
+        </select>
+      </div>
+      <div style="grid-column:1/-1">
+        <label class="pz-form-label">Descrição / Observação</label>
+        <textarea class="pz-form-textarea" id="pz-if-descricao" placeholder="Contexto, riscos, links..." style="width:100%;margin-top:5px;"></textarea>
+      </div>
+    </div>
+    <div style="display:flex;gap:10px;justify-content:flex-end;margin-top:16px;">
+      <button onclick="pzToggleForm()" class="pz-btn-cancel">Cancelar</button>
+      <button onclick="pzSaveInlineForm()" class="pz-btn-save" id="pz-if-save-btn">Salvar Prazo</button>
     </div>
   </div>
 
@@ -2641,6 +2694,9 @@ function switchPMSub(sub, btn) {
     save(prazos); closeModal(); renderBoard();
   }
 
+  // Expõe renderBoard globalmente para o script inline de salvar
+  window._pzRenderBoard = renderBoard;
+
   // ── Global onclick handlers ────────────────────────────────────────────────
   window.pzOpenNew=()=>{
     try{
@@ -2657,7 +2713,7 @@ function switchPMSub(sub, btn) {
       editingId=null;
     }catch(err){alert('Erro ao abrir modal: '+err.message);}
   };
-  window.pzEdit=id=>{const p=load().find(x=>x.id===id);if(p)openModal(p);};
+  window.pzEdit=id=>{if(typeof pzOpenEdit==='function')pzOpenEdit(id);};
   window.pzDel =id=>{if(!confirm('Excluir este prazo?'))return;save(load().filter(p=>p.id!==id));renderBoard();};
 
   // ── Events ─────────────────────────────────────────────────────────────────
@@ -2761,6 +2817,107 @@ function switchPMSub(sub, btn) {
 
 <!-- ═══ TOAST ═══ -->
 <div id="pz-toast" class="pz-toast" style="display:none"></div>
+
+<script>
+// ─── Formulário inline de prazos (independente do IIFE) ───────────────────────
+var _pzEditingId = null;
+
+function pzToggleForm() {
+  var f = document.getElementById('pz-inline-form');
+  if (!f) return;
+  if (f.style.display === 'none' || f.style.display === '') {
+    // Abrir para NOVO prazo
+    _pzEditingId = null;
+    document.getElementById('pz-form-heading').textContent = 'Novo Prazo';
+    document.getElementById('pz-if-save-btn').textContent = 'Salvar Prazo';
+    ['pz-if-titulo','pz-if-vencimento','pz-if-responsavel','pz-if-revisor','pz-if-descricao'].forEach(function(id){
+      var el = document.getElementById(id); if (el) el.value = '';
+    });
+    document.getElementById('pz-if-area').value = '';
+    document.getElementById('pz-if-status').value = '';
+    f.style.display = 'block';
+    var t = document.getElementById('pz-if-titulo'); if (t) t.focus();
+  } else {
+    f.style.display = 'none';
+    _pzEditingId = null;
+  }
+}
+
+function pzOpenEdit(id) {
+  var store = localStorage.getItem('pitaco-prazos-v3');
+  if (!store) return;
+  var list = JSON.parse(store);
+  var item = list.find(function(p){ return p.id === id; });
+  if (!item) return;
+  _pzEditingId = id;
+  var f = document.getElementById('pz-inline-form');
+  document.getElementById('pz-form-heading').textContent = 'Editar Prazo';
+  document.getElementById('pz-if-save-btn').textContent = 'Salvar Alterações';
+  document.getElementById('pz-if-titulo').value      = item.titulo || '';
+  document.getElementById('pz-if-vencimento').value  = item.vencimento || '';
+  document.getElementById('pz-if-area').value        = item.area || '';
+  document.getElementById('pz-if-responsavel').value = item.responsavel || '';
+  document.getElementById('pz-if-revisor').value     = item.revisor || '';
+  document.getElementById('pz-if-status').value      = item.manualStatus || '';
+  document.getElementById('pz-if-descricao').value   = item.descricao || '';
+  f.style.display = 'block';
+  document.getElementById('pz-if-titulo').focus();
+  f.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}
+
+function pzSaveInlineForm() {
+  var titulo = document.getElementById('pz-if-titulo').value.trim();
+  if (!titulo) {
+    document.getElementById('pz-if-titulo').style.borderColor = '#EF4444';
+    document.getElementById('pz-if-titulo').focus();
+    return;
+  }
+  document.getElementById('pz-if-titulo').style.borderColor = '';
+
+  var STORE_KEY = 'pitaco-prazos-v3';
+  var USER_KEY  = 'pitaco-prazos-user';
+  var list = [];
+  try { list = JSON.parse(localStorage.getItem(STORE_KEY)) || []; } catch(e) { list = []; }
+
+  var item = {
+    titulo:      titulo,
+    vencimento:  document.getElementById('pz-if-vencimento').value || null,
+    area:        document.getElementById('pz-if-area').value,
+    responsavel: document.getElementById('pz-if-responsavel').value.trim(),
+    revisor:     document.getElementById('pz-if-revisor').value.trim(),
+    manualStatus:document.getElementById('pz-if-status').value || null,
+    descricao:   document.getElementById('pz-if-descricao').value.trim(),
+  };
+
+  var user = localStorage.getItem(USER_KEY) || '—';
+
+  if (_pzEditingId) {
+    var idx = list.findIndex(function(p){ return p.id === _pzEditingId; });
+    if (idx > -1) list[idx] = Object.assign({}, list[idx], item);
+  } else {
+    item.id = 'p' + Date.now();
+    item.history = [{ action: 'created', by: user, at: new Date().toISOString() }];
+    list.push(item);
+  }
+
+  localStorage.setItem(STORE_KEY, JSON.stringify(list));
+  document.getElementById('pz-inline-form').style.display = 'none';
+  _pzEditingId = null;
+
+  // Atualiza o board se a função existir
+  if (typeof renderBoard === 'function') renderBoard();
+  else if (window._pzRenderBoard) window._pzRenderBoard();
+
+  // Toast
+  var toast = document.getElementById('pz-toast');
+  if (toast) {
+    toast.innerHTML = '✅ Prazo salvo!';
+    toast.style.display = 'block';
+    toast.style.opacity = '1';
+    setTimeout(function(){ toast.style.opacity = '0'; setTimeout(function(){ toast.style.display = 'none'; }, 300); }, 2500);
+  }
+}
+</script>
 
 </body>
 </html>
