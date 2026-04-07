@@ -2051,7 +2051,7 @@ function checkPwd(){
     <div class="pz-toolbar-actions">
       <button class="pz-focus-btn" id="pz-focus-btn">🎯 Modo Foco</button>
       <button class="pz-export-btn" id="pz-export-btn">📤 Exportar</button>
-      <button class="pz-add-btn" id="pz-add-btn">+ Novo Prazo</button>
+      <button class="pz-add-btn" id="pz-add-btn" onclick="pzOpenNew()">+ Novo Prazo</button>
     </div>
   </div>
 
@@ -2642,11 +2642,12 @@ function switchPMSub(sub, btn) {
   }
 
   // ── Global onclick handlers ────────────────────────────────────────────────
+  window.pzOpenNew=()=>openModal(null);
   window.pzEdit=id=>{const p=load().find(x=>x.id===id);if(p)openModal(p);};
   window.pzDel =id=>{if(!confirm('Excluir este prazo?'))return;save(load().filter(p=>p.id!==id));renderBoard();};
 
   // ── Events ─────────────────────────────────────────────────────────────────
-  document.getElementById('pz-add-btn')       ?.addEventListener('click',()=>openModal(null));
+  // pz-add-btn usa onclick="pzOpenNew()" direto no HTML
   // pz-modal-close / pz-btn-cancel / pz-btn-save / pz-modal click-outside
   // são atribuídos via .onclick em openModal() porque o HTML do modal vem após o bloco script
   document.getElementById('pz-filter-area')   ?.addEventListener('change',renderBoard);
