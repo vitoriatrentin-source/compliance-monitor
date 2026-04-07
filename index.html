@@ -2597,6 +2597,7 @@ function switchPMSub(sub, btn) {
   // ── Modal create/edit ──────────────────────────────────────────────────────
   function openModal(item){
     editingId=item?.id||null;
+    const modal=document.getElementById('pz-modal');
     document.getElementById('pz-modal-title').textContent=item?'Editar Prazo':'Novo Prazo';
     document.getElementById('pz-f-titulo').value     =item?.titulo      ||'';
     document.getElementById('pz-f-vencimento').value =item?.vencimento  ||'';
@@ -2606,7 +2607,12 @@ function switchPMSub(sub, btn) {
     document.getElementById('pz-f-status').value     =item?.manualStatus||'';
     document.getElementById('pz-f-descricao').value  =item?.descricao   ||'';
     document.getElementById('pz-btn-save').textContent=item?'Salvar Alterações':'Salvar Prazo';
-    document.getElementById('pz-modal').classList.add('open');
+    // botões do modal precisam de onclick porque o HTML vem depois do <script>
+    document.getElementById('pz-btn-save').onclick   = saveModal;
+    document.getElementById('pz-btn-cancel').onclick = closeModal;
+    document.getElementById('pz-modal-close').onclick= closeModal;
+    modal.onclick=e=>{if(e.target===modal)closeModal();};
+    modal.classList.add('open');
     setTimeout(()=>document.getElementById('pz-f-titulo').focus(),50);
   }
   function closeModal(){document.getElementById('pz-modal').classList.remove('open');editingId=null;}
@@ -2641,10 +2647,8 @@ function switchPMSub(sub, btn) {
 
   // ── Events ─────────────────────────────────────────────────────────────────
   document.getElementById('pz-add-btn')       ?.addEventListener('click',()=>openModal(null));
-  document.getElementById('pz-modal-close')   ?.addEventListener('click',closeModal);
-  document.getElementById('pz-btn-cancel')    ?.addEventListener('click',closeModal);
-  document.getElementById('pz-btn-save')      ?.addEventListener('click',saveModal);
-  document.getElementById('pz-modal')         ?.addEventListener('click',e=>{if(e.target.id==='pz-modal')closeModal();});
+  // pz-modal-close / pz-btn-cancel / pz-btn-save / pz-modal click-outside
+  // são atribuídos via .onclick em openModal() porque o HTML do modal vem após o </script>
   document.getElementById('pz-filter-area')   ?.addEventListener('change',renderBoard);
   document.getElementById('pz-filter-status') ?.addEventListener('change',renderBoard);
   document.getElementById('pz-filter-resp')   ?.addEventListener('change',renderBoard);
@@ -2720,7 +2724,7 @@ function switchPMSub(sub, btn) {
   <div class="pz-mini-modal">
     <div class="pz-modal-header">
       <span class="pz-modal-title">↷ Adiar Prazo</span>
-      <button class="pz-modal-close" id="pz-pp-cancel-btn">✕</button>
+      <button class="pz-modal-close" onclick="document.getElementById('pz-postpone-modal').classList.remove('open')">✕</button>
     </div>
     <p id="pz-pp-title" style="font-size:13px;color:var(--text-secondary);margin-bottom:18px;font-weight:500;line-height:1.4"></p>
     <div style="display:flex;flex-direction:column;gap:14px">
