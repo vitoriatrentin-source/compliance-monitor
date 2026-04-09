@@ -486,8 +486,7 @@ body {
   transition: all var(--transition); white-space: nowrap;
 }
 .pz-add-btn:hover { background: var(--brand-light); box-shadow: 0 4px 12px rgba(124,58,237,0.4); }
-/* CSS toggle para o form de novo prazo */
-#pz-form-toggle:checked ~ #pz-inline-form { display: block; }
+
 .pz-group { margin-bottom: 28px; }
 .pz-group-header { display:flex; align-items:center; gap:10px; margin-bottom:12px; }
 .pz-group-title { font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:0.6px; white-space:nowrap; }
@@ -548,7 +547,7 @@ body {
 
 /* ── PRAZOS MODAL ── */
 .pz-modal-overlay { display:none; position:fixed; inset:0; z-index:1000; background:rgba(0,0,0,0.75); backdrop-filter:blur(4px); align-items:center; justify-content:center; padding:20px; }
-.pz-modal-overlay.open { display:flex; }
+.pz-modal-overlay.open { display:flex !important; }
 .pz-modal { background:var(--bg-surface); border:1px solid var(--border-md); border-radius:var(--radius-xl); padding:28px; width:100%; max-width:520px; max-height:90vh; overflow-y:auto; box-shadow:0 24px 64px rgba(0,0,0,0.7); animation:pz-in .2s ease; }
 @keyframes pz-in { from{opacity:0;transform:translateY(14px) scale(0.97)} to{opacity:1;transform:translateY(0) scale(1)} }
 .pz-modal-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:22px; }
@@ -2053,63 +2052,7 @@ function checkPwd(){
     <div class="pz-toolbar-actions">
       <button class="pz-focus-btn" id="pz-focus-btn">🎯 Modo Foco</button>
       <button class="pz-export-btn" id="pz-export-btn">📤 Exportar</button>
-      <label for="pz-form-toggle" class="pz-add-btn" style="cursor:pointer">+ Novo Prazo</label>
-    </div>
-  </div>
-
-  <!-- toggle CSS puro — sem JavaScript -->
-  <input type="checkbox" id="pz-form-toggle" style="display:none">
-
-  <!-- Formulário inline de novo prazo -->
-  <div id="pz-inline-form" style="display:none;background:var(--bg-surface);border:1px solid var(--border-md);border-radius:var(--radius-lg);padding:22px;margin-bottom:20px;">
-    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:18px;">
-      <span style="font-size:15px;font-weight:700;color:var(--text-primary)" id="pz-form-heading">Novo Prazo</span>
-      <label for="pz-form-toggle" style="background:none;border:1px solid var(--border);color:var(--text-muted);cursor:pointer;border-radius:6px;width:28px;height:28px;font-size:14px;display:flex;align-items:center;justify-content:center;">✕</label>
-    </div>
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
-      <div style="grid-column:1/-1">
-        <label class="pz-form-label">Título *</label>
-        <input type="text" class="pz-form-input" id="pz-if-titulo" placeholder="Nome do prazo ou obrigação..." style="width:100%;margin-top:5px;">
-      </div>
-      <div>
-        <label class="pz-form-label">Data de Vencimento</label>
-        <input type="date" class="pz-form-input" id="pz-if-vencimento" style="width:100%;margin-top:5px;">
-      </div>
-      <div>
-        <label class="pz-form-label">Área</label>
-        <select class="pz-form-select" id="pz-if-area" style="width:100%;margin-top:5px;">
-          <option value="">Selecione...</option>
-          <option value="AML">AML</option>
-          <option value="Sports Integrity">Sports Integrity</option>
-          <option value="Data Privacy">Data Privacy</option>
-          <option value="JR">JR</option>
-          <option value="Regulatório">Regulatório</option>
-          <option value="Contratos">Contratos</option>
-        </select>
-      </div>
-      <div>
-        <label class="pz-form-label">Responsável (Owner)</label>
-        <input type="text" class="pz-form-input" id="pz-if-responsavel" placeholder="Nome..." style="width:100%;margin-top:5px;">
-      </div>
-      <div>
-        <label class="pz-form-label">Revisor</label>
-        <input type="text" class="pz-form-input" id="pz-if-revisor" placeholder="Nome..." style="width:100%;margin-top:5px;">
-      </div>
-      <div>
-        <label class="pz-form-label">Status</label>
-        <select class="pz-form-select" id="pz-if-status" style="width:100%;margin-top:5px;">
-          <option value="">Automático (por data)</option>
-          <option value="concluido">✅ Concluído</option>
-        </select>
-      </div>
-      <div style="grid-column:1/-1">
-        <label class="pz-form-label">Descrição / Observação</label>
-        <textarea class="pz-form-textarea" id="pz-if-descricao" placeholder="Contexto, riscos, links..." style="width:100%;margin-top:5px;"></textarea>
-      </div>
-    </div>
-    <div style="display:flex;gap:10px;justify-content:flex-end;margin-top:16px;">
-      <label for="pz-form-toggle" class="pz-btn-cancel" style="cursor:pointer">Cancelar</label>
-      <button onclick="pzSaveInlineForm()" class="pz-btn-save" id="pz-if-save-btn">Salvar Prazo</button>
+      <button class="pz-add-btn" id="pz-new-btn">+ Novo Prazo</button>
     </div>
   </div>
 
@@ -2699,32 +2642,16 @@ function switchPMSub(sub, btn) {
     save(prazos); closeModal(); renderBoard();
   }
 
-  // Expõe renderBoard globalmente para o script inline de salvar
+  // Expõe renderBoard para o script do modal
   window._pzRenderBoard = renderBoard;
 
   // ── Global onclick handlers ────────────────────────────────────────────────
-  window.pzOpenNew=()=>{
-    try{
-      const m=document.getElementById('pz-modal');
-      if(!m){alert('ERRO: modal não encontrado no DOM');return;}
-      m.style.cssText='display:flex!important;position:fixed;inset:0;z-index:9000;background:rgba(0,0,0,0.75);align-items:center;justify-content:center;padding:20px;';
-      const t=document.getElementById('pz-modal-title');if(t)t.textContent='Novo Prazo';
-      const s=document.getElementById('pz-f-titulo');if(s){s.value='';setTimeout(()=>s.focus(),50);}
-      ['pz-f-vencimento','pz-f-area','pz-f-responsavel','pz-f-revisor','pz-f-status','pz-f-descricao'].forEach(id=>{const el=document.getElementById(id);if(el)el.value='';});
-      const btn=document.getElementById('pz-btn-save');if(btn){btn.textContent='Salvar Prazo';btn.onclick=()=>{saveModal();m.style.display='none';};}
-      const cc=document.getElementById('pz-btn-cancel');if(cc)cc.onclick=()=>m.style.display='none';
-      const cx=document.getElementById('pz-modal-close');if(cx)cx.onclick=()=>m.style.display='none';
-      m.onclick=e=>{if(e.target===m)m.style.display='none';};
-      editingId=null;
-    }catch(err){alert('Erro ao abrir modal: '+err.message);}
-  };
-  window.pzEdit=id=>{if(typeof pzOpenEdit==='function')pzOpenEdit(id);};
+  window.pzEdit=id=>{const p=load().find(x=>x.id===id);if(p&&window._pzModalOpen)window._pzModalOpen(p);};
   window.pzDel =id=>{if(!confirm('Excluir este prazo?'))return;save(load().filter(p=>p.id!==id));renderBoard();};
 
   // ── Events ─────────────────────────────────────────────────────────────────
-  // pz-add-btn usa onclick="pzOpenNew()" direto no HTML
-  // pz-modal-close / pz-btn-cancel / pz-btn-save / pz-modal click-outside
-  // são atribuídos via .onclick em openModal() porque o HTML do modal vem após o bloco script
+  // pz-new-btn, pz-modal-close, pz-btn-cancel, pz-btn-save são registrados
+  // no script separado após o HTML do modal (elementos existem antes do script rodar)
   document.getElementById('pz-filter-area')   ?.addEventListener('change',renderBoard);
   document.getElementById('pz-filter-status') ?.addEventListener('change',renderBoard);
   document.getElementById('pz-filter-resp')   ?.addEventListener('change',renderBoard);
@@ -2824,104 +2751,113 @@ function switchPMSub(sub, btn) {
 <div id="pz-toast" class="pz-toast" style="display:none"></div>
 
 <script>
-// ─── Formulário inline de prazos (independente do IIFE) ───────────────────────
-var _pzEditingId = null;
+// ─── Modal de Prazos — script separado após HTML (garante que elementos existem) ───
+(function () {
+  var STORE = 'pitaco-prazos-v3';
+  var USER_KEY = 'pitaco-prazos-user';
+  var editId = null;
 
-function pzToggleForm() {
-  var f = document.getElementById('pz-inline-form');
-  if (!f) return;
-  if (f.style.display === 'none' || f.style.display === '') {
-    // Abrir para NOVO prazo
-    _pzEditingId = null;
-    document.getElementById('pz-form-heading').textContent = 'Novo Prazo';
-    document.getElementById('pz-if-save-btn').textContent = 'Salvar Prazo';
-    ['pz-if-titulo','pz-if-vencimento','pz-if-responsavel','pz-if-revisor','pz-if-descricao'].forEach(function(id){
-      var el = document.getElementById(id); if (el) el.value = '';
-    });
-    document.getElementById('pz-if-area').value = '';
-    document.getElementById('pz-if-status').value = '';
-    f.style.display = 'block';
-    var t = document.getElementById('pz-if-titulo'); if (t) t.focus();
-  } else {
-    f.style.display = 'none';
-    _pzEditingId = null;
-  }
-}
+  var overlay  = document.getElementById('pz-modal');
+  var newBtn   = document.getElementById('pz-new-btn');
+  var titleEl  = document.getElementById('pz-modal-title');
+  var saveBtn  = document.getElementById('pz-btn-save');
+  var cancelBtn= document.getElementById('pz-btn-cancel');
+  var closeBtn = document.getElementById('pz-modal-close');
+  var fTitulo  = document.getElementById('pz-f-titulo');
+  var fVenc    = document.getElementById('pz-f-vencimento');
+  var fArea    = document.getElementById('pz-f-area');
+  var fResp    = document.getElementById('pz-f-responsavel');
+  var fRev     = document.getElementById('pz-f-revisor');
+  var fStatus  = document.getElementById('pz-f-status');
+  var fDesc    = document.getElementById('pz-f-descricao');
 
-function pzOpenEdit(id) {
-  var store = localStorage.getItem('pitaco-prazos-v3');
-  if (!store) return;
-  var list = JSON.parse(store);
-  var item = list.find(function(p){ return p.id === id; });
-  if (!item) return;
-  _pzEditingId = id;
-  var f = document.getElementById('pz-inline-form');
-  document.getElementById('pz-form-heading').textContent = 'Editar Prazo';
-  document.getElementById('pz-if-save-btn').textContent = 'Salvar Alterações';
-  document.getElementById('pz-if-titulo').value      = item.titulo || '';
-  document.getElementById('pz-if-vencimento').value  = item.vencimento || '';
-  document.getElementById('pz-if-area').value        = item.area || '';
-  document.getElementById('pz-if-responsavel').value = item.responsavel || '';
-  document.getElementById('pz-if-revisor').value     = item.revisor || '';
-  document.getElementById('pz-if-status').value      = item.manualStatus || '';
-  document.getElementById('pz-if-descricao').value   = item.descricao || '';
-  f.style.display = 'block';
-  document.getElementById('pz-if-titulo').focus();
-  f.scrollIntoView({ behavior: 'smooth', block: 'start' });
-}
+  function openNew() { _openModal(null); }
 
-function pzSaveInlineForm() {
-  var titulo = document.getElementById('pz-if-titulo').value.trim();
-  if (!titulo) {
-    document.getElementById('pz-if-titulo').style.borderColor = '#EF4444';
-    document.getElementById('pz-if-titulo').focus();
-    return;
-  }
-  document.getElementById('pz-if-titulo').style.borderColor = '';
-
-  var STORE_KEY = 'pitaco-prazos-v3';
-  var USER_KEY  = 'pitaco-prazos-user';
-  var list = [];
-  try { list = JSON.parse(localStorage.getItem(STORE_KEY)) || []; } catch(e) { list = []; }
-
-  var item = {
-    titulo:      titulo,
-    vencimento:  document.getElementById('pz-if-vencimento').value || null,
-    area:        document.getElementById('pz-if-area').value,
-    responsavel: document.getElementById('pz-if-responsavel').value.trim(),
-    revisor:     document.getElementById('pz-if-revisor').value.trim(),
-    manualStatus:document.getElementById('pz-if-status').value || null,
-    descricao:   document.getElementById('pz-if-descricao').value.trim(),
-  };
-
-  var user = localStorage.getItem(USER_KEY) || '—';
-
-  if (_pzEditingId) {
-    var idx = list.findIndex(function(p){ return p.id === _pzEditingId; });
-    if (idx > -1) list[idx] = Object.assign({}, list[idx], item);
-  } else {
-    item.id = 'p' + Date.now();
-    item.history = [{ action: 'created', by: user, at: new Date().toISOString() }];
-    list.push(item);
+  function _openModal(item) {
+    editId = item ? item.id : null;
+    titleEl.textContent  = item ? 'Editar Prazo' : 'Novo Prazo';
+    saveBtn.textContent  = item ? 'Salvar Alterações' : 'Salvar Prazo';
+    fTitulo.value  = item ? (item.titulo || '')      : '';
+    fVenc.value    = item ? (item.vencimento || '')  : '';
+    fArea.value    = item ? (item.area || '')        : '';
+    fResp.value    = item ? (item.responsavel || '') : '';
+    fRev.value     = item ? (item.revisor || '')     : '';
+    fStatus.value  = item ? (item.manualStatus || ''): '';
+    fDesc.value    = item ? (item.descricao || '')   : '';
+    fTitulo.style.borderColor = '';
+    overlay.classList.add('open');
+    setTimeout(function () { fTitulo.focus(); }, 60);
   }
 
-  localStorage.setItem(STORE_KEY, JSON.stringify(list));
-  document.getElementById('pz-inline-form').style.display = 'none';
-  _pzEditingId = null;
-
-  // Atualiza o board se a função existir
-  if (typeof renderBoard === 'function') renderBoard();
-  else if (window._pzRenderBoard) window._pzRenderBoard();
-
-  // Toast
-  var toast = document.getElementById('pz-toast');
-  if (toast) {
-    toast.innerHTML = '✅ Prazo salvo!';
-    toast.style.display = 'block';
-    toast.style.opacity = '1';
-    setTimeout(function(){ toast.style.opacity = '0'; setTimeout(function(){ toast.style.display = 'none'; }, 300); }, 2500);
+  function closeOverlay() {
+    overlay.classList.remove('open');
+    editId = null;
   }
-}
+
+  function saveForm() {
+    var titulo = fTitulo.value.trim();
+    if (!titulo) {
+      fTitulo.style.borderColor = '#EF4444';
+      fTitulo.focus();
+      return;
+    }
+    fTitulo.style.borderColor = '';
+
+    var list = [];
+    try { list = JSON.parse(localStorage.getItem(STORE)) || []; } catch (e) { list = []; }
+    var user = localStorage.getItem(USER_KEY) || '—';
+
+    var item = {
+      titulo:      titulo,
+      vencimento:  fVenc.value   || null,
+      area:        fArea.value,
+      responsavel: fResp.value.trim(),
+      revisor:     fRev.value.trim(),
+      manualStatus:fStatus.value || null,
+      descricao:   fDesc.value.trim(),
+    };
+
+    if (editId) {
+      var idx = -1;
+      for (var i = 0; i < list.length; i++) { if (list[i].id === editId) { idx = i; break; } }
+      if (idx > -1) list[idx] = Object.assign({ history: [] }, list[idx], item);
+    } else {
+      item.id = 'p' + Date.now();
+      item.history = [{ action: 'created', by: user, at: new Date().toISOString() }];
+      list.push(item);
+    }
+
+    localStorage.setItem(STORE, JSON.stringify(list));
+    closeOverlay();
+
+    if (window._pzRenderBoard) {
+      window._pzRenderBoard();
+    }
+
+    var toast = document.getElementById('pz-toast');
+    if (toast) {
+      toast.innerHTML = '&#x2705; Prazo salvo!';
+      toast.style.borderLeftColor = '#22C55E';
+      toast.style.display = 'block';
+      toast.style.opacity = '1';
+      setTimeout(function () {
+        toast.style.opacity = '0';
+        setTimeout(function () { toast.style.display = 'none'; }, 300);
+      }, 2500);
+    }
+  }
+
+  // Eventos
+  if (newBtn)    newBtn.addEventListener('click', openNew);
+  if (closeBtn)  closeBtn.addEventListener('click', closeOverlay);
+  if (cancelBtn) cancelBtn.addEventListener('click', closeOverlay);
+  if (saveBtn)   saveBtn.addEventListener('click', saveForm);
+  if (overlay)   overlay.addEventListener('click', function (e) { if (e.target === overlay) closeOverlay(); });
+  document.addEventListener('keydown', function (e) { if (e.key === 'Escape') closeOverlay(); });
+
+  // Expõe para o IIFE usar no pzEdit
+  window._pzModalOpen = _openModal;
+}());
 </script>
 
 </body>
