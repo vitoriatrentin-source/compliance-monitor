@@ -2923,8 +2923,18 @@ function switchPMSub(sub, btn) {
     list.push(item);
     localStorage.setItem(STORE, JSON.stringify(list));
     closeModal();
-    if (window._pzRenderBoard) window._pzRenderBoard();
+    try {
+      if (window._pzRenderBoard) window._pzRenderBoard();
+    } catch(e) {
+      console.error('renderBoard error:', e);
+    }
     _pzToast('\u2705 Prazo criado!', '#22C55E');
+    // Notifica no console para debug
+    console.log('Prazo salvo:', JSON.stringify(item));
+    // Se renderBoard falhou, força reload após 500ms
+    if (!window._pzRenderBoard) {
+      setTimeout(function(){ location.reload(); }, 500);
+    }
   }
 
   if (newBtn)    newBtn.addEventListener('click', openModal);
@@ -3157,8 +3167,10 @@ function _pzToast(msg, color) {
     if (!list[idx].history) list[idx].history = [];
     localStorage.setItem(STORE, JSON.stringify(list));
     closeDrawer();
-    if (window._pzRenderBoard) window._pzRenderBoard();
+    try { if (window._pzRenderBoard) window._pzRenderBoard(); } catch(e) { console.error(e); }
     _pzToast('\u2705 Prazo atualizado!', '#22C55E');
+    // Garante que os dados aparecem
+    setTimeout(function(){ try { if(window._pzRenderBoard) window._pzRenderBoard(); } catch(e){} }, 200);
   }
 
   function deleteFromDrawer() {
