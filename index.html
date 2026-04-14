@@ -627,6 +627,49 @@ body {
 /* ── PRAZOS: MINI MODAL (adiamento) ── */
 .pz-mini-modal { background:var(--bg-surface); border:1px solid var(--border-md); border-radius:var(--radius-xl); padding:24px; width:100%; max-width:380px; box-shadow:0 24px 64px rgba(0,0,0,0.7); animation:pz-in .2s ease; }
 
+/* ── PRAZOS: DRAWER ── */
+.pz-drawer-overlay { display:none; position:fixed; inset:0; z-index:1001; background:rgba(0,0,0,0.6); backdrop-filter:blur(3px); }
+.pz-drawer-overlay.open { display:block; }
+.pz-drawer { position:fixed; top:0; right:-480px; width:480px; max-width:90vw; height:100vh; z-index:1002; background:var(--bg-surface); border-left:1px solid var(--border-md); box-shadow:-8px 0 32px rgba(0,0,0,0.5); transition:right .3s cubic-bezier(0.4,0,0.2,1); overflow-y:auto; display:flex; flex-direction:column; }
+.pz-drawer.open { right:0; }
+.pz-drawer-header { display:flex; align-items:center; justify-content:space-between; padding:20px 24px; border-bottom:1px solid var(--border); flex-shrink:0; }
+.pz-drawer-title { font-size:15px; font-weight:700; color:var(--text-primary); }
+.pz-drawer-body { flex:1; padding:20px 24px; overflow-y:auto; }
+.pz-drawer-footer { display:flex; gap:10px; padding:16px 24px; border-top:1px solid var(--border); flex-shrink:0; }
+.pz-btn-delete { padding:9px 18px; border-radius:var(--radius-pill); border:1px solid rgba(239,68,68,0.3); background:rgba(239,68,68,0.08); color:#EF4444; font-family:var(--font); font-size:13px; font-weight:600; cursor:pointer; transition:all var(--transition); }
+.pz-btn-delete:hover { background:rgba(239,68,68,0.15); border-color:rgba(239,68,68,0.5); }
+.pz-drawer-field { margin-bottom:16px; }
+.pz-drawer-field .pz-form-label { margin-bottom:6px; }
+.pz-drawer-field .pz-form-input,
+.pz-drawer-field .pz-form-select,
+.pz-drawer-field .pz-form-textarea { width:100%; }
+
+/* ── PRAZOS: EXPANDED STATUS BADGES ── */
+.pz-status-badge.em_andamento { background:rgba(59,130,246,0.12); color:#3B82F6; border:1px solid rgba(59,130,246,0.2); }
+.pz-status-badge.standby { background:rgba(107,114,128,0.12); color:#6B7280; border:1px solid rgba(107,114,128,0.2); }
+.pz-card.em_andamento::before { background:#3B82F6; }
+.pz-card.standby::before { background:#6B7280; }
+.pz-group.em_andamento .pz-group-title { color:#3B82F6; }
+.pz-group.em_andamento .pz-group-count { background:rgba(59,130,246,0.12); color:#3B82F6; }
+.pz-group.standby .pz-group-title { color:#6B7280; }
+.pz-group.standby .pz-group-count { background:rgba(107,114,128,0.12); color:#6B7280; }
+
+/* ── PRAZOS: SLACK AUTOCOMPLETE ── */
+.pz-slack-ac { position:absolute; left:0; right:0; top:100%; z-index:50; background:var(--bg-elevated); border:1px solid var(--border-md); border-radius:var(--radius-md); max-height:180px; overflow-y:auto; box-shadow:0 8px 24px rgba(0,0,0,0.4); display:none; }
+.pz-slack-ac.open { display:block; }
+.pz-slack-ac-item { padding:8px 12px; font-size:12px; color:var(--text-secondary); cursor:pointer; display:flex; align-items:center; gap:8px; transition:background .1s; }
+.pz-slack-ac-item:hover, .pz-slack-ac-item.active { background:var(--brand-dim); color:var(--text-primary); }
+.pz-slack-ac-dept { font-size:10px; color:var(--text-muted); margin-left:auto; }
+.pz-ac-wrap { position:relative; }
+
+/* ── PRAZOS: STATUS DROPDOWN VISUAL ── */
+.pz-status-option { display:flex; align-items:center; gap:8px; padding:8px 12px; cursor:pointer; transition:background .1s; border-radius:var(--radius-sm); }
+.pz-status-option:hover { background:var(--bg-hover); }
+.pz-status-option.selected { background:var(--brand-dim); }
+.pz-status-dot { width:10px; height:10px; border-radius:50%; flex-shrink:0; }
+.pz-status-dropdown { position:absolute; left:0; right:0; top:100%; z-index:50; background:var(--bg-elevated); border:1px solid var(--border-md); border-radius:var(--radius-md); box-shadow:0 8px 24px rgba(0,0,0,0.4); display:none; padding:4px; }
+.pz-status-dropdown.open { display:block; }
+
 /* ── TAB PANE ── */
 .tab-pane { display: none; }
 .tab-pane.active { display: block; }
@@ -2323,6 +2366,8 @@ function switchPMSub(sub, btn) {
   // ── Status ─────────────────────────────────────────────────────────────────
   function computeStatus(item) {
     if (item.manualStatus==='concluido') return 'concluido';
+    if (item.manualStatus==='em_andamento') return 'em_andamento';
+    if (item.manualStatus==='standby') return 'standby';
     if (!item.vencimento) return 'normal';
     const today=new Date(); today.setHours(0,0,0,0);
     const due=new Date(item.vencimento+'T00:00:00');
@@ -2334,9 +2379,9 @@ function switchPMSub(sub, btn) {
   }
 
   // ── Utils ──────────────────────────────────────────────────────────────────
-  const STATUS_LABELS = {vencido:'🔴 Vencido',urgente:'🟠 Urgente',atencao:'🟡 Atenção',normal:'🔵 Em Dia',concluido:'🟢 Concluído'};
-  const GROUP_TITLES  = {vencido:'🚨 Vencidos',urgente:'⚡ Urgentes — próximos 3 dias',atencao:'⚠️ Atenção — 4 a 7 dias',normal:'📅 Em Dia',concluido:'✅ Concluídos'};
-  const STATUS_ORDER  = ['vencido','urgente','atencao','normal','concluido'];
+  const STATUS_LABELS = {vencido:'🔴 Vencido',urgente:'🟠 Urgente',atencao:'🟡 Atenção',normal:'🔵 Em Dia',concluido:'🟢 Concluído',em_andamento:'⚙️ Em Andamento',standby:'⏸️ Stand By'};
+  const GROUP_TITLES  = {vencido:'🚨 Vencidos',urgente:'⚡ Urgentes — próximos 3 dias',atencao:'⚠️ Atenção — 4 a 7 dias',normal:'📅 Em Dia',concluido:'✅ Concluídos',em_andamento:'⚙️ Em Andamento',standby:'⏸️ Stand By'};
+  const STATUS_ORDER  = ['vencido','urgente','atencao','em_andamento','standby','normal','concluido'];
 
   function fmtDate(iso) { if(!iso)return'sem data'; const[y,m,d]=iso.split('-'); return`${d}/${m}/${y}`; }
   function fmtTs(iso)   { const d=new Date(iso); return`${String(d.getDate()).padStart(2,'0')}/${String(d.getMonth()+1).padStart(2,'0')} ${String(d.getHours()).padStart(2,'0')}:${String(d.getMinutes()).padStart(2,'0')}`; }
@@ -2492,7 +2537,7 @@ function switchPMSub(sub, btn) {
         const histBlock=hist.length?`
           <span class="pz-history-toggle" onclick="this.nextElementSibling.classList.toggle('open')">📋 ${hist.length} registro${hist.length>1?'s':''} ▾</span>
           <div class="pz-history-log">${[...hist].reverse().map(h=>`<div class="pz-history-entry"><strong>${esc(h.action==='completed'?'Concluído':h.action==='postponed'?'Adiado':h.action==='notified'?'Notificado':'Criado')}</strong> por <em>${esc(h.by||'—')}</em> em ${fmtTs(h.at)}${h.note?' · '+esc(h.note):''}${h.oldDate?' (era '+fmtDate(h.oldDate)+')':''}</div>`).join('')}</div>`:'' ;
-        return`<div class="pz-card ${esc(p._s)}${isMine?' is-mine':''}" data-id="${esc(p.id)}">
+        return`<div class="pz-card ${esc(p._s)}${isMine?' is-mine':''}" data-id="${esc(p.id)}" onclick="pzOpenDrawer('${esc(p.id)}')" style="cursor:pointer">
           <div class="pz-card-top">
             <div class="pz-card-title">${esc(p.titulo)}</div>
             <div class="pz-card-actions">
@@ -2505,7 +2550,7 @@ function switchPMSub(sub, btn) {
             <span class="pz-status-badge ${esc(p._s)}">${STATUS_LABELS[p._s]}</span>
             ${isMine?`<span style="font-size:9px;padding:2px 6px;border-radius:4px;background:rgba(124,58,237,0.12);color:var(--brand-light);border:1px solid rgba(124,58,237,0.2);font-weight:600">👤 meu</span>`:''}
           </div>
-          <div class="pz-card-due">📅 ${fmtDate(p.vencimento)}${dl?` · <em style="color:${p._s==='vencido'?'#EF4444':p._s==='urgente'?'#F97316':'inherit'}">${esc(dl)}</em>`:''}</div>
+          <div class="pz-card-due">📅 ${fmtDate(p.vencimento)}${dl?` · <em style="color:${p._s==='vencido'?'#EF4444':p._s==='urgente'?'#F97316':'inherit'}">${esc(dl)}</em>`:''}${p.manualStatus&&p.manualStatus!=='concluido'&&p.vencimento?' · '+STATUS_LABELS[p._s]:''}</div>
           ${(p.responsavel||p.revisor)?`<div class="pz-card-people">
             ${p.responsavel?`<span class="pz-person"><span class="pz-person-label">Owner</span> ${esc(p.responsavel)}</span>`:''}
             ${p.revisor?`<span class="pz-person"><span class="pz-person-label">Revisor</span> ${esc(p.revisor)}</span>`:''}
@@ -2646,8 +2691,9 @@ function switchPMSub(sub, btn) {
   window._pzRenderBoard = renderBoard;
 
   // ── Global onclick handlers ────────────────────────────────────────────────
-  window.pzEdit=id=>{const p=load().find(x=>x.id===id);if(p&&window._pzModalOpen)window._pzModalOpen(p);};
+  window.pzEdit=id=>{if(window._pzDrawerOpen)window._pzDrawerOpen(id);};
   window.pzDel =id=>{if(!confirm('Excluir este prazo?'))return;save(load().filter(p=>p.id!==id));renderBoard();};
+  window.pzOpenDrawer=id=>{if(window._pzDrawerOpen)window._pzDrawerOpen(id);};
 
   // ── Events ─────────────────────────────────────────────────────────────────
   // pz-new-btn, pz-modal-close, pz-btn-cancel, pz-btn-save são registrados
@@ -2706,7 +2752,9 @@ function switchPMSub(sub, btn) {
       <div class="pz-form-field">
         <label class="pz-form-label">Status</label>
         <select class="pz-form-select" id="pz-f-status">
-          <option value="">Automático (por data)</option>
+          <option value="">🔄 Automático (por data)</option>
+          <option value="em_andamento">⚙️ Em Andamento</option>
+          <option value="standby">⏸️ Stand By</option>
           <option value="concluido">✅ Concluído</option>
         </select>
       </div>
@@ -2747,15 +2795,78 @@ function switchPMSub(sub, btn) {
   </div>
 </div>
 
+<!-- ═══ DRAWER EDIÇÃO DE PRAZO ═══ -->
+<div class="pz-drawer-overlay" id="pz-drawer-overlay"></div>
+<div class="pz-drawer" id="pz-drawer">
+  <div class="pz-drawer-header">
+    <span class="pz-drawer-title" id="pz-drawer-title">Editar Prazo</span>
+    <button class="pz-modal-close" id="pz-drawer-close">✕</button>
+  </div>
+  <div class="pz-drawer-body">
+    <div class="pz-drawer-field">
+      <label class="pz-form-label">Título *</label>
+      <input type="text" class="pz-form-input" id="pz-d-titulo" placeholder="Nome do prazo...">
+    </div>
+    <div class="pz-drawer-field">
+      <label class="pz-form-label">Data de Vencimento</label>
+      <input type="date" class="pz-form-input" id="pz-d-vencimento">
+      <div id="pz-d-date-hint" style="font-size:11px;color:var(--text-muted);margin-top:4px;"></div>
+    </div>
+    <div class="pz-drawer-field">
+      <label class="pz-form-label">Área</label>
+      <select class="pz-form-select" id="pz-d-area">
+        <option value="">Selecione...</option>
+        <option value="AML">AML</option>
+        <option value="Sports Integrity">Sports Integrity</option>
+        <option value="Data Privacy">Data Privacy</option>
+        <option value="Jogo Responsável">Jogo Responsável</option>
+        <option value="Regulatório">Regulatório</option>
+        <option value="Contratos">Contratos</option>
+      </select>
+    </div>
+    <div class="pz-drawer-field pz-ac-wrap">
+      <label class="pz-form-label">Responsável (Owner)</label>
+      <input type="text" class="pz-form-input" id="pz-d-responsavel" placeholder="Digite @ para buscar no Slack..." autocomplete="off">
+      <input type="hidden" id="pz-d-responsavel-sid">
+      <div class="pz-slack-ac" id="pz-ac-resp"></div>
+    </div>
+    <div class="pz-drawer-field pz-ac-wrap">
+      <label class="pz-form-label">Revisor Final</label>
+      <input type="text" class="pz-form-input" id="pz-d-revisor" placeholder="Digite @ para buscar no Slack..." autocomplete="off">
+      <input type="hidden" id="pz-d-revisor-sid">
+      <div class="pz-slack-ac" id="pz-ac-rev"></div>
+    </div>
+    <div class="pz-drawer-field">
+      <label class="pz-form-label">Status</label>
+      <select class="pz-form-select" id="pz-d-status">
+        <option value="">🔄 Automático (por data)</option>
+        <option value="em_andamento">⚙️ Em Andamento</option>
+        <option value="standby">⏸️ Stand By</option>
+        <option value="concluido">✅ Concluído</option>
+      </select>
+    </div>
+    <div class="pz-drawer-field">
+      <label class="pz-form-label">Descrição / Observação</label>
+      <textarea class="pz-form-textarea" id="pz-d-descricao" placeholder="Contexto, riscos, links..."></textarea>
+    </div>
+    <div id="pz-d-history" style="margin-top:12px;"></div>
+  </div>
+  <div class="pz-drawer-footer">
+    <button class="pz-btn-delete" id="pz-d-delete">🗑 Excluir</button>
+    <span style="flex:1"></span>
+    <button class="pz-btn-cancel" id="pz-d-cancel">Fechar</button>
+    <button class="pz-btn-save" id="pz-d-save">Salvar Alterações</button>
+  </div>
+</div>
+
 <!-- ═══ TOAST ═══ -->
 <div id="pz-toast" class="pz-toast" style="display:none"></div>
 
 <script>
-// ─── Modal de Prazos — script separado após HTML (garante que elementos existem) ───
+// ─── Modal de Novo Prazo ──────────────────────────────────────────────────────
 (function () {
   var STORE = 'pitaco-prazos-v3';
   var USER_KEY = 'pitaco-prazos-user';
-  var editId = null;
 
   var overlay  = document.getElementById('pz-modal');
   var newBtn   = document.getElementById('pz-new-btn');
@@ -2771,92 +2882,305 @@ function switchPMSub(sub, btn) {
   var fStatus  = document.getElementById('pz-f-status');
   var fDesc    = document.getElementById('pz-f-descricao');
 
-  function openNew() { _openModal(null); }
-
-  function _openModal(item) {
-    editId = item ? item.id : null;
-    titleEl.textContent  = item ? 'Editar Prazo' : 'Novo Prazo';
-    saveBtn.textContent  = item ? 'Salvar Alterações' : 'Salvar Prazo';
-    fTitulo.value  = item ? (item.titulo || '')      : '';
-    fVenc.value    = item ? (item.vencimento || '')  : '';
-    fArea.value    = item ? (item.area || '')        : '';
-    fResp.value    = item ? (item.responsavel || '') : '';
-    fRev.value     = item ? (item.revisor || '')     : '';
-    fStatus.value  = item ? (item.manualStatus || ''): '';
-    fDesc.value    = item ? (item.descricao || '')   : '';
+  function openModal() {
+    titleEl.textContent  = 'Novo Prazo';
+    saveBtn.textContent  = 'Salvar Prazo';
+    fTitulo.value = ''; fVenc.value = ''; fArea.value = '';
+    fResp.value = ''; fRev.value = ''; fStatus.value = ''; fDesc.value = '';
     fTitulo.style.borderColor = '';
     overlay.classList.add('open');
     setTimeout(function () { fTitulo.focus(); }, 60);
   }
 
-  function closeOverlay() {
-    overlay.classList.remove('open');
-    editId = null;
-  }
+  function closeModal() { overlay.classList.remove('open'); }
 
   function saveForm() {
     var titulo = fTitulo.value.trim();
-    if (!titulo) {
-      fTitulo.style.borderColor = '#EF4444';
-      fTitulo.focus();
-      return;
-    }
+    if (!titulo) { fTitulo.style.borderColor = '#EF4444'; fTitulo.focus(); return; }
     fTitulo.style.borderColor = '';
-
     var list = [];
     try { list = JSON.parse(localStorage.getItem(STORE)) || []; } catch (e) { list = []; }
-    var user = localStorage.getItem(USER_KEY) || '—';
-
+    var user = localStorage.getItem(USER_KEY) || '\u2014';
     var item = {
-      titulo:      titulo,
-      vencimento:  fVenc.value   || null,
-      area:        fArea.value,
+      id: 'p' + Date.now(),
+      titulo: titulo,
+      vencimento: fVenc.value || null,
+      area: fArea.value,
       responsavel: fResp.value.trim(),
-      revisor:     fRev.value.trim(),
-      manualStatus:fStatus.value || null,
-      descricao:   fDesc.value.trim(),
+      revisor: fRev.value.trim(),
+      manualStatus: fStatus.value || null,
+      descricao: fDesc.value.trim(),
+      history: [{ action: 'created', by: user, at: new Date().toISOString() }]
     };
-
-    if (editId) {
-      var idx = -1;
-      for (var i = 0; i < list.length; i++) { if (list[i].id === editId) { idx = i; break; } }
-      if (idx > -1) list[idx] = Object.assign({ history: [] }, list[idx], item);
-    } else {
-      item.id = 'p' + Date.now();
-      item.history = [{ action: 'created', by: user, at: new Date().toISOString() }];
-      list.push(item);
-    }
-
+    list.push(item);
     localStorage.setItem(STORE, JSON.stringify(list));
-    closeOverlay();
-
-    if (window._pzRenderBoard) {
-      window._pzRenderBoard();
-    }
-
-    var toast = document.getElementById('pz-toast');
-    if (toast) {
-      toast.innerHTML = '&#x2705; Prazo salvo!';
-      toast.style.borderLeftColor = '#22C55E';
-      toast.style.display = 'block';
-      toast.style.opacity = '1';
-      setTimeout(function () {
-        toast.style.opacity = '0';
-        setTimeout(function () { toast.style.display = 'none'; }, 300);
-      }, 2500);
-    }
+    closeModal();
+    if (window._pzRenderBoard) window._pzRenderBoard();
+    _pzToast('\u2705 Prazo criado!', '#22C55E');
   }
 
-  // Eventos
-  if (newBtn)    newBtn.addEventListener('click', openNew);
-  if (closeBtn)  closeBtn.addEventListener('click', closeOverlay);
-  if (cancelBtn) cancelBtn.addEventListener('click', closeOverlay);
+  if (newBtn)    newBtn.addEventListener('click', openModal);
+  if (closeBtn)  closeBtn.addEventListener('click', closeModal);
+  if (cancelBtn) cancelBtn.addEventListener('click', closeModal);
   if (saveBtn)   saveBtn.addEventListener('click', saveForm);
-  if (overlay)   overlay.addEventListener('click', function (e) { if (e.target === overlay) closeOverlay(); });
-  document.addEventListener('keydown', function (e) { if (e.key === 'Escape') closeOverlay(); });
+  if (overlay)   overlay.addEventListener('click', function (e) { if (e.target === overlay) closeModal(); });
+}());
 
-  // Expõe para o IIFE usar no pzEdit
-  window._pzModalOpen = _openModal;
+// ─── Slack members database ───────────────────────────────────────────────────
+var PZ_SLACK_MEMBERS = [
+  {name:'Carol Pereira',id:'U07FET8L55E',dept:'CX'},
+  {name:'Letícia Santos',id:'U03EXLGN8H0',dept:'CX'},
+  {name:'Robert Nunes',id:'U09GUKL315J',dept:'Operations'},
+  {name:'Luís Serafim',id:'U092737H4UF',dept:'Operations'},
+  {name:'Fábio Guilherme',id:'U0A49M76YR5',dept:'Marketing'},
+  {name:'Gabriel Marcondes',id:'U09L69NLDSR',dept:'Data'},
+  {name:'Luca Queiroz',id:'U0931BUEYCR',dept:'Marketing'},
+  {name:'Tiago Ramon',id:'U03LF4L6XE0',dept:'Product'},
+  {name:'Léo Martins',id:'U0715NLNC3Y',dept:'CX'},
+  {name:'Thamy Morais',id:'U053L8416Q0',dept:'Finance'},
+  {name:'Yure Araújo',id:'U077AP1UL73',dept:'Legal'},
+  {name:'Vitor Fonseca',id:'U0909TTG4DN',dept:'Marketing'},
+  {name:'João Rey',id:'U04E8GFJWJ0',dept:'Technology'},
+  {name:'Caio Martins',id:'U0AGY9YJ70U',dept:'Operations'},
+  {name:'Yan Coutinho',id:'U0A6GK19Q3C',dept:'Marketing'},
+  {name:'Sávio Sá',id:'U078NM914NT',dept:'Operations'},
+  {name:'Marcos Han',id:'U07CDCFPAQM',dept:'Technology'},
+  {name:'Felipe Vasconcellos',id:'U080F10S9A9',dept:'Legal'},
+  {name:'Rafael Marchetti',id:'U02DGSYPGEL',dept:'Legal'},
+  {name:'Stefany Parracho',id:'U07DB01B2HE',dept:'Marketing'},
+  {name:'Gui Nunes',id:'U08LT7X5G5P',dept:'Operations'},
+  {name:'Gunther Baessa',id:'U0824C27Y4S',dept:'Operations'},
+  {name:'Heloísa Diniz',id:'U078JDVFMAS',dept:'Legal'},
+  {name:'Luís Marciano',id:'U096SQ65YUU',dept:'Data'},
+  {name:'Vinicius Remorino',id:'U09199AQZ7E',dept:'Marketing'},
+  {name:'Bá Barbosa',id:'U02U5981J6S',dept:'Finance'},
+  {name:'Thiago Cruz',id:'U01URSRQ0RZ',dept:'Data'},
+  {name:'Maíra Audi',id:'U08K4AH6SC9',dept:'Marketing'},
+  {name:'Vitória Trentin',id:'U08CL7VTHGT',dept:'Legal'},
+  {name:'Júlia Fernandes',id:'U07JKJLH35Z',dept:'Legal'},
+  {name:'Andressa Queiroz',id:'U07CN2NBBAP',dept:'Legal'},
+  {name:'Suzan Monteiro',id:'U036SJVQ1LP',dept:'CX'},
+  {name:'Maria Sales',id:'U076Z2D282X',dept:'Legal'},
+  {name:'Renan Bispo',id:'U049983N7S9',dept:'CX'},
+  {name:'Allaf Mendes',id:'U08PR7N6CJV',dept:'Operations'},
+  {name:'Fernando Vasconcelos',id:'U02PMN1EVFF',dept:'Legal'},
+  {name:'Daniel Vargas',id:'U0A05EYF7EZ',dept:'Marketing'},
+  {name:'Luiz Stocchi',id:'U09159K08J1',dept:'Operations'},
+  {name:'Gabriel Vaz',id:'U0879T2TK8E',dept:'CX'},
+  {name:'Clevson Costa',id:'U06PD0K5QSV',dept:'CX'},
+];
+
+// ─── Slack autocomplete helper ────────────────────────────────────────────────
+function pzSetupAutocomplete(inputId, hiddenId, dropdownId) {
+  var inp = document.getElementById(inputId);
+  var hid = document.getElementById(hiddenId);
+  var dd  = document.getElementById(dropdownId);
+  if (!inp || !dd) return;
+  var activeIdx = -1;
+
+  function render(query) {
+    var q = query.replace(/^@/, '').toLowerCase();
+    if (!q) { dd.classList.remove('open'); return; }
+    var matches = PZ_SLACK_MEMBERS.filter(function(m) {
+      return m.name.toLowerCase().indexOf(q) > -1 || m.dept.toLowerCase().indexOf(q) > -1;
+    }).slice(0, 8);
+    if (!matches.length) { dd.classList.remove('open'); return; }
+    activeIdx = -1;
+    dd.innerHTML = matches.map(function(m, i) {
+      return '<div class="pz-slack-ac-item" data-idx="' + i + '" data-name="' + m.name.replace(/"/g,'&quot;') + '" data-sid="' + m.id + '">'
+        + '<strong>' + m.name + '</strong>'
+        + '<span class="pz-slack-ac-dept">' + m.dept + '</span>'
+        + '</div>';
+    }).join('');
+    dd.classList.add('open');
+  }
+
+  function pick(name, sid) {
+    inp.value = name;
+    if (hid) hid.value = sid;
+    dd.classList.remove('open');
+  }
+
+  inp.addEventListener('input', function () {
+    var v = inp.value;
+    if (v.indexOf('@') > -1) { render(v.slice(v.lastIndexOf('@'))); }
+    else if (v.length >= 2) { render(v); }
+    else { dd.classList.remove('open'); }
+  });
+
+  inp.addEventListener('keydown', function (e) {
+    var items = dd.querySelectorAll('.pz-slack-ac-item');
+    if (!items.length || !dd.classList.contains('open')) return;
+    if (e.key === 'ArrowDown') { e.preventDefault(); activeIdx = Math.min(activeIdx + 1, items.length - 1); items.forEach(function(el,i){ el.classList.toggle('active', i === activeIdx); }); }
+    else if (e.key === 'ArrowUp') { e.preventDefault(); activeIdx = Math.max(activeIdx - 1, 0); items.forEach(function(el,i){ el.classList.toggle('active', i === activeIdx); }); }
+    else if (e.key === 'Enter' && activeIdx >= 0) { e.preventDefault(); pick(items[activeIdx].dataset.name, items[activeIdx].dataset.sid); }
+    else if (e.key === 'Escape') { dd.classList.remove('open'); }
+  });
+
+  dd.addEventListener('click', function (e) {
+    var item = e.target.closest('.pz-slack-ac-item');
+    if (item) pick(item.dataset.name, item.dataset.sid);
+  });
+
+  document.addEventListener('click', function (e) {
+    if (!inp.contains(e.target) && !dd.contains(e.target)) dd.classList.remove('open');
+  });
+}
+
+// ─── Toast helper ─────────────────────────────────────────────────────────────
+function _pzToast(msg, color) {
+  var t = document.getElementById('pz-toast');
+  if (!t) return;
+  t.innerHTML = msg;
+  t.style.borderLeftColor = color || 'var(--brand)';
+  t.style.display = 'block';
+  t.style.opacity = '1';
+  clearTimeout(t._timer);
+  t._timer = setTimeout(function () { t.style.opacity = '0'; setTimeout(function () { t.style.display = 'none'; }, 300); }, 3000);
+}
+
+// ─── Drawer de edição ─────────────────────────────────────────────────────────
+(function () {
+  var STORE = 'pitaco-prazos-v3';
+  var USER_KEY = 'pitaco-prazos-user';
+
+  var overlay = document.getElementById('pz-drawer-overlay');
+  var drawer  = document.getElementById('pz-drawer');
+  var closeBtn = document.getElementById('pz-drawer-close');
+  var cancelBtn = document.getElementById('pz-d-cancel');
+  var saveBtn  = document.getElementById('pz-d-save');
+  var deleteBtn = document.getElementById('pz-d-delete');
+
+  var dTitulo  = document.getElementById('pz-d-titulo');
+  var dVenc    = document.getElementById('pz-d-vencimento');
+  var dHint    = document.getElementById('pz-d-date-hint');
+  var dArea    = document.getElementById('pz-d-area');
+  var dResp    = document.getElementById('pz-d-responsavel');
+  var dRespSid = document.getElementById('pz-d-responsavel-sid');
+  var dRev     = document.getElementById('pz-d-revisor');
+  var dRevSid  = document.getElementById('pz-d-revisor-sid');
+  var dStatus  = document.getElementById('pz-d-status');
+  var dDesc    = document.getElementById('pz-d-descricao');
+  var dHist    = document.getElementById('pz-d-history');
+
+  var currentId = null;
+  var DAYS = ['Dom','Seg','Ter','Qua','Qui','Sex','S\u00e1b'];
+
+  function updateDateHint() {
+    if (!dVenc.value) { dHint.textContent = ''; return; }
+    var d = new Date(dVenc.value + 'T00:00:00');
+    var today = new Date(); today.setHours(0,0,0,0);
+    var diff = Math.floor((d - today) / 86400000);
+    var dayName = DAYS[d.getDay()];
+    var dd = String(d.getDate()).padStart(2,'0');
+    var mm = String(d.getMonth()+1).padStart(2,'0');
+    var label = dayName + ', ' + dd + '/' + mm + '/' + d.getFullYear();
+    if (diff < 0) label += ' \u00b7 h\u00e1 ' + Math.abs(diff) + ' dia' + (Math.abs(diff)>1?'s':'');
+    else if (diff === 0) label += ' \u00b7 HOJE';
+    else if (diff === 1) label += ' \u00b7 amanh\u00e3';
+    else label += ' \u00b7 em ' + diff + ' dias';
+    dHint.textContent = label;
+    dHint.style.color = diff < 0 ? '#EF4444' : diff <= 3 ? '#F97316' : 'var(--text-muted)';
+  }
+
+  function openDrawer(id) {
+    var list = [];
+    try { list = JSON.parse(localStorage.getItem(STORE)) || []; } catch(e) {}
+    var item = null;
+    for (var i = 0; i < list.length; i++) { if (list[i].id === id) { item = list[i]; break; } }
+    if (!item) return;
+    currentId = id;
+    dTitulo.value = item.titulo || '';
+    dVenc.value   = item.vencimento || '';
+    dArea.value   = item.area || '';
+    dResp.value   = item.responsavel || '';
+    dRespSid.value = item.responsavelSid || '';
+    dRev.value    = item.revisor || '';
+    dRevSid.value = item.revisorSid || '';
+    dStatus.value = item.manualStatus || '';
+    dDesc.value   = item.descricao || '';
+    dTitulo.style.borderColor = '';
+    updateDateHint();
+
+    // render history
+    var hist = item.history || [];
+    if (hist.length) {
+      var actionLabels = {completed:'Conclu\u00eddo',postponed:'Adiado',notified:'Notificado',created:'Criado'};
+      dHist.innerHTML = '<div style="font-size:10px;font-weight:600;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.4px;margin-bottom:8px">Hist\u00f3rico</div>'
+        + hist.slice().reverse().map(function(h) {
+          var d = new Date(h.at);
+          var ts = String(d.getDate()).padStart(2,'0') + '/' + String(d.getMonth()+1).padStart(2,'0') + ' ' + String(d.getHours()).padStart(2,'0') + ':' + String(d.getMinutes()).padStart(2,'0');
+          return '<div class="pz-history-entry"><strong>' + (actionLabels[h.action]||h.action) + '</strong> por <em>' + (h.by||'\u2014') + '</em> em ' + ts + (h.note ? ' \u00b7 ' + h.note : '') + (h.oldDate ? ' (era ' + h.oldDate + ')' : '') + '</div>';
+        }).join('');
+    } else {
+      dHist.innerHTML = '';
+    }
+
+    drawer.classList.add('open');
+    overlay.classList.add('open');
+    setTimeout(function () { dTitulo.focus(); }, 100);
+  }
+
+  function closeDrawer() {
+    drawer.classList.remove('open');
+    overlay.classList.remove('open');
+    currentId = null;
+  }
+
+  function saveDrawer() {
+    var titulo = dTitulo.value.trim();
+    if (!titulo) { dTitulo.style.borderColor = '#EF4444'; dTitulo.focus(); return; }
+    dTitulo.style.borderColor = '';
+    var list = [];
+    try { list = JSON.parse(localStorage.getItem(STORE)) || []; } catch(e) { list = []; }
+    var idx = -1;
+    for (var i = 0; i < list.length; i++) { if (list[i].id === currentId) { idx = i; break; } }
+    if (idx < 0) return;
+    var oldStatus = list[idx].manualStatus;
+    list[idx].titulo = titulo;
+    list[idx].vencimento = dVenc.value || null;
+    list[idx].area = dArea.value;
+    list[idx].responsavel = dResp.value.trim();
+    list[idx].responsavelSid = dRespSid.value || null;
+    list[idx].revisor = dRev.value.trim();
+    list[idx].revisorSid = dRevSid.value || null;
+    list[idx].manualStatus = dStatus.value || null;
+    list[idx].descricao = dDesc.value.trim();
+    if (!list[idx].history) list[idx].history = [];
+    localStorage.setItem(STORE, JSON.stringify(list));
+    closeDrawer();
+    if (window._pzRenderBoard) window._pzRenderBoard();
+    _pzToast('\u2705 Prazo atualizado!', '#22C55E');
+  }
+
+  function deleteFromDrawer() {
+    if (!confirm('Excluir este prazo?')) return;
+    var list = [];
+    try { list = JSON.parse(localStorage.getItem(STORE)) || []; } catch(e) { list = []; }
+    list = list.filter(function(p) { return p.id !== currentId; });
+    localStorage.setItem(STORE, JSON.stringify(list));
+    closeDrawer();
+    if (window._pzRenderBoard) window._pzRenderBoard();
+    _pzToast('\ud83d\uddd1\ufe0f Prazo exclu\u00eddo', '#EF4444');
+  }
+
+  // Events
+  dVenc.addEventListener('change', updateDateHint);
+  closeBtn.addEventListener('click', closeDrawer);
+  cancelBtn.addEventListener('click', closeDrawer);
+  saveBtn.addEventListener('click', saveDrawer);
+  deleteBtn.addEventListener('click', deleteFromDrawer);
+  overlay.addEventListener('click', closeDrawer);
+  document.addEventListener('keydown', function (e) {
+    if (e.key === 'Escape' && drawer.classList.contains('open')) closeDrawer();
+  });
+
+  // Setup Slack autocomplete for drawer fields
+  pzSetupAutocomplete('pz-d-responsavel', 'pz-d-responsavel-sid', 'pz-ac-resp');
+  pzSetupAutocomplete('pz-d-revisor', 'pz-d-revisor-sid', 'pz-ac-rev');
+
+  // Expose for IIFE
+  window._pzDrawerOpen = openDrawer;
 }());
 </script>
 
