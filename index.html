@@ -2741,13 +2741,17 @@ function switchPMSub(sub, btn) {
           <option value="Contratos">Contratos</option>
         </select>
       </div>
-      <div class="pz-form-field">
+      <div class="pz-form-field pz-ac-wrap">
         <label class="pz-form-label">Responsável (Owner)</label>
-        <input type="text" class="pz-form-input" id="pz-f-responsavel" placeholder="Nome do owner...">
+        <input type="text" class="pz-form-input" id="pz-f-responsavel" placeholder="Digite @ para buscar no Slack..." autocomplete="off">
+        <input type="hidden" id="pz-f-responsavel-sid">
+        <div class="pz-slack-ac" id="pz-ac-modal-resp"></div>
       </div>
-      <div class="pz-form-field">
+      <div class="pz-form-field pz-ac-wrap">
         <label class="pz-form-label">Revisor Final</label>
-        <input type="text" class="pz-form-input" id="pz-f-revisor" placeholder="Nome do revisor...">
+        <input type="text" class="pz-form-input" id="pz-f-revisor" placeholder="Digite @ para buscar no Slack..." autocomplete="off">
+        <input type="hidden" id="pz-f-revisor-sid">
+        <div class="pz-slack-ac" id="pz-ac-modal-rev"></div>
       </div>
       <div class="pz-form-field">
         <label class="pz-form-label">Status</label>
@@ -2887,6 +2891,8 @@ function switchPMSub(sub, btn) {
     saveBtn.textContent  = 'Salvar Prazo';
     fTitulo.value = ''; fVenc.value = ''; fArea.value = '';
     fResp.value = ''; fRev.value = ''; fStatus.value = ''; fDesc.value = '';
+    var hResp = document.getElementById('pz-f-responsavel-sid'); if (hResp) hResp.value = '';
+    var hRev = document.getElementById('pz-f-revisor-sid'); if (hRev) hRev.value = '';
     fTitulo.style.borderColor = '';
     overlay.classList.add('open');
     setTimeout(function () { fTitulo.focus(); }, 60);
@@ -2907,7 +2913,9 @@ function switchPMSub(sub, btn) {
       vencimento: fVenc.value || null,
       area: fArea.value,
       responsavel: fResp.value.trim(),
+      responsavelSid: (document.getElementById('pz-f-responsavel-sid') || {}).value || null,
       revisor: fRev.value.trim(),
+      revisorSid: (document.getElementById('pz-f-revisor-sid') || {}).value || null,
       manualStatus: fStatus.value || null,
       descricao: fDesc.value.trim(),
       history: [{ action: 'created', by: user, at: new Date().toISOString() }]
@@ -3182,6 +3190,10 @@ function _pzToast(msg, color) {
   // Expose for IIFE
   window._pzDrawerOpen = openDrawer;
 }());
+
+// Setup autocomplete nos campos do modal de Novo Prazo
+pzSetupAutocomplete('pz-f-responsavel', 'pz-f-responsavel-sid', 'pz-ac-modal-resp');
+pzSetupAutocomplete('pz-f-revisor', 'pz-f-revisor-sid', 'pz-ac-modal-rev');
 </script>
 
 </body>
