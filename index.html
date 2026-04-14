@@ -2541,8 +2541,8 @@ function switchPMSub(sub, btn) {
           <div class="pz-card-top">
             <div class="pz-card-title">${esc(p.titulo)}</div>
             <div class="pz-card-actions">
-              <button class="pz-card-act-btn" onclick="pzEdit('${esc(p.id)}')" title="Editar">✏️</button>
-              <button class="pz-card-act-btn delete" onclick="pzDel('${esc(p.id)}')" title="Excluir">🗑</button>
+              <button class="pz-card-act-btn" onclick="event.stopPropagation();pzEdit('${esc(p.id)}')" title="Editar">✏️</button>
+              <button class="pz-card-act-btn delete" onclick="event.stopPropagation();pzDel('${esc(p.id)}')" title="Excluir">🗑</button>
             </div>
           </div>
           <div class="pz-card-meta">
@@ -2558,9 +2558,9 @@ function switchPMSub(sub, btn) {
           ${p.descricao?`<div class="pz-card-desc">${esc(p.descricao)}</div>`:''}
           ${histBlock}
           ${p._s!=='concluido'?`<div class="pz-quick">
-            <button class="pz-quick-btn complete" onclick="pzComplete('${esc(p.id)}')">✓ Concluir</button>
-            <button class="pz-quick-btn postpone" onclick="pzPostpone('${esc(p.id)}')">↷ Adiar</button>
-            <button class="pz-quick-btn notify"   onclick="pzNotify('${esc(p.id)}')">💬 Avisar</button>
+            <button class="pz-quick-btn complete" onclick="event.stopPropagation();pzComplete('${esc(p.id)}')">✓ Concluir</button>
+            <button class="pz-quick-btn postpone" onclick="event.stopPropagation();pzPostpone('${esc(p.id)}')">↷ Adiar</button>
+            <button class="pz-quick-btn notify"   onclick="event.stopPropagation();pzNotify('${esc(p.id)}')">💬 Avisar</button>
           </div>`:''}
         </div>`;
       }).join('');
@@ -2607,14 +2607,26 @@ function switchPMSub(sub, btn) {
   window.pzNotify=function(id){
     const p=load().find(x=>x.id===id); if(!p)return;
     const dl=daysLabel(p);
-    const msg=(p.responsavel?`@${p.responsavel} — `:'')
-      +`lembrete: o prazo *${p.titulo}* vence ${dl?`*${dl}*`:'em breve'} (${fmtDate(p.vencimento)}).`
-      +(p.revisor?`\nRevisor: @${p.revisor}`:'');
+    const statusEmoji=p._s==='vencido'?'\uD83D\uDD34':p._s==='urgente'?'\uD83D\uDFE0':'\u26A0\uFE0F';
+    const msg=statusEmoji+` *${p.titulo}*`
+      +`\nVencimento: ${fmtDate(p.vencimento)}${dl?' ('+dl+')':''}`
+      +(p.responsavel?`\nRespons\u00e1vel: @${p.responsavel}`:'')
+      +(p.revisor?`\nRevisor: @${p.revisor}`:'')
+      +`\nAcesse o Monitor de Compliance: https://vitoriatrentin-source.github.io/compliance-monitor/`;
+    // Copia a mensagem
     navigator.clipboard.writeText(msg).then(()=>{
       const prazos=load(); const idx=prazos.findIndex(x=>x.id===id);
-      if(idx>=0){prazos[idx].history.push({action:'notified',by:getUser()||'alguém',at:new Date().toISOString()});save(prazos);}
-      showToast('💬 Mensagem copiada! Cole no Slack.','#7C3AED'); renderBoard();
-    }).catch(()=>showToast('⚠️ Copiar falhou. Tente de novo.','#EF4444'));
+      if(idx>=0){prazos[idx].history.push({action:'notified',by:getUser()||'algu\u00e9m',at:new Date().toISOString()});save(prazos);}
+      // Abre DM no Slack com o responsável (deep link)
+      const sid=p.responsavelSid;
+      if(sid){
+        showToast('\uD83D\uDCE8 Abrindo Slack com '+esc(p.responsavel)+'... Mensagem copiada!','#7C3AED');
+        setTimeout(()=>{window.open('https://slack.com/app_redirect?channel='+sid,'_blank');},300);
+      } else {
+        showToast('\uD83D\uDCCB Mensagem copiada! Cole no Slack.','#7C3AED');
+      }
+      renderBoard();
+    }).catch(()=>showToast('\u26A0\uFE0F Copiar falhou. Tente de novo.','#EF4444'));
   };
 
   // ── Export ─────────────────────────────────────────────────────────────────
