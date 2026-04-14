@@ -2099,7 +2099,9 @@ function checkPwd(){
     </div>
   </div>
 
-  <div id="pz-board"></div>
+  <div id="pz-board">
+    <div style="text-align:center;padding:40px;color:var(--text-muted);font-size:13px">Carregando prazos...</div>
+  </div>
 </div><!-- /tab-prazos -->
 
 <!-- ═══════════ ABA 10: IDEIA DA SEMANA ═══════════ -->
@@ -2329,7 +2331,7 @@ function switchPMSub(sub, btn) {
 }
 
 // ─── PRAZOS KANBAN ─────────────────────────────────────────────────────────
-(function () {
+(function () { try {
   const STORE_KEY = 'pitaco-prazos-v3';
   const USER_KEY  = 'pitaco-prazos-user';
 
@@ -2723,6 +2725,11 @@ function switchPMSub(sub, btn) {
 
   renderBoard();
   setInterval(renderBoard,60000);
+} catch(err) {
+  var b=document.getElementById('pz-board');
+  if(b) b.innerHTML='<div style="background:#FEE2E2;border:2px solid #EF4444;border-radius:12px;padding:20px;margin:20px 0;color:#991B1B;font-size:14px"><strong>ERRO no script Prazos:</strong><br>'+err.message+'<br><br><code style="font-size:11px;word-break:break-all">'+err.stack+'</code></div>';
+  console.error('Prazos IIFE error:', err);
+}
 })();
 </script>
 <!-- ═══ MODAL PRAZOS (fora de qualquer tab-pane) ═══ -->
